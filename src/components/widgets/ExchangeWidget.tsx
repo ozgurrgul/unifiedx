@@ -28,10 +28,10 @@ export const ExchangeWidget = forwardRef<HTMLDivElement, ExchangeWidgetProps>(
           {header}
         </div>
         <Card
-          className="w-full rounded-none border-none w-full"
+          className="w-full rounded-none border-none w-full bg-background"
           style={{ height: availableBodyHeight }}
         >
-          <div style={{ height: availableBodyHeight, overflowY: 'auto' }}>
+          <div style={{ height: availableBodyHeight, overflowY: "auto" }}>
             <CardContent className="widget-content p-0">{children}</CardContent>
           </div>
         </Card>

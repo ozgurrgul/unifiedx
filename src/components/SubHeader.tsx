@@ -38,28 +38,36 @@ export const SubHeader = () => {
       </div>
       <Separator orientation="vertical" />
       <div className="pl-6 pr-6 text-sm">
-        <FormatAmount amount={ticker?.last} precision={quote?.precision} />{" "}
-        <span className="number">{quote?.symbol}</span>
+        <div className="text-muted-foreground text-xs">
+          Last Price ({quote?.symbol})
+        </div>
+        <FormatAmount amount={ticker?.last} precision={quote?.precision} />
       </div>
       {ticker?.volumeQuote && (
         <div className="pr-6 text-sm">
+          <div className="text-muted-foreground text-xs">
+            24h Volume ({quote?.symbol})
+          </div>
           <FormatAmount
             amount={ticker?.volumeQuote}
             precision={quote?.precision}
-          />{" "}
-          <span className="number">{quote?.symbol} volume (24h)</span>
+          />
         </div>
       )}
       {ticker?.high && (
         <div className="pr-6 text-sm">
-          <FormatAmount amount={ticker?.high} precision={quote?.precision} />{" "}
-          <span className="number">{quote?.symbol} 24h High</span>
+          <div className="text-muted-foreground text-xs">
+            24h High ({quote?.symbol})
+          </div>
+          <FormatAmount amount={ticker?.high} precision={quote?.precision} />
         </div>
       )}
       {ticker?.low && (
         <div className="pr-6 text-sm">
-          <FormatAmount amount={ticker?.low} precision={quote?.precision} />{" "}
-          <span className="number">{quote?.symbol} 24h Low</span>
+          <div className="text-muted-foreground text-xs">
+            24h Low ({quote?.symbol})
+          </div>
+          <FormatAmount amount={ticker?.low} precision={quote?.precision} />
         </div>
       )}
       <Separator orientation="vertical" />

@@ -47,16 +47,22 @@ export const TradesWidget: React.FC = () => {
                     "text-green-400": trade.side === "sell",
                   })}
                 >
-                  <FormatAmount
-                    amount={trade.price}
-                    precision={trade?.market?.quote?.precision || 4}
-                  />
+                  <span>
+                    <FormatAmount
+                      amount={trade.price}
+                      precision={quote?.precision}
+                    />
+                  </span>
+                  <span> {trade.market.quote.symbol}</span>
                 </TableCell>
                 <TableCell className="w-[100px] text-xs px-4 py-1 cursor-pointer number">
-                  <FormatAmount
-                    amount={trade.amount}
-                    precision={trade?.market?.base?.precision || 4}
-                  />
+                  <span>
+                    <FormatAmount
+                      amount={trade.amount}
+                      precision={base?.precision}
+                    />
+                  </span>
+                  <span> {trade.market.base.symbol}</span>
                 </TableCell>
                 <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right text-muted-foreground">
                   time

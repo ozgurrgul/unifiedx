@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { Card, CardContent } from "../ui/card";
 import { useBaseWidget } from "./useBaseWidget";
-import Scrollbar from "react-scrollbars-custom";
+// import Scrollbar from "react-scrollbars-custom";
 
 type ExchangeWidgetProps = {
   children: any;
@@ -31,9 +31,9 @@ export const ExchangeWidget = forwardRef<HTMLDivElement, ExchangeWidgetProps>(
           className="w-full rounded-none border-none w-full"
           style={{ height: availableBodyHeight }}
         >
-          <Scrollbar height={availableBodyHeight}>
+          <div style={{ height: availableBodyHeight, overflowY: 'auto' }}>
             <CardContent className="widget-content p-0">{children}</CardContent>
-          </Scrollbar>
+          </div>
         </Card>
       </div>
     );

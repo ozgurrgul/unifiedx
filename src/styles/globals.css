@@ -81,7 +81,7 @@
   display: grid;
   gap: 1px;
   grid-template-columns:
-    1fr minmax(253px, 320px) minmax(550px, 880px) 320px
+    1fr minmax(253px, 320px) minmax(550px, 880px) 360px
     1fr;
   grid-template-rows:
     35px 68px 240px 240px minmax(169px, 1fr) minmax(146px, auto)

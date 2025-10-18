@@ -26,7 +26,7 @@ export const TradesWidget: React.FC = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="h-8 w-[120px] text-xs">Price</TableHead>
+            <TableHead className="h-8 w-[180px] text-xs">Price</TableHead>
             <TableHead className="h-8 w-[120px] text-xs">Amount</TableHead>
             <TableHead className="h-8 text-xs text-right">Time</TableHead>
           </TableRow>
@@ -42,7 +42,7 @@ export const TradesWidget: React.FC = () => {
             return (
               <TableRow key={`${trade.id}`}>
                 <TableCell
-                  className={cn("w-[120px] text-xs px-4 py-1 cursor-pointer number", {
+                  className={cn("w-[180px] text-xs px-4 py-1 cursor-pointer number", {
                     "text-red-400": trade.side === "buy",
                     "text-green-400": trade.side === "sell",
                   })}

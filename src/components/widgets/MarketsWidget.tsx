@@ -165,7 +165,7 @@ export const MarketsWidget: React.FC = () => {
       <Table className="pt-2">
         <TableHeader className="w-full">
           <TableRow>
-            <TableHead className="h-8 px-4 text-xs w-[120px]">Market</TableHead>
+            <TableHead className="h-8 px-4 text-xs w-[150px]">Market</TableHead>
             <TableHead className="h-8 px-4 text-xs text-right">Price</TableHead>
           </TableRow>
         </TableHeader>
@@ -190,7 +190,7 @@ export const MarketsWidget: React.FC = () => {
                   "bg-zinc-800": market.market === activeMarket,
                 })}
               >
-                <TableCell className="w-[120px] text-xs px-4 py-1 cursor-pointer">
+                <TableCell className="w-[150px] text-xs px-4 py-1 cursor-pointer">
                   {market?.base?.symbol}-{market?.quote?.symbol}
                 </TableCell>
                 <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">

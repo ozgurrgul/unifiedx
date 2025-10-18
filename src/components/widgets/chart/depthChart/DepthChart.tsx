@@ -49,109 +49,119 @@ export const DepthChart = () => {
     return null;
   }
 
+  const bids = bookData.bids || [];
+  const asks = bookData.asks || [];
+
+  // Calculate mid-market price
+  const highestBid = bids.length > 0 ? parseFloat(bids[0].p) : 0;
+  const lowestAsk = asks.length > 0 ? parseFloat(asks[0].p) : 0;
+  const midMarketPrice = (highestBid + lowestAsk) / 2;
+
+  // Create series data
+  const bidsData = createBidsSeriesData(bids, midMarketPrice);
+  const asksData = createAsksSeriesData(asks, midMarketPrice);
+
   const options: Options = {
     chart: {
       type: "area",
-      // zoomType: "xy",
       backgroundColor: "transparent",
+      height: "100%",
+      animation: false,
     },
     title: {
-      text: "",
+      text: undefined,
+    },
+    credits: {
+      enabled: false,
     },
     xAxis: {
-      minPadding: 0,
-      maxPadding: 0,
-      lineColor: "transparent",
       title: {
-        text: `Price`,
+        text: `Price (${quote})`,
         style: {
-          color: "var(--number)",
+          color: "hsl(var(--muted-foreground))",
         },
       },
       labels: {
         style: {
-          color: "var(--number)",
+          color: "hsl(var(--muted-foreground))",
         },
       },
+      gridLineColor: "hsl(var(--border))",
+      lineColor: "hsl(var(--border))",
+      tickColor: "hsl(var(--border))",
     },
-    yAxis: [
-      {
-        lineWidth: 1,
-        gridLineWidth: 0,
-        tickWidth: 1,
-        tickLength: 5,
-        tickPosition: "inside",
-        lineColor: "transparent",
-        labels: {
-          align: "left",
-          x: 8,
-          style: {
-            color: "var(--number)",
-          },
+    yAxis: {
+      title: {
+        text: `Cumulative ${base}`,
+        style: {
+          color: "hsl(var(--muted-foreground))",
         },
       },
-      {
-        opposite: true,
-        linkedTo: 0,
-        lineWidth: 1,
-        gridLineWidth: 0,
-        tickWidth: 1,
-        tickLength: 5,
-        tickPosition: "inside",
-        lineColor: "transparent",
-        labels: {
-          align: "right",
-          x: -8,
-          style: {
-            color: "var(--number)",
-          },
+      labels: {
+        style: {
+          color: "hsl(var(--muted-foreground))",
         },
       },
-    ],
+      gridLineColor: "hsl(var(--border))",
+    },
     legend: {
-      enabled: false,
+      enabled: true,
+      itemStyle: {
+        color: "hsl(var(--foreground))",
+      },
+      itemHoverStyle: {
+        color: "hsl(var(--primary))",
+      },
     },
     plotOptions: {
       area: {
         fillOpacity: 0.2,
-        lineWidth: 1,
-        step: "center",
+        lineWidth: 2,
+        animation: false,
+        marker: {
+          enabled: false,
+          states: {
+            hover: {
+              enabled: true,
+              radius: 4,
+            },
+          },
+        },
       },
-    },
-    tooltip: {
-      headerFormat: `<span style="font-size=10px;">Price: {point.key} ${quote.symbol}</span><br/>`,
-      valueDecimals: 2,
-      valueSuffix: base?.symbol,
     },
     series: [
       {
         name: "Bids",
-        data: createBidsSeriesData(
-          bookData?.bids || [],
-          bookData?.midMarketPrice || 0
-        ),
-        color: "green",
         type: "area",
+        data: bidsData,
+        color: "#22c55e",
+        fillColor: {
+          linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+          stops: [
+            [0, "rgba(34, 197, 94, 0.3)"],
+            [1, "rgba(34, 197, 94, 0.05)"],
+          ],
+        },
       },
       {
         name: "Asks",
-        data: createAsksSeriesData(
-          bookData?.asks || [],
-          bookData?.midMarketPrice || 0
-        ),
-        color: "red",
         type: "area",
+        data: asksData,
+        color: "#ef4444",
+        fillColor: {
+          linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+          stops: [
+            [0, "rgba(239, 68, 68, 0.3)"],
+            [1, "rgba(239, 68, 68, 0.05)"],
+          ],
+        },
       },
     ],
   };
 
   return (
-    <div key={bookData.market}>
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-        allowChartUpdate
-      />
+    <div key={bookData.market} className="w-full h-full">
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
 };

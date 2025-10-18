@@ -58,8 +58,8 @@ export const TradesWidget: React.FC = () => {
                     precision={trade?.market?.base?.precision || 4}
                   />
                 </TableCell>
-                <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
-                  20:55
+                <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right text-muted-foreground">
+                  time
                 </TableCell>
               </TableRow>
             );

@@ -77,32 +77,34 @@ export const Header = () => {
           <MenubarMenu>
             <MenubarTrigger
               onClick={() => setShowCredentials(true)}
-              className="cursor-pointer"
+              className="cursor-pointer flex items-center gap-2"
             >
-              Credentials
+              <span>Credentials</span>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span>
+                      {isAuthenticated === "loading" && (
+                        <Loader className="animate-spin" />
+                      )}
+                      {isAuthenticated === "yes" && (
+                        <LockClosedIcon className="text-green-500" />
+                      )}
+                      {isAuthenticated === "no" && (
+                        <LockOpen2Icon className="text-red-500" />
+                      )}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {isAuthenticated === "yes"
+                        ? "Authenticated successfully"
+                        : "Not authenticated"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </MenubarTrigger>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger>
-                  {isAuthenticated === "loading" && (
-                    <Loader className="animate-spin" />
-                  )}
-                  {isAuthenticated === "yes" && (
-                    <LockClosedIcon className="text-green-500" />
-                  )}
-                  {isAuthenticated === "no" && (
-                    <LockOpen2Icon className="text-red-500" />
-                  )}
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isAuthenticated === "yes"
-                      ? "Authenticated successfully"
-                      : "Not authenticated"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </MenubarMenu>
         )}
       </Menubar>

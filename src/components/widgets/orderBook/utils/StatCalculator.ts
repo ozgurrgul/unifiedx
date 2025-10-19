@@ -53,8 +53,8 @@ export class StatCalculator {
     // Otherwise we can successfully calculate the spread percentage
     else {
       const spread = +Math.max(lowestAskPrice - highestBidPrice, 0);
-      const percentage = ((spread / midMarketPrice) * 100).toFixed(3);
-      spreadPercentage = `${percentage}%`;
+      const percentage = (spread / midMarketPrice) * 100;
+      spreadPercentage = `${Math.max(percentage, 0.001).toFixed(3)}%`;
     }
 
     return {

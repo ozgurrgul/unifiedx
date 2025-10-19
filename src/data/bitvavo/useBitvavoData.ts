@@ -110,6 +110,14 @@ export const useBitvavoData = ({
           setAuthenticated("loading");
         }
       },
+      onError: () => {
+        setConnected(false);
+        setError({ error: "Failed to connect to websocket" });
+      },
+      onClose: () => {
+        setConnected(false);
+        setError({ error: "Websocket closed" });
+      },
     });
 
   const subscribeEvent = (event: string, market: Market) => {

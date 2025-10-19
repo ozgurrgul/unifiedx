@@ -234,6 +234,14 @@ export const useBtcTurkData = ({
       //   setAuthenticated("loading");
       // }
     },
+    onError: () => {
+      setConnected(false);
+      setError({ error: "Failed to connect to websocket" });
+    },
+    onClose: () => {
+      setConnected(false);
+      setError({ error: "Websocket closed" });
+    },
   });
 
   const onMarketChange = (activeMarket: Market, previousMarket?: Market) => {

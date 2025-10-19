@@ -165,6 +165,7 @@ export const useBinanceData = ({
     addBookData,
     markets,
     setConnected,
+    setError,
   } = setters;
 
   const tradeStream = `${activeMarket.base.symbol.toLowerCase()}${activeMarket.quote.symbol.toLowerCase()}@trade`;
@@ -179,6 +180,14 @@ export const useBinanceData = ({
           params: [tradeStream, depthStream],
           id: 1,
         });
+      },
+      onError: () => {
+        setConnected(false);
+        setError({ error: "Failed to connect to websocket" });
+      },
+      onClose: () => {
+        setConnected(false);
+        setError({ error: "Websocket closed" });
       },
     });
 

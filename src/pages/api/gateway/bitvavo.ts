@@ -24,13 +24,6 @@ export default async function handler(
       APISECRET: apiSecret,
     });
 
-    if (apiKey && apiSecret) {
-      console.log("bitvavo", {
-        apiKey,
-        apiSecret,
-      });
-    }
-
     const pOpenOrders = promisify(bitvavo.ordersOpen);
     const pGetOrders = promisify(bitvavo.getOrders);
     const pCancelOrder = promisify(bitvavo.cancelOrder);

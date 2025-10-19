@@ -23,6 +23,7 @@ export const useExchangeDataGetters = ({
       balances,
       isAuthenticated,
       pastOrders,
+      connected,
     },
   } = useContext(ExchangeDataSettersContext);
 
@@ -30,6 +31,7 @@ export const useExchangeDataGetters = ({
     activeExchange: {
       exchange: activeExchange,
       error,
+      isConnected: connected,
       isAuthenticated,
     },
     activeMarket: {

@@ -164,6 +164,7 @@ export const useBinanceData = ({
     setBookData,
     addBookData,
     markets,
+    setConnected,
   } = setters;
 
   const tradeStream = `${activeMarket.base.symbol.toLowerCase()}${activeMarket.quote.symbol.toLowerCase()}@trade`;
@@ -172,6 +173,7 @@ export const useBinanceData = ({
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<WsResponses>("wss://stream.binance.com:443/stream", {
       onOpen: () => {
+        setConnected(true);
         sendJsonMessage({
           method: "SUBSCRIBE",
           params: [tradeStream, depthStream],

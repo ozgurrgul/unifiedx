@@ -2,7 +2,6 @@
 
 import { MarketsWidget } from "./widgets/MarketsWidget";
 import { TradesWidget } from "./widgets/TradesWidget";
-import { ExchangeWidget } from "./widgets/ExchangeWidget";
 import { OrderBookWidget } from "./widgets/orderBook/OrderBookWidget";
 import { SubHeader } from "./SubHeader";
 import { Header } from "./Header";
@@ -13,6 +12,7 @@ import { useContext, useEffect } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { BalancesWidget } from "./widgets/BalancesWidget";
 import { OrderForm } from "./widgets/orderForm/OrderFormWidget";
+import { BottomBar } from "./BottomBar";
 
 export const ExchangeGrid = ({}) => {
   const { toast } = useToast();
@@ -47,6 +47,7 @@ export const ExchangeGrid = ({}) => {
         <div className="right" style={{ gridArea: "right" }}></div>
         <BalancesWidget />
       </div>
+      <BottomBar />
     </div>
   );
 };

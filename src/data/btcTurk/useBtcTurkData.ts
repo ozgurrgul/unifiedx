@@ -230,6 +230,7 @@ export const useBtcTurkData = ({
     setAuthenticated,
     setError,
     markets,
+    setConnected,
   } = setters;
 
   const {
@@ -240,6 +241,7 @@ export const useBtcTurkData = ({
     getWebSocket,
   } = useWebSocket<any>("wss://ws-feed-pro.btcturk.com", {
     onOpen: async () => {
+      setConnected(true);
       // if (isCredentialsProvided && credentials) {
       //   sendMessage(
       //     await getAuthSignature(

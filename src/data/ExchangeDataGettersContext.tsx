@@ -14,6 +14,7 @@ export const ExchangeDataGettersContext =
       activeExchange: {
         exchange: "" as ExchangeType,
         error: undefined,
+        isConnected: false,
         isAuthenticated: "no",
       },
       activeMarket: {

@@ -20,6 +20,7 @@ export const useExchangeDataSetters = ({
   onLayoutConfigure,
 }: UseExchangeDataSettersInput) => {
   const workerRef = useRef<Worker>();
+  const [connected, setConnected] = useState<boolean>(false);
   const [markets, setMarkets] = useState<MarketsHashmap>({});
   const [prices, setPrices] = useState<PricesHashmap>({});
   const [tickers, _setTickers] = useState<TickersHashmap>({});
@@ -126,6 +127,7 @@ export const useExchangeDataSetters = ({
   };
 
   return {
+    connected,
     markets,
     prices,
     trades,
@@ -154,5 +156,6 @@ export const useExchangeDataSetters = ({
     setError,
     setBalances,
     setAuthenticated,
+    setConnected,
   };
 };

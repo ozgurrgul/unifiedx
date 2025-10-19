@@ -82,11 +82,13 @@ export const useBitvavoData = ({
     setBalances,
     setError,
     setAuthenticated,
+    setConnected
   } = setters;
 
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<WsResponses>("wss://ws.bitvavo.com/v2?source=exchange", {
       onOpen: () => {
+        setConnected(true);
         sendJsonMessage({ action: "getTickerPrice" });
 
         if (isCredentialsProvided && credentials) {

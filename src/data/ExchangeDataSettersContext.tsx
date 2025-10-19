@@ -39,6 +39,8 @@ export const ExchangeDataSettersContext =
       setAuthenticated: () => {},
       pastOrders: [],
       setPastOrders: () => {},
+      connected: false,
+      setConnected: () => {},
     },
   });
 

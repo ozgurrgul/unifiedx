@@ -79,7 +79,7 @@ export const OrderBook: React.FC<Props> = ({ data }) => {
     },
   } = useContext(ExchangeDataGettersContext);
   const stats = (
-    <div className="flex items-center h-12 justify-evenly">
+    <div className="flex items-center py-2 justify-evenly">
       <span className="text-xs text-gray-500">
         Spread: {data?.spreadPercentage}
       </span>

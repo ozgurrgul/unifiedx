@@ -83,15 +83,15 @@
   grid-template-columns:
     minmax(250px, 360px) minmax(550px, 1fr) minmax(250px, 360px);
   grid-template-rows:
-    35px 68px 240px 240px minmax(169px, 1fr) minmax(146px, auto)
+    35px 68px 240px 240px 120px 240px
     385px;
   grid-template-areas:
     "header header header"
     "subheader subheader markets"
     "order-book chart markets"
-    "order-book chart trades"
-    "order-book order-form balances"
-    "order-book order-form balances"
+    "order-book chart markets"
+    "trades chart balances"
+    "trades order-form balances"
     "open-orders open-orders open-orders";
 }
 .widget {

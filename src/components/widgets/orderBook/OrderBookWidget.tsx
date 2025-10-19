@@ -1,14 +1,21 @@
 import { OrderBook } from "./OrderBook";
 import { ExchangeWidget } from "../ExchangeWidget";
-import { TableHeader, TableRow, TableHead, Table } from "../../ui/table";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  Table,
+  TableCell,
+} from "../../ui/table";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext, useEffect, useRef } from "react";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const OrderBookWidget: React.FC = () => {
   const {
     getters: {
-      activeMarket: { computedOrderBookData, base, quote },
+      activeMarket: { computedOrderBookData, base, quote, orderBookLoading },
     },
   } = useContext(ExchangeDataGettersContext);
 
@@ -48,7 +55,25 @@ export const OrderBookWidget: React.FC = () => {
   );
   return (
     <ExchangeWidget type="order-book" header={header}>
-      <OrderBook data={computedOrderBookData} />
+      {orderBookLoading ? (
+        <>
+          {Array.from({ length: 20 }).map((_, index) => (
+            <TableRow key={`skeleton-${index}`}>
+              <TableCell className="w-[100px] px-2">
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+              <TableCell className="px-4">
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+              <TableCell className="text-right">
+                <Skeleton className="h-4 w-24" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </>
+      ) : (
+        <OrderBook data={computedOrderBookData} />
+      )}
     </ExchangeWidget>
   );
 };

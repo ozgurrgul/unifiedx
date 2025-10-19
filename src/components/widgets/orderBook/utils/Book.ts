@@ -4,12 +4,13 @@ import { ComputedOrderBookData, ShapedBookEntry } from "../types";
 import { BookData, BookEntry } from "@/types/lib";
 
 export const UPDATE_INTERVAL_MS = 200;
+export const DEFAULT_VISIBLE_ROWS_COUNT = 10;
 
 export class Book {
   // Current grouping selected by user
   _digitsFromPricePrecision = 0;
 
-  _orderBookTableVisibleRowsCount = 10;
+  _orderBookTableVisibleRowsCount = DEFAULT_VISIBLE_ROWS_COUNT;
 
   // Asks and bids holder
   _askBookSide = new BookSide();

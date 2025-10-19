@@ -33,6 +33,8 @@ export const useExchangeDataSetters = ({
 
   const [visibleOrderBookRows, setVisibleOrderBookRows] =
     useState(0); /** per side */
+
+  const [orderBookLoading, setOrderBookLoading] = useState(true);
   const [computedOrderBookData, setComputedOrderBookData] =
     useState<ComputedOrderBookData>();
 
@@ -60,6 +62,7 @@ export const useExchangeDataSetters = ({
     ) => {
       setComputedOrderBookData(event.data.limited);
       setAllComputedOrderBookData(event.data.all);
+      setOrderBookLoading(false);
     };
     return () => {
       workerRef.current?.terminate();
@@ -151,6 +154,7 @@ export const useExchangeDataSetters = ({
     balances,
     isAuthenticated,
     initialTradesLoading,
+    orderBookLoading,
     // TODO: order by time
     setInitialTrades,
     setMarkets,

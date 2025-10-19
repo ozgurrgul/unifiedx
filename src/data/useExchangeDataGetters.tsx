@@ -25,6 +25,7 @@ export const useExchangeDataGetters = ({
       pastOrders,
       connected,
       initialTradesLoading,
+      orderBookLoading,
     },
   } = useContext(ExchangeDataSettersContext);
 
@@ -50,6 +51,7 @@ export const useExchangeDataGetters = ({
       balances,
       pastOrders,
       initialTradesLoading,
+      orderBookLoading,
     },
   };
 };

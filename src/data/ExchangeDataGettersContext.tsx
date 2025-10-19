@@ -38,6 +38,7 @@ export const ExchangeDataGettersContext =
         balances: {},
         pastOrders: [],
         initialTradesLoading: false,
+        orderBookLoading: false
       },
     },
   });

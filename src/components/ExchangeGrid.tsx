@@ -35,7 +35,6 @@ export const ExchangeGrid = ({}) => {
   return (
     <div>
       <div className="exchange-grid">
-        <div className="left" style={{ gridArea: "left" }}></div>
         <Header />
         <SubHeader />
         <MarketsWidget />
@@ -44,7 +43,6 @@ export const ExchangeGrid = ({}) => {
         <OrderBookWidget />
         <OrderForm />
         <OrdersWidget />
-        <div className="right" style={{ gridArea: "right" }}></div>
         <BalancesWidget />
       </div>
       <BottomBar />

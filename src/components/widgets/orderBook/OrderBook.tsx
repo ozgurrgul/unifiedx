@@ -35,8 +35,6 @@ const BookRenderer: React.FC<BookProps> = ({
         {entries.map((entry, index) => {
           // quote symbol precision
           const totalRatio = total ? (entry.t / total) * 100 : 0;
-          const basePrecision = base?.precision || 5;
-          const quotePrecision = Math.min(5, quote?.precision || 5);
           return (
             <TableRow
               key={entry.k || index}
@@ -53,15 +51,15 @@ const BookRenderer: React.FC<BookProps> = ({
                   }
                 )}
               >
-                <FormatAmount amount={entry.p} precision={quotePrecision} />
+                <FormatAmount amount={entry.p} precision={quote.precision} />
               </TableCell>
               <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
-                <FormatAmount amount={entry.a} precision={basePrecision} />
+                <FormatAmount amount={entry.a} precision={base.precision} />
               </TableCell>
               <TableCell className="text-xs px-2 py-1 cursor-pointer number text-right">
                 <FormatAmount
                   amount={String(entry.t)}
-                  precision={quotePrecision}
+                  precision={quote.precision}
                 />
               </TableCell>
             </TableRow>

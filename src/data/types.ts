@@ -2,14 +2,14 @@ import { CreateOrderPayload, Market, MarketsHashmap, Order } from "@/types/lib";
 import { ExchangeDataSettersContextType } from "./ExchangeDataSettersContext";
 import { ReadyState } from "react-use-websocket/dist/lib/constants";
 
-export type UseHookDataInput = {
+export type UseExchangeDataInput = {
   activeMarket: Market;
   setters: ExchangeDataSettersContextType["setters"];
   isCredentialsProvided: boolean;
   credentials?: Record<string, string>;
 };
 
-export type UseHookDataOutput = {
+export type UseExchangeDataOutput = {
   readyState: ReadyState;
   init?: () => void;
   onMarketChange: (activeMarket: Market, previousMarket?: Market) => void;
@@ -34,7 +34,7 @@ export type ExchangeConfig = {
       symbol: string;
     };
   };
-  data: (input: UseHookDataInput) => UseHookDataOutput;
+  data: (input: UseExchangeDataInput) => UseExchangeDataOutput;
   loadMarkets: () => Promise<MarketsHashmap>;
   wsStreaming: boolean;
   neededCredentials: ExchangeCredentialInput[];

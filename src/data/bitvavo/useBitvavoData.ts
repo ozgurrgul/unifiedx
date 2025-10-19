@@ -16,7 +16,7 @@ import {
 import { useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import crypto from "crypto";
-import { UseHookDataInput, UseHookDataOutput } from "../types";
+import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -69,7 +69,7 @@ export const useBitvavoData = ({
   setters,
   isCredentialsProvided,
   credentials,
-}: UseHookDataInput): UseHookDataOutput => {
+}: UseExchangeDataInput): UseExchangeDataOutput => {
   const {
     setPrices,
     setTickers,

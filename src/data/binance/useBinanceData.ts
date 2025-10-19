@@ -19,7 +19,7 @@ import {
   Order,
   CreateOrderPayload,
 } from "@/types/lib";
-import { UseHookDataInput, UseHookDataOutput } from "../types";
+import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -155,7 +155,7 @@ export const useBinanceData = ({
   setters,
   isCredentialsProvided,
   credentials,
-}: UseHookDataInput): UseHookDataOutput => {
+}: UseExchangeDataInput): UseExchangeDataOutput => {
   const {
     setPrices,
     setTickers,

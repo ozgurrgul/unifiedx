@@ -10,7 +10,7 @@ import {
   Order,
   CreateOrderPayload,
 } from "@/types/lib";
-import { UseHookDataInput, UseHookDataOutput } from "../types";
+import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import {
   BtcTurkBook,
   BtcTurkCurrency,
@@ -201,7 +201,7 @@ export const useBtcTurkData = ({
   setters,
   isCredentialsProvided,
   credentials,
-}: UseHookDataInput): UseHookDataOutput => {
+}: UseExchangeDataInput): UseExchangeDataOutput => {
   const {
     setPrices,
     setTickers,

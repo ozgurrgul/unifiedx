@@ -1,4 +1,5 @@
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { DotIcon } from "lucide-react";
 import { useContext } from "react";
 
 const ConnectionStatus = () => {
@@ -9,7 +10,12 @@ const ConnectionStatus = () => {
   } = useContext(ExchangeDataGettersContext);
 
   if (isConnected) {
-    return <span>Connected to {exchange}</span>;
+    return (
+      <span className="flex items-center gap-1">
+        <DotIcon size={18} color="green" />
+        <span>Connected to {exchange}</span>
+      </span>
+    );
   }
 
   return <span>Not connected</span>;

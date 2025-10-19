@@ -65,7 +65,6 @@ export const DepthChart = () => {
     chart: {
       type: "area",
       backgroundColor: "transparent",
-      height: "100%",
       animation: false,
     },
     title: {
@@ -76,7 +75,7 @@ export const DepthChart = () => {
     },
     xAxis: {
       title: {
-        text: `Price (${quote})`,
+        text: `Price (${quote.symbol})`,
         style: {
           color: "hsl(var(--muted-foreground))",
         },
@@ -92,7 +91,7 @@ export const DepthChart = () => {
     },
     yAxis: {
       title: {
-        text: `Cumulative ${base}`,
+        text: `Cumulative ${base?.symbol}`,
         style: {
           color: "hsl(var(--muted-foreground))",
         },
@@ -105,13 +104,7 @@ export const DepthChart = () => {
       gridLineColor: "hsl(var(--border))",
     },
     legend: {
-      enabled: true,
-      itemStyle: {
-        color: "hsl(var(--foreground))",
-      },
-      itemHoverStyle: {
-        color: "hsl(var(--primary))",
-      },
+      enabled: false,
     },
     plotOptions: {
       area: {

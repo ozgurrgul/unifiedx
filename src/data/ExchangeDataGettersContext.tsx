@@ -21,9 +21,11 @@ export const ExchangeDataGettersContext =
         market: "",
         base: {
           symbol: "",
+          precision: 0,
         },
         quote: {
           symbol: "",
+          precision: 0,
         },
         ticker: {} as Ticker,
         trades: [],

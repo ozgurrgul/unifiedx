@@ -14,33 +14,22 @@ export default function MarketPage() {
     : undefined;
   const market = router.query.market ? String(router.query.market) : undefined;
 
-  const [layoutConfigured, setLayoutConfigured] = useState(false);
-
   if (!exchange || !market) {
     return null;
   }
 
-  const onLayoutConfigure = () => {
-    setLayoutConfigured(true);
-  };
-
   return (
-    <ExchangeDataSettersContextProvider
-      onLayoutConfigure={onLayoutConfigure}
-      activeMarket={market}
-    >
+    <ExchangeDataSettersContextProvider activeMarket={market}>
       {market && (
         <ExchangeDataGettersContextTypeProvider
           activeExchange={exchange as ExchangeType}
           activeMarket={market}
         >
           <ExchangeGrid />
-          {layoutConfigured && exchange && (
-            <ExchangeDataLayerInitialization
-              activeExchange={exchange}
-              activeMarket={market}
-            />
-          )}
+          <ExchangeDataLayerInitialization
+            activeExchange={exchange}
+            activeMarket={market}
+          />
         </ExchangeDataGettersContextTypeProvider>
       )}
       <Toaster />

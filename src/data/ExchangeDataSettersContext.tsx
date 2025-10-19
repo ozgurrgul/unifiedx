@@ -50,13 +50,11 @@ export const ExchangeDataSettersContext =
 export const ExchangeDataSettersContextProvider = ({
   children,
   activeMarket,
-  onLayoutConfigure,
 }: {
   children: any;
   activeMarket: string;
-  onLayoutConfigure: UseExchangeDataSettersInput["onLayoutConfigure"];
 }) => {
-  const setters = useExchangeDataSetters({ activeMarket, onLayoutConfigure });
+  const setters = useExchangeDataSetters({ activeMarket });
 
   return (
     <ExchangeDataSettersContext.Provider value={{ setters }}>

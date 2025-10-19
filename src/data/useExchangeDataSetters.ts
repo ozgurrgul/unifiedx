@@ -13,12 +13,10 @@ import { BookWorkerPayload } from "../../workers/BookWorkerTypes";
 
 export type UseExchangeDataSettersInput = {
   activeMarket: string;
-  onLayoutConfigure: () => void;
 };
 
 export const useExchangeDataSetters = ({
   activeMarket,
-  onLayoutConfigure,
 }: UseExchangeDataSettersInput) => {
   const workerRef = useRef<Worker>();
   const [connected, setConnected] = useState<boolean>(false);
@@ -126,12 +124,6 @@ export const useExchangeDataSetters = ({
     setVisibleOrderBookRows(n);
   };
 
-  useEffect(() => {
-    if (visibleOrderBookRows > 0) {
-      onLayoutConfigure();
-    }
-  }, [visibleOrderBookRows, onLayoutConfigure]);
-
   const addCancellingOrderIds = (ids: string[]) => {
     _setCancellingOrderIds((prev) => [...prev, ...ids]);
   };
@@ -139,7 +131,7 @@ export const useExchangeDataSetters = ({
   const removeCancellingOrderIds = (ids: string[]) => {
     _setCancellingOrderIds((prev) => prev.filter((id) => !ids.includes(id)));
   };
-  
+
   const setInitialMarkets = (markets: MarketsHashmap) => {
     setMarkets(markets);
     setMarketsLoading(false);

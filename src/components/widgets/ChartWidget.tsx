@@ -6,7 +6,7 @@ export const ChartWidget = () => {
   return (
     <ExchangeWidget type="chart">
       <Tabs defaultValue="depth" className="w-full">
-        <TabsList className="w-full">
+        <TabsList className="w-full justify-start">
           <TabsTrigger value="tv">Trading View</TabsTrigger>
           <TabsTrigger value="depth">Depth</TabsTrigger>
         </TabsList>

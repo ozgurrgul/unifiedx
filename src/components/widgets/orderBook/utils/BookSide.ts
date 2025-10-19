@@ -76,7 +76,7 @@ export class BookSide {
    * @returns the entries. uses 'sortedPrices' since it's already sorted
    */
   take(): BookEntry[] {
-    return this.sortedPrices.map((price) => [
+    return this.sortedPrices.slice().map((price) => [
       price,
       String(this.entries[price]),
     ]);

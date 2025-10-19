@@ -90,7 +90,7 @@ export class Book {
       this.shapeEntry(newAsks.slice().reverse())
     );
 
-    const bidsComputed = this.returnEmptiesIfEmpty(this.shapeEntry(newBids));
+    const bidsComputed = this.returnEmptiesIfEmpty(this.shapeEntry(newBids.slice()));
     const sumOfAsksTotal = asksComputed.reduce((sum, obj) => sum + obj.t, 0);
     const sumOfBidsTotal = bidsComputed.reduce((sum, obj) => sum + obj.t, 0);
 

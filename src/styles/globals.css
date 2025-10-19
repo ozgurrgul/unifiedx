@@ -81,10 +81,17 @@
   display: grid;
   gap: 1px;
   grid-template-columns:
-    minmax(250px, 360px) minmax(550px, 1fr) minmax(250px, 360px);
+    minmax(250px, 360px)  /* Left sidebar: Order book & Trades */
+    minmax(550px, 1fr)     /* Center: Chart & Order form (grows to fill space) */
+    minmax(250px, 360px);  /* Right sidebar: Markets & Balances */
   grid-template-rows:
-    35px 68px 240px 240px 120px 240px
-    385px;
+    35px    /* Row 1: Header bar */
+    68px    /* Row 2: Subheader with market info */
+    240px   /* Row 3: Order book (top) | Chart (top) | Markets (top) */
+    240px   /* Row 4: Order book (bottom) | Chart (bottom) | Markets (bottom) */
+    120px   /* Row 5: Trades (top) | Order form (top) | Balances (top) */
+    240px   /* Row 6: Trades (bottom) | Order form (bottom) | Balances (bottom) */
+    385px;  /* Row 7: Open orders table (full width) */
   grid-template-areas:
     "header header header"
     "subheader subheader markets"

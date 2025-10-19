@@ -48,11 +48,11 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
               brandSymbol: p.market,
               base: {
                 symbol: p.market.split("-")[0],
-                precision: DEFAULT_BASE_ASSET_PRECISION,
+                precision: p.quantityDecimals,
               },
               quote: {
                 symbol: p.market.split("-")[1],
-                precision: DEFAULT_QUOTE_ASSET_PRECISION,
+                precision: p.notionalDecimals,
               },
               orderCapabilities: {
                 marketOrder: {

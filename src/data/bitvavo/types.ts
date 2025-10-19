@@ -3,6 +3,8 @@ import { BookData } from "../../types/lib";
 export type BitvavoMarket = {
   base: string;
   market: string;
+  quantityDecimals: number;
+  notionalDecimals: number;
   status: "trading" | "halted";
   orderTypes: (
     | "market"

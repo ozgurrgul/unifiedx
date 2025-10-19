@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import crypto from "crypto";
 import useWebSocket from "react-use-websocket";
 import {
   Market,
@@ -34,29 +33,6 @@ function arrayToHashmapByMarket<T extends { market: string }>(
   }
   return dict;
 }
-
-const getAuthSignature = async (publicKey: string, privateKey: string) => {
-  const serverTimeResponse = await fetch(`/api/gateway/btcTurk`, {
-    method: "POST",
-    body: JSON.stringify({ type: "/server/time" }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((r) => r.json());
-  const serverTime = serverTimeResponse.serverTime;
-  const nonce = 3011;
-  const stamp = serverTime;
-  const baseString = `${publicKey}${nonce}`;
-  const data = Buffer.from(`${baseString}`, "utf8");
-  const buffer = crypto.createHmac("sha256", Buffer.from(privateKey, "base64"));
-  buffer.update(data);
-  const signature = Buffer.from(
-    buffer.digest().toString("base64"),
-    "utf8"
-  ).toString("utf8");
-  const message = `[114,{"type":114, "publicKey":"${publicKey}", "timestamp":${stamp}, "nonce":${nonce}, "signature": "${signature}"}]`;
-  return message;
-};
 
 export const loadMarkets = (): Promise<MarketsHashmap> => {
   return fetch(`/api/gateway/btcTurk`, {

@@ -12,7 +12,9 @@ import {
 } from "./btcTurk/useBtcTurkData";
 import { ExchangeConfig } from "./types";
 
-export const exchangeConfigs: { [key: string]: ExchangeConfig } = {
+export type ExchangeType = "binance" | "bitvavo" | "btcTurk";
+
+export const exchangeConfigs: { [key in ExchangeType]: ExchangeConfig } = {
   binance: {
     data: useBinanceData,
     defaultMarket: {
@@ -74,5 +76,3 @@ export const exchangeConfigs: { [key: string]: ExchangeConfig } = {
     ],
   },
 };
-
-export type ExchangeType = keyof typeof exchangeConfigs;

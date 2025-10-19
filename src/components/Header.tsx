@@ -44,14 +44,6 @@ export const Header = () => {
     <div className="flex items-center w-full" style={{ gridArea: "header" }}>
       <Menubar className="w-full">
         <MenubarMenu>
-          <MenubarTrigger>UnifiedX</MenubarTrigger>
-          <MenubarContent>
-            <MenubarItem>
-              About <MenubarShortcut>⌘T</MenubarShortcut>
-            </MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-        <MenubarMenu>
           <MenubarTrigger>
             {exchange ? `Active: ${exchange}` : "Choose exchange"}
           </MenubarTrigger>

@@ -5,14 +5,6 @@ import { useContext } from "react";
 import { Separator } from "./ui/separator";
 import { FormatAmount } from "./common/Formatters";
 import { exchangeConfigs } from "@/data/exchangeConfigs";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
-import { $bus, BusEvent } from "./ExchangeBus";
 
 export const SubHeader = () => {
   const {
@@ -23,10 +15,6 @@ export const SubHeader = () => {
   } = useContext(ExchangeDataGettersContext);
 
   const exchangeConfig = exchangeConfigs[exchange];
-
-  const onRefreshDataClick = () => {
-    $bus.emit(BusEvent.RefreshDataLayer);
-  };
 
   return (
     <div
@@ -71,18 +59,6 @@ export const SubHeader = () => {
         </div>
       )}
       <Separator orientation="vertical" />
-      {!exchangeConfig.wsStreaming && (
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger className="ml-4">
-              <ReloadIcon onClick={() => onRefreshDataClick()} />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Refresh data manually</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { useContext, useEffect, useState } from "react";
 import { ExchangeDataLayer } from "./ExchangeDataLayer";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { $bus, BusEvent } from "./ExchangeBus";
 
 type ExchangeDataLayerInitializationProps = {
   activeExchange: ExchangeType;
@@ -37,15 +36,6 @@ export const ExchangeDataLayerInitialization: React.FC<
         setters.setError({ error: r.toString() });
       });
   }, [setInitialized]);
-
-  useEffect(() => {
-    $bus.on(BusEvent.RefreshDataLayer, () => {
-      setInitialized(false);
-      setTimeout(() => {
-        setInitialized(true);
-      }, 100);
-    });
-  }, [$bus]);
 
   if (!initialized) {
     return null;

@@ -38,6 +38,7 @@ export const OrderBookWidget: React.FC = () => {
 
   const header = (
     <>
+      <div className="p-4 pb-2 font-medium text-xs">Order Book</div>
       <Table>
         <TableHeader className="w-full">
           <TableRow>

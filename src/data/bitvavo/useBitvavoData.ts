@@ -380,7 +380,6 @@ export const useBitvavoData = ({
       // After an `order` event, request the open orders and balances slightly delayed
       // Because Bitvavo API is lacking behind WS data
       setTimeout(() => {
-        // TODO: getOpenOrders and getBalances with debounce
         getOpenOrders().then(setOpenOrders);
         getBalances().then(setBalances);
         getPastOrders(

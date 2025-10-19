@@ -179,6 +179,7 @@ export const MarketsWidget: React.FC = () => {
         <TableBody>
           {getMarkets().map((market) => {
             const price = prices && prices[market.market]?.price;
+            const isActive = market.market === activeMarket;
             return (
               <TableRow
                 key={`${market.market}-${price}`}
@@ -186,8 +187,8 @@ export const MarketsWidget: React.FC = () => {
                   goToMarket(exchange, market.base.symbol, market.quote.symbol);
                 }}
                 className={cn({
-                  "font-medium": market.market === activeMarket,
-                  "bg-zinc-800": market.market === activeMarket,
+                  "font-medium": isActive,
+                  "bg-foreground/10": isActive,
                 })}
               >
                 <TableCell className="w-[150px] text-xs px-4 py-1 cursor-pointer">

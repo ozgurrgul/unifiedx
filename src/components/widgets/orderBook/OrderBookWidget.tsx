@@ -28,9 +28,10 @@ export const OrderBookWidget: React.FC = () => {
     if (!dom) {
       return;
     }
-    const statsHeight = 48;
+    const header = dom.querySelector(".widget-card-header");
+    const statsHeight = 32 + (header?.clientHeight || 0);
     const bookRowHeight = 24;
-    const availableRows = Math.floor(
+    const availableRows = Math.ceil(
       (dom.clientHeight - statsHeight) / (2 * bookRowHeight)
     );
     updateVisibleOrderBookRowsNumber(availableRows);

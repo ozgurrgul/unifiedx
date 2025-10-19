@@ -24,7 +24,7 @@ export class StatCalculator {
   update(
     lowestAsk: BookEntry | null,
     highestBid: BookEntry | null,
-    quoteAssetPrecision: number | undefined = 1
+    quoteAssetPrecision: number | undefined
   ) {
     const lowestAskPrice = parseFloat(lowestAsk ? lowestAsk[0] : "0");
     const highestBidPrice = parseFloat(highestBid ? highestBid[0] : "0");

@@ -20,6 +20,10 @@ import {
   BtcTurkTrade,
   WsResponses,
 } from "./types";
+import {
+  DEFAULT_BASE_ASSET_PRECISION,
+  DEFAULT_QUOTE_ASSET_PRECISION,
+} from "../constants";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -86,11 +90,13 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
               brandSymbol: p.nameNormalized,
               base: {
                 symbol: p.numerator,
-                precision: baseCurrency?.precision,
+                precision:
+                  baseCurrency?.precision || DEFAULT_BASE_ASSET_PRECISION,
               },
               quote: {
                 symbol: p.denominator,
-                precision: quoteCurrency?.precision,
+                precision:
+                  quoteCurrency?.precision || DEFAULT_QUOTE_ASSET_PRECISION,
               },
               orderCapabilities: {
                 marketOrder: {

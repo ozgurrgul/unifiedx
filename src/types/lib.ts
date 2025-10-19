@@ -70,7 +70,7 @@ export type CreateOrderPayload = {
 
 export type AssetConfig = {
   symbol: string;
-  precision?: number;
+  precision: number;
 };
 
 export type Balance = {

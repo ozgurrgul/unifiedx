@@ -56,7 +56,7 @@ export class Book {
    * This is the main function iterates over events in '_deltaEventQueue'
    * Runs every 'UPDATE_INTERVAL_MS' and emits the data using updateCallback
    */
-  getData(limit: number): ComputedOrderBookData {
+  getData(limit: number, quoteAssetPrecision: number): ComputedOrderBookData {
     // Asks and bids to be consumed by order book
     const asksReversed = this.getAskSide().takeReversed();
     const bids = this.getBidSide().take();
@@ -65,7 +65,11 @@ export class Book {
 
     // Mid market price and spread is calculated, can be used in the depth calculator
     const { midMarketPrice, spreadPercentage } =
-      this.getStatCalculator().update(asksLastRow, bidsFirstRow, 1);
+      this.getStatCalculator().update(
+        asksLastRow,
+        bidsFirstRow,
+        quoteAssetPrecision
+      );
 
     // If the grouping is changed from order book component, we should apply aggregation to asks/bids
     // const needsAggregation = this.getDigitsFromPricePrecision() !== 0;

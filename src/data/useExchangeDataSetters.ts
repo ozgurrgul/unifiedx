@@ -9,6 +9,7 @@ import {
   Trade,
 } from "@/types/lib";
 import { useEffect, useRef, useState } from "react";
+import { BookWorkerPayload } from "../../workers/BookWorkerTypes";
 
 export type UseExchangeDataSettersInput = {
   activeMarket: string;
@@ -94,7 +95,8 @@ export const useExchangeDataSetters = ({
       type: "snapshot",
       bookData: data,
       visibleRows: visibleOrderBookRows,
-    });
+      quoteAssetPrecision: markets[activeMarket]?.quote.precision,
+    } satisfies BookWorkerPayload);
   };
 
   const addBookData = (data: BookData) => {
@@ -105,7 +107,8 @@ export const useExchangeDataSetters = ({
       type: "update",
       bookData: data,
       visibleRows: visibleOrderBookRows,
-    });
+      quoteAssetPrecision: markets[activeMarket]?.quote.precision,
+    } satisfies BookWorkerPayload);
   };
 
   const updateVisibleOrderBookRowsNumber = (n: number) => {

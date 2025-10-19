@@ -16,6 +16,7 @@ export const ExchangeDataGettersContext =
         error: undefined,
         isConnected: false,
         isAuthenticated: "no",
+        marketsLoading: false,
       },
       activeMarket: {
         market: "",

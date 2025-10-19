@@ -53,7 +53,7 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
     ) {
       setters.setOpenOrders([]);
       setters.setInitialTrades([]);
-      setters.setMarkets({});
+      setters.setInitialMarkets({});
       setters.setPrices({});
       setters.setOpenOrders([]);
       setters.setPastOrders([]);

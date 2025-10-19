@@ -29,7 +29,7 @@ export const ExchangeDataLayerInitialization: React.FC<
     exchangeConfig
       .loadMarkets()
       .then((r) => {
-        setters.setMarkets(r);
+        setters.setInitialMarkets(r);
         setInitialized(true);
       })
       .catch((r) => {

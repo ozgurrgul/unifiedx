@@ -19,7 +19,7 @@ import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import Fuse from "fuse.js";
-
+import { Skeleton } from "../ui/skeleton";
 
 const getUniqueMarketQuotes = (markets: MarketsHashmap) => {
   const quotes: string[] = [];
@@ -82,7 +82,7 @@ const RemaningMarkets: React.FC<{
 export const MarketsWidget: React.FC = () => {
   const {
     getters: {
-      activeExchange: { exchange },
+      activeExchange: { exchange, marketsLoading },
       activeMarket: { market: activeMarket, markets, prices },
     },
   } = useContext(ExchangeDataGettersContext);
@@ -173,34 +173,54 @@ export const MarketsWidget: React.FC = () => {
     </>
   );
 
+  const realMarkets = (
+    <>
+      {getMarkets().map((market) => {
+        const price = prices && prices[market.market]?.price;
+        const isActive = market.market === activeMarket;
+        return (
+          <TableRow
+            key={`${market.market}-${price}`}
+            onClick={() => {
+              goToMarket(exchange, market.base.symbol, market.quote.symbol);
+            }}
+            className={cn({
+              "font-medium": isActive,
+              "bg-foreground/10": isActive,
+            })}
+          >
+            <TableCell className="w-[150px] text-xs px-4 py-1 cursor-pointer">
+              {market?.base?.symbol}-{market?.quote?.symbol}
+            </TableCell>
+            <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
+              {prices && prices[market?.market]?.price} {market?.quote?.symbol}
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </>
+  );
+
   return (
     <ExchangeWidget type="markets" header={header}>
       <Table>
         <TableBody>
-          {getMarkets().map((market) => {
-            const price = prices && prices[market.market]?.price;
-            const isActive = market.market === activeMarket;
-            return (
-              <TableRow
-                key={`${market.market}-${price}`}
-                onClick={() => {
-                  goToMarket(exchange, market.base.symbol, market.quote.symbol);
-                }}
-                className={cn({
-                  "font-medium": isActive,
-                  "bg-foreground/10": isActive,
-                })}
-              >
-                <TableCell className="w-[150px] text-xs px-4 py-1 cursor-pointer">
-                  {market?.base?.symbol}-{market?.quote?.symbol}
-                </TableCell>
-                <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
-                  {prices && prices[market?.market]?.price}{" "}
-                  {market?.quote?.symbol}
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          {marketsLoading ? (
+            <>
+              {Array.from({ length: 10 }).map((_, index) => (
+                <TableRow key={`skeleton-${index}`}>
+                  <TableCell className="w-[150px] px-4 py-1">
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell className="px-4 py-1 text-right">
+                    <Skeleton className="h-4 w-24 ml-auto" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </>
+          ) : (
+            realMarkets
+          )}
         </TableBody>
       </Table>
     </ExchangeWidget>

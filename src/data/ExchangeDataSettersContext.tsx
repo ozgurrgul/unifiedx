@@ -13,7 +13,7 @@ export const ExchangeDataSettersContext =
   createContext<ExchangeDataSettersContextType>({
     setters: {
       addTrade: () => {},
-      setMarkets: () => {},
+      setInitialMarkets: () => {},
       setPrices: () => {},
       setTickers: () => {},
       markets: {},
@@ -42,7 +42,8 @@ export const ExchangeDataSettersContext =
       connected: false,
       setConnected: () => {},
       initialTradesLoading: false,
-      orderBookLoading: true,
+      orderBookLoading: false,
+      marketsLoading: false,
     },
   });
 

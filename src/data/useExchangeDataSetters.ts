@@ -22,6 +22,7 @@ export const useExchangeDataSetters = ({
 }: UseExchangeDataSettersInput) => {
   const workerRef = useRef<Worker>();
   const [connected, setConnected] = useState<boolean>(false);
+  const [marketsLoading, setMarketsLoading] = useState(true);
   const [markets, setMarkets] = useState<MarketsHashmap>({});
   const [prices, setPrices] = useState<PricesHashmap>({});
   const [tickers, _setTickers] = useState<TickersHashmap>({});
@@ -138,6 +139,11 @@ export const useExchangeDataSetters = ({
   const removeCancellingOrderIds = (ids: string[]) => {
     _setCancellingOrderIds((prev) => prev.filter((id) => !ids.includes(id)));
   };
+  
+  const setInitialMarkets = (markets: MarketsHashmap) => {
+    setMarkets(markets);
+    setMarketsLoading(false);
+  };
 
   return {
     connected,
@@ -155,9 +161,10 @@ export const useExchangeDataSetters = ({
     isAuthenticated,
     initialTradesLoading,
     orderBookLoading,
+    marketsLoading,
     // TODO: order by time
     setInitialTrades,
-    setMarkets,
+    setInitialMarkets,
     setPrices,
     setTickers,
     addTrade,

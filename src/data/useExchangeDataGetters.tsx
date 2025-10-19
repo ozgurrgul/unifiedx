@@ -26,6 +26,7 @@ export const useExchangeDataGetters = ({
       connected,
       initialTradesLoading,
       orderBookLoading,
+      marketsLoading,
     },
   } = useContext(ExchangeDataSettersContext);
 
@@ -35,6 +36,7 @@ export const useExchangeDataGetters = ({
       error,
       isConnected: connected,
       isAuthenticated,
+      marketsLoading,
     },
     activeMarket: {
       market: activeMarket,

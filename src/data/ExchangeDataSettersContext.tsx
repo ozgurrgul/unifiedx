@@ -41,6 +41,7 @@ export const ExchangeDataSettersContext =
       setPastOrders: () => {},
       connected: false,
       setConnected: () => {},
+      initialTradesLoading: false
     },
   });
 

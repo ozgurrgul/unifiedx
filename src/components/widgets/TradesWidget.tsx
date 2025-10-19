@@ -13,11 +13,12 @@ import { ExchangeWidget } from "./ExchangeWidget";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext } from "react";
 import { FormatAmount } from "../common/Formatters";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const TradesWidget: React.FC = () => {
   const {
     getters: {
-      activeMarket: { trades, base, quote },
+      activeMarket: { trades, base, quote, initialTradesLoading },
     },
   } = useContext(ExchangeDataGettersContext);
   const header = (
@@ -35,16 +36,35 @@ export const TradesWidget: React.FC = () => {
   );
   return (
     <ExchangeWidget type="trades" header={header}>
-      <Table>
-        <TableBody>
-          {(trades || []).map((trade) => {
+      {initialTradesLoading ? (
+        <Table>
+          <TableBody>
+            {Array.from({ length: 15 }).map((_, index) => (
+              <TableRow key={`skeleton-${index}`}>
+                <TableCell className="w-[150px] px-4 py-1">
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="px-4 py-1 text-right">
+                  <Skeleton className="h-4 w-20 ml-auto" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <Table>
+          <TableBody>
+            {(trades || []).map((trade) => {
             return (
               <TableRow key={`${trade.id}`}>
                 <TableCell
-                  className={cn("w-[150px] text-xs px-4 py-1 cursor-pointer number", {
-                    "text-red-400": trade.side === "buy",
-                    "text-green-400": trade.side === "sell",
-                  })}
+                  className={cn(
+                    "w-[150px] text-xs px-4 py-1 cursor-pointer number",
+                    {
+                      "text-red-400": trade.side === "buy",
+                      "text-green-400": trade.side === "sell",
+                    }
+                  )}
                 >
                   <span>
                     <FormatAmount
@@ -68,6 +88,7 @@ export const TradesWidget: React.FC = () => {
           })}
         </TableBody>
       </Table>
+      )}
     </ExchangeWidget>
   );
 };

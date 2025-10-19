@@ -37,6 +37,7 @@ export const ExchangeDataGettersContext =
         cancellingOrderIds: [],
         balances: {},
         pastOrders: [],
+        initialTradesLoading: false,
       },
     },
   });

@@ -25,6 +25,8 @@ export const useExchangeDataSetters = ({
   const [markets, setMarkets] = useState<MarketsHashmap>({});
   const [prices, setPrices] = useState<PricesHashmap>({});
   const [tickers, _setTickers] = useState<TickersHashmap>({});
+
+  const [initialTradesLoading, setInitialTradesLoading] = useState(true);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [openOrders, setOpenOrders] = useState<Order[]>([]);
   const [pastOrders, setPastOrders] = useState<Order[]>([]);
@@ -87,6 +89,11 @@ export const useExchangeDataSetters = ({
     setTrades([trade, ...(trades || [])]);
   };
 
+  const setInitialTrades = (trades: Trade[]) => {
+    setTrades(trades);
+    setInitialTradesLoading(false);
+  };
+
   const setBookData = (data: BookData) => {
     if (data.market.market !== activeMarket) {
       return;
@@ -143,8 +150,9 @@ export const useExchangeDataSetters = ({
     error,
     balances,
     isAuthenticated,
+    initialTradesLoading,
     // TODO: order by time
-    setInitialTrades: setTrades,
+    setInitialTrades,
     setMarkets,
     setPrices,
     setTickers,

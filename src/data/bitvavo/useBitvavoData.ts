@@ -17,10 +17,6 @@ import { useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import crypto from "crypto";
 import { UseHookDataInput, UseHookDataOutput } from "../types";
-import {
-  DEFAULT_BASE_ASSET_PRECISION,
-  DEFAULT_QUOTE_ASSET_PRECISION,
-} from "../constants";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]

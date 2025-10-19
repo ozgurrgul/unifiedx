@@ -9,6 +9,9 @@ import {
   MenubarRadioItem,
   MenubarShortcut,
   MenubarTrigger,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
 } from "@/components/ui/menubar";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
@@ -29,6 +32,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Loader } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export const Header = () => {
   const { goToExchange } = useAppNavigation();
@@ -39,6 +43,7 @@ export const Header = () => {
   } = useContext(ExchangeDataGettersContext);
 
   const [showCredentials, setShowCredentials] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="flex items-center w-full" style={{ gridArea: "header" }}>
@@ -99,6 +104,24 @@ export const Header = () => {
             </MenubarTrigger>
           </MenubarMenu>
         )}
+        <MenubarMenu>
+          <MenubarTrigger>Settings</MenubarTrigger>
+          <MenubarContent>
+            <MenubarSub>
+              <MenubarSubTrigger>Theme</MenubarSubTrigger>
+              <MenubarSubContent>
+                <MenubarRadioGroup value={theme}>
+                  <MenubarRadioItem value="light" onClick={() => setTheme("light")}>
+                    Light
+                  </MenubarRadioItem>
+                  <MenubarRadioItem value="dark" onClick={() => setTheme("dark")}>
+                    Dark
+                  </MenubarRadioItem>
+                </MenubarRadioGroup>
+              </MenubarSubContent>
+            </MenubarSub>
+          </MenubarContent>
+        </MenubarMenu>
       </Menubar>
       <Dialog open={showCredentials} onOpenChange={setShowCredentials}>
         <DialogContent>

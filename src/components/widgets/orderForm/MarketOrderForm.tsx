@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormatAmount } from "@/components/common/Formatters";
-import { cn } from "@/lib/utils";
 
 type MarketOrderFormProps = {
   side: Order["side"];
@@ -110,14 +109,11 @@ export const MarketOrderForm: React.FC<MarketOrderFormProps> = ({
         />
         <Button
           size="sm"
-          variant="secondary"
-          className={cn({
-            "bg-green-800": side === "buy",
-            "bg-red-800": side === "sell",
-          })}
+          variant={side === "buy" ? "buy" : "sell"}
+          className="w-full"
           type="submit"
         >
-          Create {side} order
+          {side === "buy" ? "Buy" : "Sell"} {baseAsset?.symbol}
         </Button>
       </form>
     </Form>

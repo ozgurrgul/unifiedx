@@ -23,13 +23,19 @@ export const BalancesWidget: React.FC = () => {
 
   const header = (
     <>
-      <div className="p-4 pb-2 font-medium text-xs">Balances</div>
+      <div className="widget-title">Balances</div>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="h-8 w-[80px] text-xs">Asset</TableHead>
-            <TableHead className="h-8 text-xs ">Available</TableHead>
-            <TableHead className="h-8 text-xs text-right">In order</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="h-7 w-[80px] text-[10px] uppercase tracking-wider">
+              Asset
+            </TableHead>
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider">
+              Available
+            </TableHead>
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider text-right">
+              In order
+            </TableHead>
           </TableRow>
         </TableHeader>
       </Table>
@@ -51,7 +57,7 @@ export const BalancesWidget: React.FC = () => {
               <TableRow
                 key={`${balance.asset}`}
                 className={cn({
-                  "bg-zinc-800": activeAsset,
+                  "row-active": activeAsset,
                 })}
               >
                 <TableCell className="w-[80px] text-xs px-4 py-1">

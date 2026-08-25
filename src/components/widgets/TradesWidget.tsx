@@ -23,12 +23,16 @@ export const TradesWidget: React.FC = () => {
   } = useContext(ExchangeDataGettersContext);
   const header = (
     <>
-      <div className="p-4 pb-2 font-medium text-xs">Trades</div>
+      <div className="widget-title">Trades</div>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="h-8 w-[150px] text-xs">Price</TableHead>
-            <TableHead className="h-8 text-xs text-right">Amount</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="h-7 w-[150px] text-[10px] uppercase tracking-wider">
+              Price
+            </TableHead>
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider text-right">
+              Amount
+            </TableHead>
           </TableRow>
         </TableHeader>
       </Table>
@@ -59,11 +63,8 @@ export const TradesWidget: React.FC = () => {
               <TableRow key={`${trade.id}`}>
                 <TableCell
                   className={cn(
-                    "w-[150px] text-xs px-4 py-1 cursor-pointer number",
-                    {
-                      "text-red-400": trade.side === "buy",
-                      "text-green-400": trade.side === "sell",
-                    }
+                    "w-[150px] text-xs px-4 py-0.5 cursor-pointer number tabular-nums",
+                    trade.side === "buy" ? "text-bid" : "text-ask"
                   )}
                 >
                   <span>

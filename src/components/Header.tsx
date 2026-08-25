@@ -1,22 +1,9 @@
 "use client";
 
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarShortcut,
-  MenubarTrigger,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
-} from "@/components/ui/menubar";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -31,8 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loader } from "lucide-react";
+import { Loader, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
 export const Header = () => {
   const { goToExchange } = useAppNavigation();
@@ -43,88 +31,94 @@ export const Header = () => {
   } = useContext(ExchangeDataGettersContext);
 
   const [showCredentials, setShowCredentials] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
-    <div className="flex items-center w-full" style={{ gridArea: "header" }}>
-      <Menubar className="w-full">
-        <MenubarMenu>
-          <MenubarTrigger>
-            {exchange ? `Active: ${exchange}` : "Choose exchange"}
-          </MenubarTrigger>
-          <MenubarContent>
-            {/* Render exchange options */}
-            <MenubarRadioGroup value={String(exchange)}>
-              {Object.keys(exchangeConfigs).map((exchange) => (
-                <MenubarRadioItem
-                  key={exchange}
-                  value={exchange}
-                  onClick={() => {
-                    const exchangeCasted = exchange as ExchangeType;
-                    goToExchange(exchangeCasted);
-                  }}
-                >
-                  {exchange}
-                </MenubarRadioItem>
-              ))}
-            </MenubarRadioGroup>
-          </MenubarContent>
-        </MenubarMenu>
-        {exchange && (
-          <MenubarMenu>
-            <MenubarTrigger
-              onClick={() => setShowCredentials(true)}
-              className="cursor-pointer flex items-center gap-2"
+    <div
+      className="app-header flex items-center justify-between px-4"
+      style={{ gridArea: "header" }}
+    >
+      <div className="flex items-center gap-6">
+        <span className="text-sm font-bold tracking-tight text-foreground">
+          UnifiedX
+        </span>
+
+        <div className="flex items-center gap-0.5">
+          {Object.keys(exchangeConfigs).map((ex) => (
+            <button
+              type="button"
+              key={ex}
+              className={cn("exchange-pill capitalize", {
+                "exchange-pill-active": exchange === ex,
+              })}
+              onClick={() => goToExchange(ex as ExchangeType)}
             >
-              <span>Credentials</span>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <span>
-                      {isAuthenticated === "loading" && (
-                        <Loader className="animate-spin" />
-                      )}
-                      {isAuthenticated === "yes" && (
-                        <LockClosedIcon className="text-green-500" />
-                      )}
-                      {isAuthenticated === "no" && (
-                        <LockOpen2Icon className="text-red-500" />
-                      )}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      {isAuthenticated === "yes"
-                        ? "Authenticated successfully"
-                        : "Not authenticated"}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </MenubarTrigger>
-          </MenubarMenu>
+              {ex}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {exchange && (
+          <button
+            type="button"
+            onClick={() => setShowCredentials(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          >
+            <span>Credentials</span>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span>
+                    {isAuthenticated === "loading" && (
+                      <Loader className="animate-spin w-3.5 h-3.5" />
+                    )}
+                    {isAuthenticated === "yes" && (
+                      <LockClosedIcon className="text-bid w-3.5 h-3.5" />
+                    )}
+                    {isAuthenticated === "no" && (
+                      <LockOpen2Icon className="text-ask w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {isAuthenticated === "yes"
+                      ? "Authenticated successfully"
+                      : "Not authenticated"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </button>
         )}
-        <MenubarMenu>
-          <MenubarTrigger>Settings</MenubarTrigger>
-          <MenubarContent>
-            <MenubarSub>
-              <MenubarSubTrigger>Theme</MenubarSubTrigger>
-              <MenubarSubContent>
-                <MenubarRadioGroup value={theme}>
-                  <MenubarRadioItem value="light" onClick={() => setTheme("light")}>
-                    Light
-                  </MenubarRadioItem>
-                  <MenubarRadioItem value="dark" onClick={() => setTheme("dark")}>
-                    Dark
-                  </MenubarRadioItem>
-                </MenubarRadioGroup>
-              </MenubarSubContent>
-            </MenubarSub>
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar>
+
+        <button
+          type="button"
+          onClick={() =>
+            setTheme(resolvedTheme === "dark" ? "light" : "dark")
+          }
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          aria-label="Toggle theme"
+        >
+          {!mounted ? (
+            <span className="block w-4 h-4" />
+          ) : resolvedTheme === "dark" ? (
+            <Sun className="w-4 h-4" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+
       <Dialog open={showCredentials} onOpenChange={setShowCredentials}>
-        <DialogContent>
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
             <DialogTitle>
               Set or update your credentials for {exchange}

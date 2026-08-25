@@ -127,12 +127,12 @@ export const DepthChart = () => {
         name: "Bids",
         type: "area",
         data: bidsData,
-        color: "#22c55e",
+        color: "#149e61",
         fillColor: {
           linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
           stops: [
-            [0, "rgba(34, 197, 94, 0.3)"],
-            [1, "rgba(34, 197, 94, 0.05)"],
+            [0, "rgba(20, 158, 97, 0.3)"],
+            [1, "rgba(20, 158, 97, 0.05)"],
           ],
         },
       },
@@ -140,12 +140,12 @@ export const DepthChart = () => {
         name: "Asks",
         type: "area",
         data: asksData,
-        color: "#ef4444",
+        color: "#e04545",
         fillColor: {
           linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
           stops: [
-            [0, "rgba(239, 68, 68, 0.3)"],
-            [1, "rgba(239, 68, 68, 0.05)"],
+            [0, "rgba(224, 69, 69, 0.3)"],
+            [1, "rgba(224, 69, 69, 0.05)"],
           ],
         },
       },

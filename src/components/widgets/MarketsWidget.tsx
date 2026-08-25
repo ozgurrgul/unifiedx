@@ -60,14 +60,9 @@ const RemaningMarkets: React.FC<{
           return (
             <div
               key={quote}
-              className={cn(
-                "text-xs hover:font-bold cursor-pointer flex justify-center items-center radius-2",
-                {
-                  "font-bold": isActive,
-                  "border-2": isActive,
-                  "rounded-sm": isActive,
-                }
-              )}
+            className={cn("text-xs hover:text-foreground cursor-pointer flex justify-center items-center rounded-md px-2 py-1 transition-colors", {
+                  "font-semibold text-foreground bg-secondary": isActive,
+                })}
               onClick={() => onSelect(quote)}
             >
               {quote}
@@ -130,9 +125,9 @@ export const MarketsWidget: React.FC = () => {
     <>
       <div className="p-2">
         <Input
-          placeholder="Search"
+          placeholder="Search markets..."
           onChange={(e) => setSearchInputText(e.target.value)}
-          className="bg-muted"
+          className="bg-secondary/50 border-border h-8 text-xs"
           value={searchInputText}
         />
       </div>
@@ -165,8 +160,12 @@ export const MarketsWidget: React.FC = () => {
       <Table className="pt-2">
         <TableHeader className="w-full">
           <TableRow>
-            <TableHead className="h-8 px-4 text-xs w-[150px]">Market</TableHead>
-            <TableHead className="h-8 px-4 text-xs text-right">Price</TableHead>
+            <TableHead className="h-7 px-4 text-[10px] uppercase tracking-wider w-[150px]">
+              Market
+            </TableHead>
+            <TableHead className="h-7 px-4 text-[10px] uppercase tracking-wider text-right">
+              Price
+            </TableHead>
           </TableRow>
         </TableHeader>
       </Table>
@@ -184,9 +183,8 @@ export const MarketsWidget: React.FC = () => {
             onClick={() => {
               goToMarket(exchange, market.base.symbol, market.quote.symbol);
             }}
-            className={cn({
-              "font-medium": isActive,
-              "bg-foreground/10": isActive,
+            className={cn("cursor-pointer transition-colors", {
+              "row-active-market font-semibold": isActive,
             })}
           >
             <TableCell className="w-[150px] text-xs px-4 py-1 cursor-pointer">

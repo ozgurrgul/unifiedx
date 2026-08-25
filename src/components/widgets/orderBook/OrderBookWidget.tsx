@@ -40,17 +40,19 @@ export const OrderBookWidget: React.FC = () => {
 
   const header = (
     <>
-      <div className="p-4 pb-2 font-medium text-xs">Order Book</div>
+      <div className="widget-title">Order Book</div>
       <Table>
         <TableHeader className="w-full">
-          <TableRow>
-            <TableHead className="h-8 text-xs w-[100px] px-2">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider w-[100px] px-2">
               Price ({quote?.symbol})
             </TableHead>
-            <TableHead className="h-8 text-xs px-4">
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider px-4">
               Amount ({base?.symbol})
             </TableHead>
-            <TableHead className="h-8 text-xs px-2 text-right">Total</TableHead>
+            <TableHead className="h-7 text-[10px] uppercase tracking-wider px-2 text-right">
+              Total
+            </TableHead>
           </TableRow>
         </TableHeader>
       </Table>

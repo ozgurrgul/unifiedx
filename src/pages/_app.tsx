@@ -23,8 +23,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>UnifiedX - Multi-Exchange Crypto Trading Platform</title>
       </Head>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <main className={`${font1.variable} ${font2.variable}`}>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <main className={`${font1.variable} ${font2.variable} font-sans`}>
           <Component {...pageProps} />
           <Analytics />
         </main>

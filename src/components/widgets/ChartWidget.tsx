@@ -10,7 +10,9 @@ export const ChartWidget = () => {
           <TabsTrigger value="tv">Trading View</TabsTrigger>
           <TabsTrigger value="depth">Depth</TabsTrigger>
         </TabsList>
-        <TabsContent value="tv">TV chart here</TabsContent>
+        <TabsContent value="tv" className="flex items-center justify-center h-48 text-muted-foreground text-xs">
+          TradingView chart coming soon
+        </TabsContent>
         <TabsContent value="depth">
           <DepthChart />
         </TabsContent>

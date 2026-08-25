@@ -38,47 +38,55 @@ export const OrderForm: React.FC = () => {
     <ExchangeWidget type="order-form">
       <Tabs defaultValue="market">
         <TabsList className="w-full justify-start">
-          <TabsTrigger value="market">Market order</TabsTrigger>
-          <TabsTrigger value="limit">Limit order</TabsTrigger>
+          <TabsTrigger value="market">Market</TabsTrigger>
+          <TabsTrigger value="limit">Limit</TabsTrigger>
         </TabsList>
         <TabsContent value="market" className="mt-0">
-          <div className="grid grid-cols-2 gap-2 p-2">
-            <MarketOrderForm
-              side="buy"
-              balance={balances[quote?.symbol]}
-              asset={quote}
-              baseAsset={base}
-              market={market}
-              onSubmit={onSubmit}
-            />
-            <MarketOrderForm
-              side="sell"
-              balance={balances[base?.symbol]}
-              asset={base}
-              baseAsset={base}
-              market={market}
-              onSubmit={onSubmit}
-            />
+          <div className="grid grid-cols-2 divide-x divide-border">
+            <div className="p-3 border-t-2 border-bid">
+              <MarketOrderForm
+                side="buy"
+                balance={balances[quote?.symbol]}
+                asset={quote}
+                baseAsset={base}
+                market={market}
+                onSubmit={onSubmit}
+              />
+            </div>
+            <div className="p-3 border-t-2 border-ask">
+              <MarketOrderForm
+                side="sell"
+                balance={balances[base?.symbol]}
+                asset={base}
+                baseAsset={base}
+                market={market}
+                onSubmit={onSubmit}
+              />
+            </div>
           </div>
         </TabsContent>
         <TabsContent value="limit" className="mt-0">
-          <div className="grid grid-cols-2 gap-2 p-2">
-            <LimitOrderForm
-              side="buy"
-              balance={balances[quote?.symbol]}
-              asset={quote}
-              baseAsset={base}
-              market={market}
-              onSubmit={onSubmit}
-            />
-            <LimitOrderForm
-              side="sell"
-              balance={balances[base?.symbol]}
-              asset={base}
-              baseAsset={base}
-              market={market}
-              onSubmit={onSubmit}
-            />
+          <div className="grid grid-cols-2 divide-x divide-border">
+            <div className="p-3 border-t-2 border-bid">
+              <LimitOrderForm
+                side="buy"
+                balance={balances[quote?.symbol]}
+                asset={quote}
+                baseAsset={base}
+                market={market}
+                onSubmit={onSubmit}
+              />
+            </div>
+            <div className="p-3 border-t-2 border-ask">
+              <LimitOrderForm
+                side="sell"
+                balance={balances[base?.symbol]}
+                asset={base}
+                baseAsset={base}
+                market={market}
+                onSubmit={onSubmit}
+              />
+            </div>
           </div>
         </TabsContent>
       </Tabs>

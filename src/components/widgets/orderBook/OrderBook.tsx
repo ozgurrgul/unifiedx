@@ -25,38 +25,31 @@ const BookRenderer: React.FC<BookProps> = ({
   base,
   quote,
 }) => {
-  const bgColor: { [key in Trade["side"]]: string } = {
-    buy: "rgba(19, 100, 0, 0.16)",
-    sell: "rgba(255, 1, 1, 0.16)",
-  };
+  const bgVar = type === "buy" ? "var(--bid-muted)" : "var(--ask-muted)";
   return (
     <Table>
       <TableBody>
         {entries.map((entry, index) => {
-          // quote symbol precision
           const totalRatio = total ? (entry.t / total) * 100 : 0;
           return (
             <TableRow
               key={entry.k || index}
               style={{
-                background: `linear-gradient(90deg, ${bgColor[type]} ${totalRatio}%, transparent ${totalRatio}%)`,
+                background: `linear-gradient(90deg, hsl(${bgVar}) ${totalRatio}%, transparent ${totalRatio}%)`,
               }}
             >
               <TableCell
                 className={cn(
-                  "font-medium text-xs w-[100px] px-2 py-1 cursor-pointer",
-                  {
-                    "text-green-400": type === "buy",
-                    "text-red-400": type === "sell",
-                  }
+                  "font-medium text-xs w-[100px] px-2 py-0.5 cursor-pointer tabular-nums",
+                  type === "buy" ? "text-bid" : "text-ask"
                 )}
               >
                 <FormatAmount amount={entry.p} precision={quote.precision} />
               </TableCell>
-              <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
+              <TableCell className="text-xs px-4 py-0.5 cursor-pointer number text-right">
                 <FormatAmount amount={entry.a} precision={base.precision} />
               </TableCell>
-              <TableCell className="text-xs px-2 py-1 cursor-pointer number text-right">
+              <TableCell className="text-xs px-2 py-0.5 cursor-pointer number text-right text-muted-foreground">
                 <FormatAmount
                   amount={String(entry.t)}
                   precision={quote.precision}
@@ -76,12 +69,15 @@ export const OrderBook: React.FC<Props> = ({ data }) => {
       activeMarket: { base, quote },
     },
   } = useContext(ExchangeDataGettersContext);
+
   const stats = (
-    <div className="flex items-center py-2 justify-evenly">
-      <span className="text-xs text-gray-500">
-        Spread: {data?.spreadPercentage}
+    <div className="flex items-center py-1.5 justify-center border-y border-border bg-secondary/30">
+      <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+        Spread:{" "}
+        <span className="text-foreground font-medium">
+          {data?.spreadPercentage}
+        </span>
       </span>
-      {/* <span className="text-xs text-gray-500">Mid: {data?.midMarketPrice}</span> */}
     </div>
   );
 

@@ -69,15 +69,15 @@ const OrdersTable: React.FC<{
           return (
             <TableRow key={order.id}>
               <TableCell
-                className="w-[200px] underline cursor-pointer text-xs"
+                className="w-[200px] text-foreground cursor-pointer text-xs hover:underline"
                 onClick={() => onClickMarket(order)}
               >
                 {order.baseAssetSymbol}-{order.quoteAssetSymbol}
               </TableCell>
               <TableCell
-                className={cn("w-[100px] text-xs", {
-                  "text-green-400": order.side === "buy",
-                  "text-red-400": order.side === "sell",
+                className={cn("w-[100px] text-xs capitalize", {
+                  "text-bid": order.side === "buy",
+                  "text-ask": order.side === "sell",
                 })}
               >
                 {order.side}

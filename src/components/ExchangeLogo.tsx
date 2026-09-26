@@ -1,6 +1,6 @@
 import Image from "next/image";
-import type { ExchangeType } from "@/data/exchangeConfigs";
 import { exchangeLogos } from "@/data/exchangeBranding";
+import type { ExchangeType } from "@/data/exchangeConfigs";
 import { cn } from "@/lib/utils";
 
 type ExchangeLogoProps = {
@@ -9,11 +9,7 @@ type ExchangeLogoProps = {
   className?: string;
 };
 
-export const ExchangeLogo = ({
-  exchange,
-  size = 16,
-  className,
-}: ExchangeLogoProps) => {
+export const ExchangeLogo = ({ exchange, size = 16, className }: ExchangeLogoProps) => {
   return (
     <Image
       src={exchangeLogos[exchange]}

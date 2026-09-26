@@ -95,7 +95,10 @@ export const MarketsWidget: React.FC = () => {
     [spotMarkets]
   );
   const visibleMarketQuoteSymbols = useMemo(
-    () => (marketQuoteSymbols.length > 5 ? marketQuoteSymbols.slice(0, 5) : marketQuoteSymbols),
+    () =>
+      marketQuoteSymbols.length > 5
+        ? marketQuoteSymbols.slice(0, 5)
+        : marketQuoteSymbols,
     [marketQuoteSymbols]
   );
 

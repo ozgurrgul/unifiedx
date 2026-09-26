@@ -34,7 +34,10 @@ function isPerpLayoutValid(data: unknown): data is SerializedDockview {
   for (const panelId of PERP_PANEL_IDS) {
     const panel = layout.panels[panelId];
     const component = panel?.contentComponent;
-    if (!component || !PERP_COMPONENTS.includes(component as (typeof PERP_COMPONENTS)[number])) {
+    if (
+      !component ||
+      !PERP_COMPONENTS.includes(component as (typeof PERP_COMPONENTS)[number])
+    ) {
       return false;
     }
   }
@@ -105,7 +108,10 @@ export function savePerpDockLayout(api: DockviewApi): void {
   if (typeof window === "undefined") {
     return;
   }
-  window.localStorage.setItem(PERP_DOCK_LAYOUT_STORAGE_KEY, JSON.stringify(api.toJSON()));
+  window.localStorage.setItem(
+    PERP_DOCK_LAYOUT_STORAGE_KEY,
+    JSON.stringify(api.toJSON())
+  );
 }
 
 export function clearStoredPerpDockLayout(): void {

@@ -12,7 +12,10 @@ type HeaderExchangeSelectProps = {
   onSelect: (exchange: ExchangeType) => void;
 };
 
-export const HeaderExchangeSelect = ({ value, onSelect }: HeaderExchangeSelectProps) => {
+export const HeaderExchangeSelect = ({
+  value,
+  onSelect,
+}: HeaderExchangeSelectProps) => {
   const label = value ? exchangeLabels[value] : "Exchange";
 
   return (

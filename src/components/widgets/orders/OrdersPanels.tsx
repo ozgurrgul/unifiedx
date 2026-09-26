@@ -129,11 +129,7 @@ function useOrdersActions() {
   return { cancelOrder, onClickMarket };
 }
 
-function AccountGatedOrdersBody({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AccountGatedOrdersBody({ children }: { children: React.ReactNode }) {
   const { showSignInPrompt } = useAccountGatedContent();
   if (showSignInPrompt) {
     return <AuthenticatedAccountPrompt />;

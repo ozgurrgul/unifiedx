@@ -4,15 +4,15 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
+  Order,
   SpotMarket,
   SpotMarketsHashmap,
-  Order,
   Ticker,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
-import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type {
   Binance24hTickerPrice,
   BinanceBookApiResponse,
@@ -176,9 +176,7 @@ export const useBinanceData = ({
     setError,
   } = setters;
 
-  const subscribedStreamsRef = useRef<{ trade: string; depth: string } | null>(
-    null
-  );
+  const subscribedStreamsRef = useRef<{ trade: string; depth: string } | null>(null);
   const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const subscribeBinanceStreams = (market: SpotMarket) => {

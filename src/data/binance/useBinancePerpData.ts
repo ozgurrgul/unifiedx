@@ -11,9 +11,17 @@ import type {
   TickersHashmap,
   Trade,
 } from "@/types/lib";
-import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../spot/types";
+import type {
+  UseSpotExchangeDataInput,
+  UseSpotExchangeDataOutput,
+} from "../spot/types";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { BinanceDepthWs, BinanceMarkPriceWs, BinanceTradeWs, WsResponses } from "./types";
+import type {
+  BinanceDepthWs,
+  BinanceMarkPriceWs,
+  BinanceTradeWs,
+  WsResponses,
+} from "./types";
 
 const FAPI_BASE = "https://fapi.binance.com/fapi/v1";
 const FSTREAM = "wss://fstream.binance.com/stream";
@@ -101,15 +109,24 @@ export const loadBinancePerpMarkets = (): Promise<SpotMarketsHashmap> => {
 const getTrades = (activeSpotMarket: SpotMarket) => {
   return fetch(`${FAPI_BASE}/trades?symbol=${activeSpotMarket.brandSymbol}&limit=100`)
     .then((r) => r.json())
-    .then((rows: Array<{ id: number; price: string; qty: string; time: number; isBuyerMaker: boolean }>) =>
-      rows.map((p) => ({
-        market: activeSpotMarket,
-        amount: p.qty,
-        id: p.id,
-        price: p.price,
-        side: p.isBuyerMaker ? ("sell" as const) : ("buy" as const),
-        timestamp: p.time,
-      }))
+    .then(
+      (
+        rows: Array<{
+          id: number;
+          price: string;
+          qty: string;
+          time: number;
+          isBuyerMaker: boolean;
+        }>
+      ) =>
+        rows.map((p) => ({
+          market: activeSpotMarket,
+          amount: p.qty,
+          id: p.id,
+          price: p.price,
+          side: p.isBuyerMaker ? ("sell" as const) : ("buy" as const),
+          timestamp: p.time,
+        }))
     );
 };
 
@@ -152,9 +169,7 @@ const getTickers = (markets: SpotMarketsHashmap) => {
 };
 
 const getPremiumIndex = (activeSpotMarket: SpotMarket) => {
-  return fetch(
-    `${FAPI_BASE}/premiumIndex?symbol=${activeSpotMarket.brandSymbol}`
-  )
+  return fetch(`${FAPI_BASE}/premiumIndex?symbol=${activeSpotMarket.brandSymbol}`)
     .then((r) => r.json())
     .then(
       (row: {

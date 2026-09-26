@@ -11,7 +11,9 @@ export default function ExchangePerpIndexPage() {
   }
 
   if (!isPerpSupportedExchange(exchange)) {
-    return <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>;
+    return (
+      <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>
+    );
   }
 
   return <ExchangeRedirectToDefaultPerpMarket exchange={exchange} />;

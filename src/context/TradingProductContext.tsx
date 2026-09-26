@@ -11,7 +11,9 @@ export const TradingProductProvider = ({
   product: TradingProduct;
   children: React.ReactNode;
 }) => (
-  <TradingProductContext.Provider value={product}>{children}</TradingProductContext.Provider>
+  <TradingProductContext.Provider value={product}>
+    {children}
+  </TradingProductContext.Provider>
 );
 
 export const useTradingProduct = () => useContext(TradingProductContext);

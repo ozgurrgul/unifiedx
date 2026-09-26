@@ -72,10 +72,7 @@ export async function waitForLiveTicker(page: Page): Promise<void> {
   });
 }
 
-export async function selectExchange(
-  page: Page,
-  exchange: string
-): Promise<void> {
+export async function selectExchange(page: Page, exchange: string): Promise<void> {
   await page.getByTestId("exchange-select").click();
   await page.getByTestId(`exchange-option-${exchange}`).click();
 }

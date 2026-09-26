@@ -3,11 +3,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
+import type { ExchangeType } from "@/data/exchangeConfigs";
 import {
   isPerpSupportedExchange,
   perpExchangeConfigs,
 } from "@/data/perp/exchangeConfigs";
-import type { ExchangeType } from "@/data/exchangeConfigs";
 import { ExchangeDataLayer } from "./ExchangeDataLayer";
 
 type Props = {

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { perpExchangeConfigs } from "@/data/perp/exchangeConfigs";
 import type { PerpSupportedExchange } from "@/data/perp/types";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 type Props = {
   exchange: PerpSupportedExchange;

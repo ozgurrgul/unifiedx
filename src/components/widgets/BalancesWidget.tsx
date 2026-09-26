@@ -55,32 +55,32 @@ export const BalancesWidget: React.FC = () => {
       {showSignInPrompt ? (
         <AuthenticatedAccountPrompt />
       ) : (
-      <Table>
-        <TableBody>
-          {sortedBalances.map((balance) => {
-            const activeAsset =
-              balance.asset === base.symbol || balance.asset === quote.symbol;
-            return (
-              <TableRow
-                key={`${balance.asset}`}
-                className={cn({
-                  "row-active": activeAsset,
-                })}
-              >
-                <TableCell className="w-[80px] text-xs px-4 py-1">
-                  {balance.asset}
-                </TableCell>
-                <TableCell className="text-xs px-4 py-1 number">
-                  <FormatAmount amount={String(balance.available)} precision={6} />
-                </TableCell>
-                <TableCell className="text-xs px-4 py-1 number text-right">
-                  <FormatAmount amount={String(balance.inOrder)} precision={6} />
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+        <Table>
+          <TableBody>
+            {sortedBalances.map((balance) => {
+              const activeAsset =
+                balance.asset === base.symbol || balance.asset === quote.symbol;
+              return (
+                <TableRow
+                  key={`${balance.asset}`}
+                  className={cn({
+                    "row-active": activeAsset,
+                  })}
+                >
+                  <TableCell className="w-[80px] text-xs px-4 py-1">
+                    {balance.asset}
+                  </TableCell>
+                  <TableCell className="text-xs px-4 py-1 number">
+                    <FormatAmount amount={String(balance.available)} precision={6} />
+                  </TableCell>
+                  <TableCell className="text-xs px-4 py-1 number text-right">
+                    <FormatAmount amount={String(balance.inOrder)} precision={6} />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       )}
     </ExchangeWidget>
   );

@@ -11,14 +11,14 @@ import type {
 import type {
   BalancesHashmap,
   CreateOrderPayload,
+  Order,
   SpotMarket,
   SpotMarketsHashmap,
-  Order,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
-import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import { bitvavoMarketId, syncBitvavoMarketStreams } from "./ws";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
@@ -384,9 +384,9 @@ export const useBitvavoData = ({
       setTimeout(() => {
         getOpenOrders().then(setOpenOrders);
         getBalances().then(setBalances);
-        getPastOrders(`${activeSpotMarket.base.symbol}-${activeSpotMarket.quote.symbol}`).then(
-          setPastOrders
-        );
+        getPastOrders(
+          `${activeSpotMarket.base.symbol}-${activeSpotMarket.quote.symbol}`
+        ).then(setPastOrders);
       }, 1000);
     }
   }, [lastJsonMessage, activeSpotMarket]);

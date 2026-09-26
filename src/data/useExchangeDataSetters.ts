@@ -1,12 +1,11 @@
-
 import { useEffect, useRef, useState } from "react";
 import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
 import type {
   BalancesHashmap,
   BookData,
-  SpotMarketsHashmap,
   Order,
   PricesHashmap,
+  SpotMarketsHashmap,
   Ticker,
   TickersHashmap,
   Trade,

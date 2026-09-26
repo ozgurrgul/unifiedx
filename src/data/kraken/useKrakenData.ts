@@ -4,15 +4,15 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
+  Order,
   SpotMarket,
   SpotMarketsHashmap,
-  Order,
   Ticker,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
-import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type {
   KrakenAssetPairsResponse,
   KrakenDepthResponse,
@@ -48,7 +48,11 @@ function brandSymbolFromWsName(wsname: string): string {
   return `${normalizeKrakenSymbol(base)}/${quote}`;
 }
 
-function registerPairAliases(pairId: string, info: { altname: string; wsname?: string }, marketId: string) {
+function registerPairAliases(
+  pairId: string,
+  info: { altname: string; wsname?: string },
+  marketId: string
+) {
   krakenPairAliasToMarket[pairId] = marketId;
   krakenPairAliasToMarket[info.altname] = marketId;
   if (info.wsname) {
@@ -227,7 +231,10 @@ function subscribeKrakenMarket(sendJsonMessage: (msg: object) => void, symbol: s
   });
 }
 
-function unsubscribeKrakenMarket(sendJsonMessage: (msg: object) => void, symbol: string) {
+function unsubscribeKrakenMarket(
+  sendJsonMessage: (msg: object) => void,
+  symbol: string
+) {
   sendJsonMessage({
     method: "unsubscribe",
     params: {

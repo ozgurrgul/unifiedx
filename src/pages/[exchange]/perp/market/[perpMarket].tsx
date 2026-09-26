@@ -3,10 +3,10 @@ import { ExchangeGrid } from "@/components/ExchangeGrid";
 import { PerpExchangeDataLayerInitialization } from "@/components/PerpExchangeDataLayerInitialization";
 import { Toaster } from "@/components/ui/toaster";
 import { TradingProductProvider } from "@/context/TradingProductContext";
-import type { ExchangeType } from "@/data/exchangeConfigs";
-import { isPerpSupportedExchange } from "@/data/perp/exchangeConfigs";
 import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
+import type { ExchangeType } from "@/data/exchangeConfigs";
+import { isPerpSupportedExchange } from "@/data/perp/exchangeConfigs";
 
 export default function PerpMarketPage() {
   const router = useRouter();
@@ -22,7 +22,9 @@ export default function PerpMarketPage() {
   }
 
   if (!isPerpSupportedExchange(exchange)) {
-    return <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>;
+    return (
+      <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>
+    );
   }
 
   const dataScopeKey = `${exchange}-perp-${perpMarketId}`;

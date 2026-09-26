@@ -1,10 +1,6 @@
 import { expect, type Page } from "@playwright/test";
+import { type ExchangeFixture, gotoTradingMarket, waitForLiveTicker } from "./app";
 import { activateTab, dockPanel } from "./dock";
-import {
-  type ExchangeFixture,
-  gotoTradingMarket,
-  waitForLiveTicker,
-} from "./app";
 
 /** Core market-data widgets every exchange should expose on the default pair. */
 export async function assertExchangeTradingBasics(

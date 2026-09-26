@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { ExchangeDataLayerInitialization } from "@/components/ExchangeDataLayerInitialization";
 import { ExchangeGrid } from "@/components/ExchangeGrid";
-import { TradingProductProvider } from "@/context/TradingProductContext";
 import { Toaster } from "@/components/ui/toaster";
+import { TradingProductProvider } from "@/context/TradingProductContext";
 import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
 import type { ExchangeType } from "@/data/exchangeConfigs";

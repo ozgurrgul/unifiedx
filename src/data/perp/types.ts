@@ -1,9 +1,9 @@
+import type { SpotMarketsHashmap } from "@/types/lib";
 import type {
   ExchangeCredentialInput,
   UseSpotExchangeDataInput,
   UseSpotExchangeDataOutput,
 } from "../spot/types";
-import type { SpotMarketsHashmap } from "@/types/lib";
 
 export type PerpSupportedExchange = "binance";
 

@@ -41,7 +41,15 @@ export type KrakenDepthResponse = {
   >;
 };
 
-export type KrakenTradeRow = [string, string, number, "b" | "s", string, string, number];
+export type KrakenTradeRow = [
+  string,
+  string,
+  number,
+  "b" | "s",
+  string,
+  string,
+  number,
+];
 
 export type KrakenTradesResponse = {
   error: string[];

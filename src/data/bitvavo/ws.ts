@@ -23,7 +23,10 @@ export function subscribeBitvavoTrades(send: BitvavoWsSend, market: SpotMarket):
   });
 }
 
-export function unsubscribeBitvavoTrades(send: BitvavoWsSend, market: SpotMarket): void {
+export function unsubscribeBitvavoTrades(
+  send: BitvavoWsSend,
+  market: SpotMarket
+): void {
   send({
     action: "unsubscribe",
     channels: [{ name: "trades", markets: [bitvavoMarketId(market)] }],

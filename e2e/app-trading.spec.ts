@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { activateTab, dockPanel, tabsShareGroup } from "./helpers/dock";
 import {
   BINANCE_BTC_EUR_PATH,
   BINANCE_BTC_USDT_PERP_PATH,
@@ -11,6 +10,7 @@ import {
   selectProduct,
   waitForLiveTicker,
 } from "./helpers/app";
+import { activateTab, dockPanel, tabsShareGroup } from "./helpers/dock";
 import {
   assertExchangeRootRedirect,
   assertExchangeTradingBasics,
@@ -112,9 +112,12 @@ test.describe("Binance perp", () => {
     await activateTab(page, "chart");
     await expect(dockPanel(page, "chart")).toBeVisible();
     await expect(page.locator(".widget-chart")).toBeVisible();
-    await expect(page.locator(".widget-chart")).not.toContainText("Failed to load chart", {
-      timeout: 30_000,
-    });
+    await expect(page.locator(".widget-chart")).not.toContainText(
+      "Failed to load chart",
+      {
+        timeout: 30_000,
+      }
+    );
   });
 
   test("perp markets list is populated", async ({ page }) => {

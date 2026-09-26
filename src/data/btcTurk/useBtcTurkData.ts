@@ -4,9 +4,9 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
+  Order,
   SpotMarket,
   SpotMarketsHashmap,
-  Order,
   Ticker,
   TickersHashmap,
   Trade,
@@ -15,8 +15,8 @@ import {
   DEFAULT_BASE_ASSET_PRECISION,
   DEFAULT_QUOTE_ASSET_PRECISION,
 } from "../constants";
-import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type {
   BtcTurkBook,
   BtcTurkCurrency,
@@ -26,11 +26,7 @@ import type {
   BtcTurkWsTradeSingle,
   WsResponses,
 } from "./types";
-import {
-  btcTurkPairEvent,
-  btcTurkSubscriptionMessage,
-  mapBtcTurkWsTrade,
-} from "./ws";
+import { btcTurkPairEvent, btcTurkSubscriptionMessage, mapBtcTurkWsTrade } from "./ws";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -260,7 +256,8 @@ export const useBtcTurkData = ({
         }
         setError({ error: "Websocket closed" });
       },
-    });
+    }
+  );
 
   const onSpotMarketChange = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (nextMarket) {
@@ -284,7 +281,12 @@ export const useBtcTurkData = ({
     }
 
     const [code, payload] = msg;
-    if (code === 114 && payload && typeof payload === "object" && "message" in payload) {
+    if (
+      code === 114 &&
+      payload &&
+      typeof payload === "object" &&
+      "message" in payload
+    ) {
       setAuthenticated("no");
       setError({ error: String(payload.message) });
       return;
@@ -329,7 +331,14 @@ export const useBtcTurkData = ({
         bids: mapDiffSide(payload.BO),
       });
     }
-  }, [lastJsonMessage, activeSpotMarket, addTrade, setBookData, addBookData, setInitialTrades]);
+  }, [
+    lastJsonMessage,
+    activeSpotMarket,
+    addTrade,
+    setBookData,
+    addBookData,
+    setInitialTrades,
+  ]);
 
   const cancelOrder = (order: Order) => {};
 

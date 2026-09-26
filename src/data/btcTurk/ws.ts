@@ -21,7 +21,10 @@ export function btcTurkSubscriptionMessage(
   ]);
 }
 
-export function mapBtcTurkWsTrade(row: BtcTurkWsTradeSingle, market: SpotMarket): Trade {
+export function mapBtcTurkWsTrade(
+  row: BtcTurkWsTradeSingle,
+  market: SpotMarket
+): Trade {
   return {
     id: row.I,
     price: row.P,

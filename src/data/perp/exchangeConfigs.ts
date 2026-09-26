@@ -23,6 +23,8 @@ export const perpExchangeConfigs: Record<PerpSupportedExchange, PerpExchangeConf
   },
 };
 
-export function isPerpSupportedExchange(exchange: string): exchange is PerpSupportedExchange {
+export function isPerpSupportedExchange(
+  exchange: string
+): exchange is PerpSupportedExchange {
   return exchange in perpExchangeConfigs;
 }

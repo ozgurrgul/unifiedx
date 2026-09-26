@@ -2,10 +2,9 @@
 
 import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 import { Loader, Moon, RotateCcw, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { useContext, useEffect, useState } from "react";
-import { useTradingProduct } from "@/context/TradingProductContext";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTradingProduct } from "@/context/TradingProductContext";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { isPerpSupportedExchange } from "@/data/perp/exchangeConfigs";

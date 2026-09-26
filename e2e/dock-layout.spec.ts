@@ -42,9 +42,7 @@ test.describe("Exchange dockview layout", () => {
     await expect
       .poll(async () => tabsShareGroup(page, "chart", "depth-chart"))
       .toBe(true);
-    await expect
-      .poll(async () => tabsShareGroup(page, "markets", "trades"))
-      .toBe(true);
+    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
     await expect
       .poll(async () => tabsShareGroup(page, "market-order", "limit-order"))
       .toBe(true);
@@ -56,9 +54,7 @@ test.describe("Exchange dockview layout", () => {
   test("merges panels into a tab group via drag and drop", async ({ page }) => {
     await waitForDockReady(page);
 
-    expect(await tabsShareGroup(page, "order-book", "base-open-orders")).toBe(
-      false
-    );
+    expect(await tabsShareGroup(page, "order-book", "base-open-orders")).toBe(false);
 
     await dragTabOntoTab(page, "order-book", "base-open-orders");
 
@@ -144,9 +140,7 @@ test.describe("Exchange dockview layout", () => {
     await expect
       .poll(async () => tabsShareGroup(page, "chart", "depth-chart"))
       .toBe(true);
-    await expect
-      .poll(async () => tabsShareGroup(page, "markets", "trades"))
-      .toBe(true);
+    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
 
     for (const id of PANEL_IDS) {
       await expect(dockTab(page, id)).toBeVisible();

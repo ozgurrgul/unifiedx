@@ -9,6 +9,7 @@ import {
   type UTCTimestamp,
 } from "lightweight-charts";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useTradingProduct } from "@/context/TradingProductContext";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { cn } from "@/lib/utils";
 import { applyTradeToCandles } from "./candleUtils";
@@ -36,6 +37,7 @@ const toSeriesData = (candles: Candle[]) =>
   }));
 
 export const CandlestickChart = () => {
+  const product = useTradingProduct();
   const {
     getters: {
       activeExchange: { exchange },
@@ -132,6 +134,7 @@ export const CandlestickChart = () => {
       quote: quote.symbol,
       brandSymbol: "",
       interval,
+      product,
     })
       .then((candles) => {
         if (cancelled) return;
@@ -149,7 +152,7 @@ export const CandlestickChart = () => {
     return () => {
       cancelled = true;
     };
-  }, [exchange, spotMarketId, base?.symbol, quote?.symbol, interval]);
+  }, [exchange, spotMarketId, base?.symbol, quote?.symbol, interval, product]);
 
   // Live update from latest trade
   useEffect(() => {

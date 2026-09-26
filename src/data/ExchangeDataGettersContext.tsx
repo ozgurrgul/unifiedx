@@ -16,6 +16,7 @@ export const ExchangeDataGettersContext = createContext<ExchangeDataGettersConte
         error: undefined,
         isConnected: false,
         isAuthenticated: "no",
+        canTrade: false,
         marketsLoading: false,
       },
       activeSpotMarket: {

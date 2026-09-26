@@ -6,11 +6,12 @@ export const fetchCandles = async ({
   base,
   quote,
   interval,
+  product,
 }: FetchCandlesParams): Promise<Candle[]> => {
   const res = await fetch("/api/candles", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ exchange, market, base, quote, interval }),
+    body: JSON.stringify({ exchange, market, base, quote, interval, product }),
   });
 
   const json = await res.json();

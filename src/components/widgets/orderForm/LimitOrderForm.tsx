@@ -21,6 +21,7 @@ type LimitOrderFormProps = {
   baseAsset: AssetConfig;
   market: string;
   onSubmit: (payload: CreateOrderPayload) => void;
+  disabled?: boolean;
 };
 
 export const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
@@ -30,6 +31,7 @@ export const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
   baseAsset,
   market,
   onSubmit: _onSubmit,
+  disabled = false,
 }) => {
   const formSchema = z.object({
     price: z.string(),
@@ -75,6 +77,7 @@ export const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
         <FormField
           control={form.control}
           name="price"
+          disabled={disabled}
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center">
@@ -90,6 +93,7 @@ export const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
         <FormField
           control={form.control}
           name="amount"
+          disabled={disabled}
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center">
@@ -110,6 +114,7 @@ export const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
           variant={side === "buy" ? "buy" : "sell"}
           className="w-full"
           type="submit"
+          disabled={disabled}
         >
           {side === "buy" ? "Buy" : "Sell"} {baseAsset?.symbol}
         </Button>

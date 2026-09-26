@@ -78,6 +78,8 @@ test.describe("Binance perp", () => {
     await waitForLiveTicker(page);
     await expect(page).toHaveURL(new RegExp(`${BINANCE_BTC_USDT_PERP_PATH}$`));
     await expect(page.getByTestId("product-select")).toHaveText(/perp/i);
+    await expect(page.getByText("Mark", { exact: true })).toBeVisible();
+    await expect(page.getByText("Funding", { exact: true })).toBeVisible();
   });
 
   test("product dropdown switches between spot and perp", async ({ page }) => {

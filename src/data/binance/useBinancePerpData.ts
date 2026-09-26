@@ -13,7 +13,7 @@ import type {
 } from "@/types/lib";
 import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../spot/types";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { BinanceDepthWs, BinanceTradeWs, WsResponses } from "./types";
+import type { BinanceDepthWs, BinanceMarkPriceWs, BinanceTradeWs, WsResponses } from "./types";
 
 const FAPI_BASE = "https://fapi.binance.com/fapi/v1";
 const FSTREAM = "wss://fstream.binance.com/stream";
@@ -56,6 +56,7 @@ function getFuturesStreams(market: SpotMarket) {
   return {
     trade: `${symbol}@aggTrade`,
     depth: `${symbol}@depth@100ms`,
+    markPrice: `${symbol}@markPrice@1s`,
   };
 }
 
@@ -112,10 +113,22 @@ const getTrades = (activeSpotMarket: SpotMarket) => {
     );
 };
 
+type BinanceFutures24hTicker = {
+  symbol: string;
+  lastPrice: string;
+  volume: string;
+  quoteVolume: string;
+  bidPrice: string;
+  askPrice: string;
+  highPrice: string;
+  lowPrice: string;
+  openPrice: string;
+};
+
 const getTickers = (markets: SpotMarketsHashmap) => {
   return fetch(`${FAPI_BASE}/ticker/24hr`)
     .then((r) => r.json())
-    .then((rows: Array<{ symbol: string; lastPrice: string; volume: string; quoteVolume: string; bidPrice: string }>) => {
+    .then((rows: BinanceFutures24hTicker[]) => {
       const byBrand = Object.values(markets);
       const mappedTickers: TickersHashmap = arrayToHashmapByMarket(
         rows.map((p) => {
@@ -126,16 +139,36 @@ const getTickers = (markets: SpotMarketsHashmap) => {
             volume: p.volume,
             volumeQuote: p.quoteVolume,
             bid: p.bidPrice,
-            ask: "",
-            high: "",
-            low: "",
-            open: "",
+            ask: p.askPrice,
+            high: p.highPrice,
+            low: p.lowPrice,
+            open: p.openPrice,
           };
           return ticker;
         })
       );
       return mappedTickers;
     });
+};
+
+const getPremiumIndex = (activeSpotMarket: SpotMarket) => {
+  return fetch(
+    `${FAPI_BASE}/premiumIndex?symbol=${activeSpotMarket.brandSymbol}`
+  )
+    .then((r) => r.json())
+    .then(
+      (row: {
+        markPrice: string;
+        indexPrice: string;
+        lastFundingRate: string;
+        nextFundingTime: number;
+      }) => ({
+        markPrice: row.markPrice,
+        indexPrice: row.indexPrice,
+        fundingRate: row.lastFundingRate,
+        nextFundingTimeMs: row.nextFundingTime,
+      })
+    );
 };
 
 const getBook = (activeSpotMarket: SpotMarket) => {
@@ -155,6 +188,7 @@ export const useBinancePerpData = ({
 }: UseSpotExchangeDataInput): UseSpotExchangeDataOutput => {
   const {
     setTickers,
+    patchTicker,
     setInitialTrades,
     addTrade,
     setBookData,
@@ -164,23 +198,31 @@ export const useBinancePerpData = ({
     setError,
   } = setters;
 
-  const subscribedStreamsRef = useRef<{ trade: string; depth: string } | null>(null);
+  const subscribedStreamsRef = useRef<{
+    trade: string;
+    depth: string;
+    markPrice: string;
+  } | null>(null);
   const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const subscribeStreams = (market: SpotMarket) => {
     const streams = getFuturesStreams(market);
     sendJsonMessage({
       method: "SUBSCRIBE",
-      params: [streams.trade, streams.depth],
+      params: [streams.trade, streams.depth, streams.markPrice],
       id: Date.now(),
     });
     subscribedStreamsRef.current = streams;
   };
 
-  const unsubscribeStreams = (streams: { trade: string; depth: string }) => {
+  const unsubscribeStreams = (streams: {
+    trade: string;
+    depth: string;
+    markPrice: string;
+  }) => {
     sendJsonMessage({
       method: "UNSUBSCRIBE",
-      params: [streams.trade, streams.depth],
+      params: [streams.trade, streams.depth, streams.markPrice],
       id: Date.now(),
     });
   };
@@ -209,6 +251,9 @@ export const useBinancePerpData = ({
       getTickers(markets).then(setTickers);
       getBook(nextMarket).then(setBookData);
       getTrades(nextMarket).then(setInitialTrades);
+      getPremiumIndex(nextMarket).then((perp) => {
+        patchTicker(nextMarket.market, perp);
+      });
     }
 
     if (readyState === ReadyState.OPEN) {
@@ -245,16 +290,21 @@ export const useBinancePerpData = ({
         bids: data.b,
         market: activeSpotMarket,
       });
+    } else if (msg.stream === streams.markPrice) {
+      const data = msg.data as BinanceMarkPriceWs["data"];
+      patchTicker(activeSpotMarket.market, {
+        markPrice: data.p,
+        indexPrice: data.i,
+        fundingRate: data.r,
+        nextFundingTimeMs: data.T,
+      });
     }
-  }, [lastJsonMessage, activeSpotMarket, addTrade, addBookData]);
+  }, [lastJsonMessage, activeSpotMarket, addTrade, addBookData, patchTicker]);
 
   const cancelOrder = (_order: Order) => {};
 
   const createOrder = (payload: CreateOrderPayload) => {
     if (!isCredentialsProvided) {
-      setError({
-        error: "Set Binance API key and secret under Credentials to place futures orders",
-      });
       return;
     }
 

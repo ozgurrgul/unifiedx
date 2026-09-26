@@ -7,6 +7,7 @@ import type {
   SpotMarketsHashmap,
   Order,
   PricesHashmap,
+  Ticker,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
@@ -83,6 +84,16 @@ export const useExchangeDataSetters = ({
     }));
   };
 
+  const patchTicker = (market: string, patch: Partial<Ticker>) => {
+    _setTickers((prev) => {
+      const existing = prev[market];
+      if (!existing) {
+        return prev;
+      }
+      return { ...prev, [market]: { ...existing, ...patch } };
+    });
+  };
+
   const addTrade = (trade: Trade) => {
     if (trade.market.market !== activeSpotMarketId) {
       return;
@@ -157,6 +168,7 @@ export const useExchangeDataSetters = ({
     setInitialMarkets,
     setPrices,
     setTickers,
+    patchTicker,
     addTrade,
     setBookData,
     addBookData,

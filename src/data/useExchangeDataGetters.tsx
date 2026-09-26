@@ -36,6 +36,7 @@ export const useExchangeDataGetters = ({
       error,
       isConnected: connected,
       isAuthenticated,
+      canTrade: isAuthenticated === "yes",
       marketsLoading,
     },
     activeSpotMarket: {

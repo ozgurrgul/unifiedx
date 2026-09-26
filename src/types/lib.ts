@@ -29,6 +29,14 @@ export type Ticker = {
   open: string;
   volume: string;
   volumeQuote: string;
+  /** USDT-M perp mark price */
+  markPrice?: string;
+  /** USDT-M perp index price */
+  indexPrice?: string;
+  /** Last funding rate (decimal, e.g. 0.0001 = 0.01%) */
+  fundingRate?: string;
+  /** Next funding settlement time (ms since epoch) */
+  nextFundingTimeMs?: number;
 };
 
 export type Trade = {

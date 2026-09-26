@@ -12,25 +12,29 @@ import { MarketOrderForm } from "./MarketOrderForm";
 function useOrderSubmit() {
   const {
     getters: {
-      activeExchange: { isAuthenticated },
+      activeExchange: { canTrade },
     },
   } = useContext(ExchangeDataGettersContext);
   const { toast } = useToast();
 
   return (payload: CreateOrderPayload) => {
-    if (isAuthenticated === "yes") {
-      $bus.emit(BusEvent.CreateOrder, payload);
-      toast({
-        title: "Order creating",
-        variant: "success",
-      });
-    } else {
-      toast({
-        title: "Please set your credentials in the Credentials menu",
-        variant: "destructive",
-      });
+    if (!canTrade) {
+      return;
     }
+    $bus.emit(BusEvent.CreateOrder, payload);
+    toast({
+      title: "Order creating",
+      variant: "success",
+    });
   };
+}
+
+function ReadOnlyOrderBanner() {
+  return (
+    <div className="px-3 py-2 text-xs text-muted-foreground border-b border-border bg-muted/30">
+      Read-only: add API credentials under Credentials to place orders.
+    </div>
+  );
 }
 
 function useOrderFormMarket() {
@@ -45,9 +49,15 @@ function useOrderFormMarket() {
 export const MarketOrderFormPanel = () => {
   const onSubmit = useOrderSubmit();
   const { balances, base, quote, spotMarketId } = useOrderFormMarket();
+  const {
+    getters: {
+      activeExchange: { canTrade },
+    },
+  } = useContext(ExchangeDataGettersContext);
 
   return (
     <ExchangeWidget type="market-order">
+      {!canTrade && <ReadOnlyOrderBanner />}
       <div className="grid grid-cols-2 divide-x divide-border h-full">
         <div className="p-3 border-t-2 border-bid">
           <MarketOrderForm
@@ -57,6 +67,7 @@ export const MarketOrderFormPanel = () => {
             baseAsset={base}
             market={spotMarketId}
             onSubmit={onSubmit}
+            disabled={!canTrade}
           />
         </div>
         <div className="p-3 border-t-2 border-ask">
@@ -67,6 +78,7 @@ export const MarketOrderFormPanel = () => {
             baseAsset={base}
             market={spotMarketId}
             onSubmit={onSubmit}
+            disabled={!canTrade}
           />
         </div>
       </div>
@@ -77,9 +89,15 @@ export const MarketOrderFormPanel = () => {
 export const LimitOrderFormPanel = () => {
   const onSubmit = useOrderSubmit();
   const { balances, base, quote, spotMarketId } = useOrderFormMarket();
+  const {
+    getters: {
+      activeExchange: { canTrade },
+    },
+  } = useContext(ExchangeDataGettersContext);
 
   return (
     <ExchangeWidget type="limit-order">
+      {!canTrade && <ReadOnlyOrderBanner />}
       <div className="grid grid-cols-2 divide-x divide-border h-full">
         <div className="p-3 border-t-2 border-bid">
           <LimitOrderForm
@@ -89,6 +107,7 @@ export const LimitOrderFormPanel = () => {
             baseAsset={base}
             market={spotMarketId}
             onSubmit={onSubmit}
+            disabled={!canTrade}
           />
         </div>
         <div className="p-3 border-t-2 border-ask">
@@ -99,6 +118,7 @@ export const LimitOrderFormPanel = () => {
             baseAsset={base}
             market={spotMarketId}
             onSubmit={onSubmit}
+            disabled={!canTrade}
           />
         </div>
       </div>

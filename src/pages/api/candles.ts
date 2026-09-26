@@ -91,6 +91,20 @@ const fetchBinanceCandles = async (
   return parseCandles(json);
 };
 
+const fetchBinanceFuturesCandles = async (
+  base: string,
+  quote: string,
+  interval: ChartInterval
+): Promise<Candle[]> => {
+  const symbol = `${base}${quote}`;
+  const res = await fetch(
+    `https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=${BINANCE_INTERVALS[interval]}&limit=${LIMIT}`
+  );
+  if (!res.ok) throw new Error(`Binance futures candles failed: ${res.status}`);
+  const json = await res.json();
+  return parseCandles(json);
+};
+
 const fetchBitvavoCandles = async (
   market: string,
   interval: ChartInterval
@@ -202,12 +216,13 @@ export default async function handler(
     return;
   }
 
-  const { exchange, market, base, quote, interval } = req.body as {
+  const { exchange, market, base, quote, interval, product } = req.body as {
     exchange: string;
     market: string;
     base: string;
     quote: string;
     interval: ChartInterval;
+    product?: "spot" | "perp";
   };
 
   if (!exchange || !base || !quote || !interval) {
@@ -219,7 +234,10 @@ export default async function handler(
     let candles: Candle[] = [];
 
     if (exchange === "binance") {
-      candles = await fetchBinanceCandles(base, quote, interval);
+      candles =
+        product === "perp"
+          ? await fetchBinanceFuturesCandles(base, quote, interval)
+          : await fetchBinanceCandles(base, quote, interval);
     } else if (exchange === "bitvavo") {
       candles = await fetchBitvavoCandles(market, interval);
     } else if (exchange === "btcTurk") {

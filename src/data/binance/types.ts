@@ -63,4 +63,17 @@ export type BinanceDepthWs = {
   };
 };
 
-export type WsResponses = BinanceTradeWs | BinanceDepthWs;
+export type BinanceMarkPriceWs = {
+  stream: string;
+  data: {
+    e: "markPriceUpdate";
+    E: number;
+    s: string;
+    p: string;
+    i: string;
+    r: string;
+    T: number;
+  };
+};
+
+export type WsResponses = BinanceTradeWs | BinanceDepthWs | BinanceMarkPriceWs;

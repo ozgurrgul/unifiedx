@@ -28,4 +28,5 @@ export type FetchCandlesParams = {
   brandSymbol: string;
   interval: ChartInterval;
   limit?: number;
+  product?: "spot" | "perp";
 };

@@ -1,6 +1,6 @@
+import { getCookies } from "cookies-next";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { promisify } from "util";
-import { getCookies } from "cookies-next";
 
 type ResponseData = any;
 

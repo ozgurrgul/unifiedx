@@ -1,16 +1,10 @@
-import { OrderBook } from "./OrderBook";
-import { ExchangeWidget } from "../ExchangeWidget";
-import {
-  TableHeader,
-  TableRow,
-  TableHead,
-  Table,
-  TableCell,
-} from "../../ui/table";
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext, useEffect, useRef } from "react";
-import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
+import { Table, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import { ExchangeWidget } from "../ExchangeWidget";
+import { OrderBook } from "./OrderBook";
 
 export const OrderBookWidget: React.FC = () => {
   const {

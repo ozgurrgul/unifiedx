@@ -2,12 +2,12 @@
 
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useMemo,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 
 type DockLayoutControlContextValue = {
@@ -16,8 +16,9 @@ type DockLayoutControlContextValue = {
   registerResetLayout: (handler: (() => void) | null) => void;
 };
 
-const DockLayoutControlContext =
-  createContext<DockLayoutControlContextValue | null>(null);
+const DockLayoutControlContext = createContext<DockLayoutControlContextValue | null>(
+  null
+);
 
 export function DockLayoutControlProvider({ children }: { children: ReactNode }) {
   const resetHandlerRef = useRef<(() => void) | null>(null);

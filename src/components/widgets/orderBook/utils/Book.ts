@@ -1,7 +1,7 @@
+import type { BookData, BookEntry } from "@/types/lib";
+import type { ComputedOrderBookData, ShapedBookEntry } from "../types";
 import { BookSide } from "./BookSide";
 import { StatCalculator } from "./StatCalculator";
-import { ComputedOrderBookData, ShapedBookEntry } from "../types";
-import { BookData, BookEntry } from "@/types/lib";
 
 export const UPDATE_INTERVAL_MS = 200;
 export const DEFAULT_VISIBLE_ROWS_COUNT = 10;
@@ -65,12 +65,11 @@ export class Book {
     const bidsFirstRow = this.getBidSide().getFirstRow();
 
     // Mid market price and spread is calculated, can be used in the depth calculator
-    const { midMarketPrice, spreadPercentage } =
-      this.getStatCalculator().update(
-        asksLastRow,
-        bidsFirstRow,
-        quoteAssetPrecision
-      );
+    const { midMarketPrice, spreadPercentage } = this.getStatCalculator().update(
+      asksLastRow,
+      bidsFirstRow,
+      quoteAssetPrecision
+    );
 
     // If the grouping is changed from order book component, we should apply aggregation to asks/bids
     // const needsAggregation = this.getDigitsFromPricePrecision() !== 0;

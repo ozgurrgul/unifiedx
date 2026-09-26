@@ -1,7 +1,8 @@
-import { AssetConfig, Balance, CreateOrderPayload, Order } from "@/types/lib";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { FormatAmount } from "@/components/common/Formatters";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,8 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { FormatAmount } from "@/components/common/Formatters";
+import type { AssetConfig, Balance, CreateOrderPayload, Order } from "@/types/lib";
 
 type MarketOrderFormProps = {
   side: Order["side"];
@@ -97,9 +97,7 @@ export const MarketOrderForm: React.FC<MarketOrderFormProps> = ({
                 <FormControl className="w-full text-xs relative">
                   <div>
                     <Input {...field} autoComplete="off" />
-                    <span className="absolute right-2 top-2">
-                      {baseAsset?.symbol}
-                    </span>
+                    <span className="absolute right-2 top-2">{baseAsset?.symbol}</span>
                   </div>
                 </FormControl>
               </div>

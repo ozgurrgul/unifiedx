@@ -1,17 +1,21 @@
 import { useEffect } from "react";
 import useWebSocket from "react-use-websocket";
-import {
+import type {
+  BookData,
+  CreateOrderPayload,
   Market,
   MarketsHashmap,
-  Trade,
+  Order,
   Ticker,
   TickersHashmap,
-  BookData,
-  Order,
-  CreateOrderPayload,
+  Trade,
 } from "@/types/lib";
-import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import {
+  DEFAULT_BASE_ASSET_PRECISION,
+  DEFAULT_QUOTE_ASSET_PRECISION,
+} from "../constants";
+import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type {
   BtcTurkBook,
   BtcTurkCurrency,
   BtcTurkSymbol,
@@ -19,10 +23,6 @@ import {
   BtcTurkTrade,
   WsResponses,
 } from "./types";
-import {
-  DEFAULT_BASE_ASSET_PRECISION,
-  DEFAULT_QUOTE_ASSET_PRECISION,
-} from "../constants";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -66,13 +66,11 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
               brandSymbol: p.nameNormalized,
               base: {
                 symbol: p.numerator,
-                precision:
-                  baseCurrency?.precision || DEFAULT_BASE_ASSET_PRECISION,
+                precision: baseCurrency?.precision || DEFAULT_BASE_ASSET_PRECISION,
               },
               quote: {
                 symbol: p.denominator,
-                precision:
-                  quoteCurrency?.precision || DEFAULT_QUOTE_ASSET_PRECISION,
+                precision: quoteCurrency?.precision || DEFAULT_QUOTE_ASSET_PRECISION,
               },
               orderCapabilities: {
                 marketOrder: {
@@ -215,34 +213,29 @@ export const useBtcTurkData = ({
     setConnected,
   } = setters;
 
-  const {
-    lastJsonMessage,
-    sendJsonMessage,
-    sendMessage,
-    readyState,
-    getWebSocket,
-  } = useWebSocket<any>("wss://ws-feed-pro.btcturk.com", {
-    onOpen: async () => {
-      setConnected(true);
-      // if (isCredentialsProvided && credentials) {
-      //   sendMessage(
-      //     await getAuthSignature(
-      //       credentials["public_key"],
-      //       credentials["private_key"]
-      //     )
-      //   );
-      //   setAuthenticated("loading");
-      // }
-    },
-    onError: () => {
-      setConnected(false);
-      setError({ error: "Failed to connect to websocket" });
-    },
-    onClose: () => {
-      setConnected(false);
-      setError({ error: "Websocket closed" });
-    },
-  });
+  const { lastJsonMessage, sendJsonMessage, sendMessage, readyState, getWebSocket } =
+    useWebSocket<any>("wss://ws-feed-pro.btcturk.com", {
+      onOpen: async () => {
+        setConnected(true);
+        // if (isCredentialsProvided && credentials) {
+        //   sendMessage(
+        //     await getAuthSignature(
+        //       credentials["public_key"],
+        //       credentials["private_key"]
+        //     )
+        //   );
+        //   setAuthenticated("loading");
+        // }
+      },
+      onError: () => {
+        setConnected(false);
+        setError({ error: "Failed to connect to websocket" });
+      },
+      onClose: () => {
+        setConnected(false);
+        setError({ error: "Websocket closed" });
+      },
+    });
 
   const onMarketChange = (activeMarket: Market, previousMarket?: Market) => {
     if (activeMarket) {

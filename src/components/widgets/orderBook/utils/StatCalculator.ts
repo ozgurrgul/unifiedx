@@ -1,4 +1,4 @@
-import { BookEntry } from "@/types/lib";
+import type { BookEntry } from "@/types/lib";
 
 const NA = "N.A.";
 

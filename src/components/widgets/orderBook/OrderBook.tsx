@@ -1,10 +1,10 @@
-import { ComputedOrderBookData, ShapedBookEntry } from "./types";
-import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
-import { cn } from "@/lib/utils";
-import { AssetConfig, Trade } from "@/types/lib";
 import { useContext } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { cn } from "@/lib/utils";
+import type { AssetConfig, Trade } from "@/types/lib";
 import { FormatAmount } from "../../common/Formatters";
+import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
+import type { ComputedOrderBookData, ShapedBookEntry } from "./types";
 
 type Props = {
   data?: ComputedOrderBookData;
@@ -18,13 +18,7 @@ type BookProps = {
   quote: AssetConfig;
 };
 
-const BookRenderer: React.FC<BookProps> = ({
-  type,
-  entries,
-  total,
-  base,
-  quote,
-}) => {
+const BookRenderer: React.FC<BookProps> = ({ type, entries, total, base, quote }) => {
   const bgVar = type === "buy" ? "var(--bid-muted)" : "var(--ask-muted)";
   return (
     <Table>
@@ -50,10 +44,7 @@ const BookRenderer: React.FC<BookProps> = ({
                 <FormatAmount amount={entry.a} precision={base.precision} />
               </TableCell>
               <TableCell className="text-xs px-2 py-0.5 cursor-pointer number text-right text-muted-foreground">
-                <FormatAmount
-                  amount={String(entry.t)}
-                  precision={quote.precision}
-                />
+                <FormatAmount amount={String(entry.t)} precision={quote.precision} />
               </TableCell>
             </TableRow>
           );
@@ -74,9 +65,7 @@ export const OrderBook: React.FC<Props> = ({ data }) => {
     <div className="flex items-center py-1.5 justify-center border-y border-border bg-secondary/30">
       <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
         Spread:{" "}
-        <span className="text-foreground font-medium">
-          {data?.spreadPercentage}
-        </span>
+        <span className="text-foreground font-medium">{data?.spreadPercentage}</span>
       </span>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { ExchangeRedirectToDefaultMarket } from "@/components/ExchangeRedirectToDefaultMarket";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 
 export default function ExchangePage() {
   const router = useRouter();

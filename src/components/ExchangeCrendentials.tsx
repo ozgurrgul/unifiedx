@@ -1,7 +1,10 @@
-import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Cookies from "js-cookie";
+import { InfoIcon, LockIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,12 +13,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Cookies from "js-cookie";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { useToast } from "./ui/use-toast";
-import { LockIcon, InfoIcon } from "lucide-react";
 
 type ExchangeCrendentialsProps = {
   activeExchange: ExchangeType;
@@ -73,7 +73,7 @@ export const ExchangeCrendentials: React.FC<ExchangeCrendentialsProps> = ({
                 <FormField
                   key={credential.id}
                   control={form.control}
-                  // @ts-ignore
+                  // @ts-expect-error
                   name={credential.id}
                   render={({ field }) => (
                     <FormItem>
@@ -95,9 +95,8 @@ export const ExchangeCrendentials: React.FC<ExchangeCrendentialsProps> = ({
               <InfoIcon className="h-4 w-4" />
               <AlertTitle>Note:</AlertTitle>
               <AlertDescription>
-                After you enter your credentials, page will be refreshed. You
-                can test if the api key is successfully setup or not by placing
-                a small order.
+                After you enter your credentials, page will be refreshed. You can test
+                if the api key is successfully setup or not by placing a small order.
               </AlertDescription>
             </Alert>
             <Alert className="bg-green-800">
@@ -117,8 +116,8 @@ export const ExchangeCrendentials: React.FC<ExchangeCrendentialsProps> = ({
           <InfoIcon className="h-4 w-4" />
           <AlertTitle>Authentication is not supported</AlertTitle>
           <AlertDescription>
-            Either {activeExchange} does not support or UnifiedX did not
-            implement authentication yet.
+            Either {activeExchange} does not support or UnifiedX did not implement
+            authentication yet.
           </AlertDescription>
         </Alert>
       )}

@@ -1,16 +1,14 @@
 "use client";
 
-import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { useEffect } from "react";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 type Props = {
   exchange: ExchangeType;
 };
 
-export const ExchangeRedirectToDefaultMarket: React.FC<Props> = ({
-  exchange,
-}) => {
+export const ExchangeRedirectToDefaultMarket: React.FC<Props> = ({ exchange }) => {
   const { goToMarket } = useAppNavigation();
   const exchangeConfig = exchangeConfigs[exchange];
 

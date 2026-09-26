@@ -1,16 +1,16 @@
-import { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
+import { createContext } from "react";
+import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
 import {
   UseExchangeDataSettersInput,
   useExchangeDataSetters,
 } from "@/data/useExchangeDataSetters";
-import { createContext } from "react";
 
 export type ExchangeDataSettersContextType = {
   setters: ReturnType<typeof useExchangeDataSetters>;
 };
 
-export const ExchangeDataSettersContext =
-  createContext<ExchangeDataSettersContextType>({
+export const ExchangeDataSettersContext = createContext<ExchangeDataSettersContextType>(
+  {
     setters: {
       addTrade: () => {},
       setInitialMarkets: () => {},
@@ -45,7 +45,8 @@ export const ExchangeDataSettersContext =
       orderBookLoading: false,
       marketsLoading: false,
     },
-  });
+  }
+);
 
 export const ExchangeDataSettersContextProvider = ({
   children,

@@ -1,5 +1,5 @@
-import { Trade } from "@/types/lib";
-import { Candle, ChartInterval, INTERVAL_SECONDS } from "./types";
+import type { Trade } from "@/types/lib";
+import { type Candle, type ChartInterval, INTERVAL_SECONDS } from "./types";
 
 export const aggregateCandles = (
   candles: Candle[],
@@ -11,8 +11,7 @@ export const aggregateCandles = (
   const buckets = new Map<number, Candle>();
 
   for (const candle of candles) {
-    const bucketTime =
-      Math.floor(candle.time / bucketSize) * bucketSize;
+    const bucketTime = Math.floor(candle.time / bucketSize) * bucketSize;
     const existing = buckets.get(bucketTime);
 
     if (!existing) {

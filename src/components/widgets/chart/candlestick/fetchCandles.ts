@@ -1,4 +1,4 @@
-import { Candle, ChartInterval, FetchCandlesParams } from "./types";
+import { type Candle, ChartInterval, type FetchCandlesParams } from "./types";
 
 export const fetchCandles = async ({
   exchange,

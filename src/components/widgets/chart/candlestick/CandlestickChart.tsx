@@ -1,7 +1,5 @@
 "use client";
 
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { useContext, useEffect, useRef, useState } from "react";
 import {
   CandlestickSeries,
   ColorType,
@@ -10,10 +8,12 @@ import {
   type ISeriesApi,
   type UTCTimestamp,
 } from "lightweight-charts";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { cn } from "@/lib/utils";
 import { applyTradeToCandles } from "./candleUtils";
 import { fetchCandles } from "./fetchCandles";
-import { Candle, CHART_INTERVALS, ChartInterval } from "./types";
+import { type Candle, CHART_INTERVALS, type ChartInterval } from "./types";
 
 const CHART_COLORS = {
   background: "#0e0e12",
@@ -158,11 +158,7 @@ export const CandlestickChart = () => {
     if (latest.id === lastTradeIdRef.current) return;
     lastTradeIdRef.current = latest.id;
 
-    const { candles, bar } = applyTradeToCandles(
-      candlesRef.current,
-      latest,
-      interval
-    );
+    const { candles, bar } = applyTradeToCandles(candlesRef.current, latest, interval);
     candlesRef.current = candles;
     seriesRef.current.update({
       time: toSeriesTime(bar.time),

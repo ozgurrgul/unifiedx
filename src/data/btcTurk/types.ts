@@ -1,4 +1,4 @@
-import { BookData, BookEntry } from "@/types/lib";
+import { type BookData, BookEntry } from "@/types/lib";
 
 export type BtcTurkSymbol = {
   name: string; // BTCTRY

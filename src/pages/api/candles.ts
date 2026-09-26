@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ChartInterval } from "@/components/widgets/chart/candlestick/types";
+import type { ChartInterval } from "@/components/widgets/chart/candlestick/types";
 
 type Candle = {
   time: number;

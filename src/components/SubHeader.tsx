@@ -1,9 +1,9 @@
 "use client";
 
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext } from "react";
-import { Separator } from "./ui/separator";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { FormatAmount } from "./common/Formatters";
+import { Separator } from "./ui/separator";
 
 export const SubHeader = () => {
   const {
@@ -17,9 +17,7 @@ export const SubHeader = () => {
       <div className="pr-6">
         <div className="text-lg font-bold tracking-tight">
           {base?.symbol}
-          <span className="text-muted-foreground font-normal">
-            /{quote?.symbol}
-          </span>
+          <span className="text-muted-foreground font-normal">/{quote?.symbol}</span>
         </div>
       </div>
 
@@ -39,10 +37,7 @@ export const SubHeader = () => {
         <div className="pr-6">
           <div className="ticker-label">24h Volume</div>
           <div className="ticker-value">
-            <FormatAmount
-              amount={ticker?.volumeQuote}
-              precision={quote?.precision}
-            />
+            <FormatAmount amount={ticker?.volumeQuote} precision={quote?.precision} />
           </div>
         </div>
       )}

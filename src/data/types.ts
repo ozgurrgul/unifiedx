@@ -1,6 +1,6 @@
-import { CreateOrderPayload, Market, MarketsHashmap, Order } from "@/types/lib";
-import { ExchangeDataSettersContextType } from "./ExchangeDataSettersContext";
-import { ReadyState } from "react-use-websocket/dist/lib/constants";
+import type { ReadyState } from "react-use-websocket/dist/lib/constants";
+import type { CreateOrderPayload, Market, MarketsHashmap, Order } from "@/types/lib";
+import type { ExchangeDataSettersContextType } from "./ExchangeDataSettersContext";
 
 export type UseExchangeDataInput = {
   activeMarket: Market;

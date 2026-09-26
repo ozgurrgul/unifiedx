@@ -1,5 +1,6 @@
 "use client";
 
+import { useContext } from "react";
 import {
   Table,
   TableBody,
@@ -8,11 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { ExchangeWidget } from "./ExchangeWidget";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { useContext } from "react";
+import { cn } from "@/lib/utils";
 import { FormatAmount } from "../common/Formatters";
+import { ExchangeWidget } from "./ExchangeWidget";
 
 export const BalancesWidget: React.FC = () => {
   const {
@@ -63,16 +63,10 @@ export const BalancesWidget: React.FC = () => {
                   {balance.asset}
                 </TableCell>
                 <TableCell className="text-xs px-4 py-1 number">
-                  <FormatAmount
-                    amount={String(balance.available)}
-                    precision={6}
-                  />
+                  <FormatAmount amount={String(balance.available)} precision={6} />
                 </TableCell>
                 <TableCell className="text-xs px-4 py-1 number text-right">
-                  <FormatAmount
-                    amount={String(balance.inOrder)}
-                    precision={6}
-                  />
+                  <FormatAmount amount={String(balance.inOrder)} precision={6} />
                 </TableCell>
               </TableRow>
             );

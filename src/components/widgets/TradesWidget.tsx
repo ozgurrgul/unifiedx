@@ -1,5 +1,7 @@
 "use client";
 
+import { useContext } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -8,12 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-import { ExchangeWidget } from "./ExchangeWidget";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { useContext } from "react";
+import { cn } from "@/lib/utils";
 import { FormatAmount } from "../common/Formatters";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ExchangeWidget } from "./ExchangeWidget";
 
 export const TradesWidget: React.FC = () => {
   const {
@@ -58,36 +58,30 @@ export const TradesWidget: React.FC = () => {
         <Table>
           <TableBody>
             {(trades || []).map((trade) => {
-            return (
-              <TableRow key={`${trade.id}`}>
-                <TableCell
-                  className={cn(
-                    "w-[150px] text-xs px-4 py-0.5 cursor-pointer number tabular-nums",
-                    trade.side === "buy" ? "text-bid" : "text-ask"
-                  )}
-                >
-                  <span>
-                    <FormatAmount
-                      amount={trade.price}
-                      precision={quote?.precision}
-                    />
-                  </span>
-                  <span> {trade.market.quote.symbol}</span>
-                </TableCell>
-                <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
-                  <span>
-                    <FormatAmount
-                      amount={trade.amount}
-                      precision={base?.precision}
-                    />
-                  </span>
-                  <span> {trade.market.base.symbol}</span>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+              return (
+                <TableRow key={`${trade.id}`}>
+                  <TableCell
+                    className={cn(
+                      "w-[150px] text-xs px-4 py-0.5 cursor-pointer number tabular-nums",
+                      trade.side === "buy" ? "text-bid" : "text-ask"
+                    )}
+                  >
+                    <span>
+                      <FormatAmount amount={trade.price} precision={quote?.precision} />
+                    </span>
+                    <span> {trade.market.quote.symbol}</span>
+                  </TableCell>
+                  <TableCell className="text-xs px-4 py-1 cursor-pointer number text-right">
+                    <span>
+                      <FormatAmount amount={trade.amount} precision={base?.precision} />
+                    </span>
+                    <span> {trade.market.base.symbol}</span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       )}
     </ExchangeWidget>
   );

@@ -1,4 +1,4 @@
-import { BookData } from "@/types/lib";
+import type { BookData } from "@/types/lib";
 
 export type BookWorkerPayload = {
   bookData?: BookData;

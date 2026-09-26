@@ -1,11 +1,11 @@
-import { ExchangeGrid } from "@/components/ExchangeGrid";
-import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
-import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ExchangeDataLayerInitialization } from "@/components/ExchangeDataLayerInitialization";
-import { ExchangeType } from "@/data/exchangeConfigs";
+import { ExchangeGrid } from "@/components/ExchangeGrid";
 import { Toaster } from "@/components/ui/toaster";
+import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
+import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
+import type { ExchangeType } from "@/data/exchangeConfigs";
 
 export default function MarketPage() {
   const router = useRouter();

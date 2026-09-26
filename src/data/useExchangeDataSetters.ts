@@ -1,5 +1,6 @@
-import { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
-import {
+import { useEffect, useRef, useState } from "react";
+import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
+import type {
   BalancesHashmap,
   BookData,
   MarketsHashmap,
@@ -8,8 +9,7 @@ import {
   TickersHashmap,
   Trade,
 } from "@/types/lib";
-import { useEffect, useRef, useState } from "react";
-import { BookWorkerPayload } from "../../workers/BookWorkerTypes";
+import type { BookWorkerPayload } from "../../workers/BookWorkerTypes";
 
 export type UseExchangeDataSettersInput = {
   activeMarket: string;
@@ -30,8 +30,7 @@ export const useExchangeDataSetters = ({
   const [openOrders, setOpenOrders] = useState<Order[]>([]);
   const [pastOrders, setPastOrders] = useState<Order[]>([]);
 
-  const [visibleOrderBookRows, setVisibleOrderBookRows] =
-    useState(0); /** per side */
+  const [visibleOrderBookRows, setVisibleOrderBookRows] = useState(0); /** per side */
 
   const [orderBookLoading, setOrderBookLoading] = useState(true);
   const [computedOrderBookData, setComputedOrderBookData] =
@@ -43,9 +42,7 @@ export const useExchangeDataSetters = ({
   const [cancellingOrderIds, _setCancellingOrderIds] = useState<string[]>([]);
 
   const [error, setError] = useState<{ error: string }>();
-  const [isAuthenticated, setAuthenticated] = useState<
-    "no" | "loading" | "yes"
-  >("no");
+  const [isAuthenticated, setAuthenticated] = useState<"no" | "loading" | "yes">("no");
 
   const [balances, setBalances] = useState<BalancesHashmap>({});
 

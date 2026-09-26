@@ -1,12 +1,12 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
-  PANEL_IDS,
   activateTab,
   dockPanel,
   dockTab,
-  resizeDockWithSplitter,
   dragTabOntoTab,
+  PANEL_IDS,
   readLayoutSnapshot,
+  resizeDockWithSplitter,
   tabsShareGroup,
   waitForDockReady,
 } from "./helpers/dock";
@@ -46,9 +46,7 @@ test.describe("Exchange dockview layout", () => {
       .poll(async () => tabsShareGroup(page, "market-order", "limit-order"))
       .toBe(true);
     await expect
-      .poll(async () =>
-        tabsShareGroup(page, "base-open-orders", "all-open-orders")
-      )
+      .poll(async () => tabsShareGroup(page, "base-open-orders", "all-open-orders"))
       .toBe(true);
   });
 
@@ -74,14 +72,10 @@ test.describe("Exchange dockview layout", () => {
     await waitForDockReady(page);
 
     await expect
-      .poll(async () =>
-        tabsShareGroup(page, "base-open-orders", "all-open-orders")
-      )
+      .poll(async () => tabsShareGroup(page, "base-open-orders", "all-open-orders"))
       .toBe(true);
     await expect
-      .poll(async () =>
-        tabsShareGroup(page, "base-open-orders", "order-history")
-      )
+      .poll(async () => tabsShareGroup(page, "base-open-orders", "order-history"))
       .toBe(true);
 
     for (const id of [
@@ -99,30 +93,22 @@ test.describe("Exchange dockview layout", () => {
 
     await resizeDockWithSplitter(page);
 
-    await expect
-      .poll(async () => readLayoutSnapshot(page))
-      .toBeTruthy();
+    await expect.poll(async () => readLayoutSnapshot(page)).toBeTruthy();
   });
 
   test("persists layout across reload", async ({ page }) => {
     await waitForDockReady(page);
 
     await dragTabOntoTab(page, "markets", "trades");
-    await expect
-      .poll(async () => tabsShareGroup(page, "markets", "trades"))
-      .toBe(true);
+    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
 
-    await expect
-      .poll(async () => readLayoutSnapshot(page))
-      .not.toBeNull();
+    await expect.poll(async () => readLayoutSnapshot(page)).not.toBeNull();
 
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.getByTestId("exchange-dock").waitFor({ state: "visible" });
     await dockTab(page, "markets").waitFor({ state: "visible" });
 
-    await expect
-      .poll(async () => tabsShareGroup(page, "markets", "trades"))
-      .toBe(true);
+    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
   });
 
   test("reset layout restores separated panels after complex edits", async ({

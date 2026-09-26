@@ -1,8 +1,8 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import type { AppProps } from "next/app";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
+import Head from "next/head";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const font1 = Inter({

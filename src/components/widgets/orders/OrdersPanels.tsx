@@ -1,8 +1,6 @@
 "use client";
 
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext } from "react";
-import { ExchangeWidget } from "../ExchangeWidget";
 import {
   Table,
   TableBody,
@@ -11,12 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Order } from "@/types/lib";
-import { FormatAmount } from "../../common/Formatters";
-import { Button } from "../../ui/button";
-import { $bus, BusEvent } from "../../ExchangeBus";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
+import type { Order } from "@/types/lib";
+import { FormatAmount } from "../../common/Formatters";
+import { $bus, BusEvent } from "../../ExchangeBus";
+import { Button } from "../../ui/button";
+import { ExchangeWidget } from "../ExchangeWidget";
 
 const TableHeaderRenderer: React.FC<{
   showCancel?: boolean;
@@ -28,18 +28,10 @@ const TableHeaderRenderer: React.FC<{
           <TableHead className="h-8 text-xs w-[200px]">Market</TableHead>
           <TableHead className="h-8 text-xs w-[100px]">Side</TableHead>
           <TableHead className="h-8 text-xs w-[100px]">Type</TableHead>
-          <TableHead className="h-8 text-xs text-right w-[240px]">
-            Amount
-          </TableHead>
-          <TableHead className="h-8 text-xs text-right w-[240px]">
-            Filled
-          </TableHead>
-          <TableHead className="h-8 text-xs text-right w-[240px]">
-            Price
-          </TableHead>
-          <TableHead className="h-8 text-xs text-right w-[240px]">
-            Status
-          </TableHead>
+          <TableHead className="h-8 text-xs text-right w-[240px]">Amount</TableHead>
+          <TableHead className="h-8 text-xs text-right w-[240px]">Filled</TableHead>
+          <TableHead className="h-8 text-xs text-right w-[240px]">Price</TableHead>
+          <TableHead className="h-8 text-xs text-right w-[240px]">Status</TableHead>
           {showCancel && (
             <TableHead className="h-8 text-xs text-right">Action</TableHead>
           )}
@@ -141,9 +133,7 @@ export const BaseOpenOrdersPanel = () => {
   } = useContext(ExchangeDataGettersContext);
   const { cancelOrder, onClickMarket } = useOrdersActions();
 
-  const baseOpenOrders = openOrders.filter(
-    (r) => r.baseAssetSymbol === base?.symbol
-  );
+  const baseOpenOrders = openOrders.filter((r) => r.baseAssetSymbol === base?.symbol);
 
   return (
     <ExchangeWidget type="base-open-orders" header={<TableHeaderRenderer />}>

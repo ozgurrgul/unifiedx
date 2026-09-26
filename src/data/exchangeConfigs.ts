@@ -1,16 +1,16 @@
 import {
-  useBinanceData,
   loadMarkets as loadBinanceMarkets,
+  useBinanceData,
 } from "./binance/useBinanceData";
 import {
-  useBitvavoData,
   loadMarkets as loadBitvavoMarkets,
+  useBitvavoData,
 } from "./bitvavo/useBitvavoData";
 import {
-  useBtcTurkData,
   loadMarkets as loadBtcTurkMarkets,
+  useBtcTurkData,
 } from "./btcTurk/useBtcTurkData";
-import { ExchangeConfig } from "./types";
+import type { ExchangeConfig } from "./types";
 
 export type ExchangeType = "binance" | "bitvavo" | "btcTurk";
 

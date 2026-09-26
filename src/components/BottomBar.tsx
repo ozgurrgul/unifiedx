@@ -1,5 +1,5 @@
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext } from "react";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 
 const ConnectionStatus = () => {
   const {
@@ -17,9 +17,7 @@ const ConnectionStatus = () => {
         </span>
         <span className="text-muted-foreground">
           Connected to{" "}
-          <span className="text-foreground font-medium capitalize">
-            {exchange}
-          </span>
+          <span className="text-foreground font-medium capitalize">{exchange}</span>
         </span>
       </span>
     );

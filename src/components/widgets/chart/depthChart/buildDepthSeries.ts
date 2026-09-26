@@ -1,4 +1,4 @@
-import { ShapedBookEntry } from "../../orderBook/types";
+import type { ShapedBookEntry } from "../../orderBook/types";
 
 export type DepthPoint = [number, number];
 
@@ -34,9 +34,7 @@ export const buildDepthSeries = (
   );
 
   const bestBidPrice = validBids.length ? parseFloat(validBids[0].p) : 0;
-  const bestAskPrice = asksBestFirst.length
-    ? parseFloat(asksBestFirst[0].p)
-    : 0;
+  const bestAskPrice = asksBestFirst.length ? parseFloat(asksBestFirst[0].p) : 0;
 
   const midPrice =
     midPriceHint && midPriceHint > 0
@@ -62,14 +60,10 @@ export const buildDepthSeries = (
     cumulative += parseFloat(entry.a);
     askPoints.push([parseFloat(entry.p), cumulative]);
   }
-  const maxAskVolume = askPoints.length
-    ? askPoints[askPoints.length - 1][1]
-    : 0;
+  const maxAskVolume = askPoints.length ? askPoints[askPoints.length - 1][1] : 0;
 
   const lowestBid = bidPoints.length ? bidPoints[0][0] : midPrice;
-  const highestAsk = askPoints.length
-    ? askPoints[askPoints.length - 1][0]
-    : midPrice;
+  const highestAsk = askPoints.length ? askPoints[askPoints.length - 1][0] : midPrice;
 
   // Symmetric range around mid — same as Kraken/Binance/etc.
   const bidSpan = midPrice - lowestBid;

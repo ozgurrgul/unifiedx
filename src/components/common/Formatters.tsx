@@ -1,4 +1,4 @@
-import { AssetConfig } from "@/types/lib";
+import type { AssetConfig } from "@/types/lib";
 
 export const FormatAmount: React.FC<{
   amount?: string;

@@ -1,5 +1,5 @@
-import { ExchangeType } from "@/data/exchangeConfigs";
 import { useRouter } from "next/router";
+import type { ExchangeType } from "@/data/exchangeConfigs";
 
 export const useAppNavigation = () => {
   const router = useRouter();

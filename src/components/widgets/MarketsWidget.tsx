@@ -1,5 +1,8 @@
 "use client";
 
+import Fuse from "fuse.js";
+import { MoreHorizontal } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,17 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Market, MarketsHashmap } from "@/types/lib";
-import { Input } from "../ui/input";
-import { useContext, useEffect, useState } from "react";
-import { ExchangeWidget } from "./ExchangeWidget";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { MoreHorizontal } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
-import Fuse from "fuse.js";
+import { cn } from "@/lib/utils";
+import type { Market, MarketsHashmap } from "@/types/lib";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Skeleton } from "../ui/skeleton";
+import { ExchangeWidget } from "./ExchangeWidget";
 
 const getUniqueMarketQuotes = (markets: MarketsHashmap) => {
   const quotes: string[] = [];
@@ -57,15 +57,19 @@ const RemaningMarkets: React.FC<{
         {remainingMarketQuoteSymbols.map((quote) => {
           const isActive = quote === viewingMarketQuote;
           return (
-            <div
+            <button
               key={quote}
-            className={cn("text-xs hover:text-foreground cursor-pointer flex justify-center items-center rounded-md px-2 py-1 transition-colors", {
+              type="button"
+              className={cn(
+                "text-xs hover:text-foreground cursor-pointer flex justify-center items-center rounded-md px-2 py-1 transition-colors",
+                {
                   "font-semibold text-foreground bg-secondary": isActive,
-                })}
+                }
+              )}
               onClick={() => onSelect(quote)}
             >
               {quote}
-            </div>
+            </button>
           );
         })}
       </PopoverContent>
@@ -85,9 +89,7 @@ export const MarketsWidget: React.FC = () => {
   const [searchInputText, setSearchInputText] = useState("");
   const marketQuoteSymbols = getUniqueMarketQuotes(markets);
   const visibleMarketQuoteSymbols =
-    marketQuoteSymbols.length > 5
-      ? marketQuoteSymbols.slice(0, 5)
-      : marketQuoteSymbols;
+    marketQuoteSymbols.length > 5 ? marketQuoteSymbols.slice(0, 5) : marketQuoteSymbols;
 
   const [viewingMarketQuote, setViewingMarketQuote] = useState<string>();
 

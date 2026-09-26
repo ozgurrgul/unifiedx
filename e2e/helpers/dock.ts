@@ -81,10 +81,7 @@ export async function tabsShareGroup(
   if (!handleA || !handleB) {
     return false;
   }
-  return page.evaluate(
-    ([elA, elB]) => elA === elB,
-    [handleA, handleB] as const
-  );
+  return page.evaluate(([elA, elB]) => elA === elB, [handleA, handleB] as const);
 }
 
 export async function activateTab(page: Page, panelId: PanelId): Promise<void> {
@@ -137,5 +134,8 @@ export async function resizeDockWithSplitter(page: Page): Promise<void> {
 }
 
 export async function readLayoutSnapshot(page: Page): Promise<string | null> {
-  return page.evaluate((key) => window.localStorage.getItem(key), DOCK_LAYOUT_STORAGE_KEY);
+  return page.evaluate(
+    (key) => window.localStorage.getItem(key),
+    DOCK_LAYOUT_STORAGE_KEY
+  );
 }

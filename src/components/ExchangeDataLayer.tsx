@@ -1,13 +1,13 @@
 "use client";
 
-import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
-import { ExchangeType } from "@/data/exchangeConfigs";
 import { usePrevious } from "@uidotdev/usehooks";
-import { useContext, useEffect } from "react";
-import { $bus, BusEvent } from "./ExchangeBus";
-import { ExchangeConfig } from "@/data/types";
-import { Market } from "@/types/lib";
 import Cookies from "js-cookie";
+import { useContext, useEffect } from "react";
+import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
+import type { ExchangeType } from "@/data/exchangeConfigs";
+import type { ExchangeConfig } from "@/data/types";
+import type { Market } from "@/types/lib";
+import { $bus, BusEvent } from "./ExchangeBus";
 
 type ExchangeDataLayerProps = {
   activeExchange: ExchangeType;
@@ -23,13 +23,15 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
   const { setters } = useContext(ExchangeDataSettersContext);
   const previousExchange = usePrevious(activeExchange);
   const previousMarket = usePrevious(activeMarket);
-  const credentials: Record<string, string> =
-    exchangeConfig.neededCredentials.reduce((acc, cur) => {
+  const credentials: Record<string, string> = exchangeConfig.neededCredentials.reduce(
+    (acc, cur) => {
       return {
         ...acc,
         [cur.id]: Cookies.get(`${activeExchange}_${cur.id}`) || "",
       };
-    }, {});
+    },
+    {}
+  );
   const isCredentialsProvided =
     Object.values(credentials).filter((r: string) => r.length).length > 0;
 
@@ -46,11 +48,7 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
   });
 
   useEffect(() => {
-    if (
-      activeExchange &&
-      previousExchange &&
-      previousExchange !== activeExchange
-    ) {
+    if (activeExchange && previousExchange && previousExchange !== activeExchange) {
       setters.setOpenOrders([]);
       setters.setInitialTrades([]);
       setters.setInitialMarkets({});

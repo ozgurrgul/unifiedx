@@ -15,14 +15,10 @@ export default async function handler(
   try {
     let response = {};
     if (type === "/server/exchangeInfo") {
-      response = await fetchJson(
-        "https://api.btcturk.com/api/v2/server/exchangeInfo"
-      );
+      response = await fetchJson("https://api.btcturk.com/api/v2/server/exchangeInfo");
     }
     if (type === "/server/time") {
-      response = await fetchJson(
-        "https://api.btcturk.com/api/v2/server/time"
-      );
+      response = await fetchJson("https://api.btcturk.com/api/v2/server/time");
     } else if (type === "/ticker") {
       response = await fetchJson("https://api.btcturk.com/api/v2/ticker");
     } else if (type === "/trades") {

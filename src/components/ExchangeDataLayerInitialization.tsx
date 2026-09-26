@@ -1,10 +1,10 @@
 "use client";
 
-import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
-import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { useContext, useEffect, useState } from "react";
-import { ExchangeDataLayer } from "./ExchangeDataLayer";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { ExchangeDataLayer } from "./ExchangeDataLayer";
 
 type ExchangeDataLayerInitializationProps = {
   activeExchange: ExchangeType;

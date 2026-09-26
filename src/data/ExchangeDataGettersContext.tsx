@@ -1,15 +1,15 @@
 import { createContext } from "react";
+import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
+import type { Ticker } from "@/types/lib";
+import type { ExchangeType } from "./exchangeConfigs";
 import { useExchangeDataGetters } from "./useExchangeDataGetters";
-import { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
-import { Ticker } from "@/types/lib";
-import { ExchangeType } from "./exchangeConfigs";
 
 type ExchangeDataGettersContextType = {
   getters: ReturnType<typeof useExchangeDataGetters>;
 };
 
-export const ExchangeDataGettersContext =
-  createContext<ExchangeDataGettersContextType>({
+export const ExchangeDataGettersContext = createContext<ExchangeDataGettersContextType>(
+  {
     getters: {
       activeExchange: {
         exchange: "" as ExchangeType,
@@ -39,10 +39,11 @@ export const ExchangeDataGettersContext =
         balances: {},
         pastOrders: [],
         initialTradesLoading: false,
-        orderBookLoading: false
+        orderBookLoading: false,
       },
     },
-  });
+  }
+);
 
 export const ExchangeDataGettersContextTypeProvider = ({
   activeMarket,

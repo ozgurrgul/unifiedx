@@ -1,8 +1,8 @@
 "use client";
 
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
-import { useAppNavigation } from "@/hooks/useAppNavigation";
+import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
+import { Loader, Moon, RotateCcw, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useContext, useEffect, useState } from "react";
 import {
   Dialog,
@@ -10,17 +10,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ExchangeCrendentials } from "./ExchangeCrendentials";
-import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loader, Moon, RotateCcw, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
+import { ExchangeCrendentials } from "./ExchangeCrendentials";
 import { useOptionalDockLayoutControl } from "./layout/DockLayoutControlContext";
 
 export const Header = () => {
@@ -113,9 +113,7 @@ export const Header = () => {
 
         <button
           type="button"
-          onClick={() =>
-            setTheme(resolvedTheme === "dark" ? "light" : "dark")
-          }
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           aria-label="Toggle theme"
         >
@@ -132,9 +130,7 @@ export const Header = () => {
       <Dialog open={showCredentials} onOpenChange={setShowCredentials}>
         <DialogContent className="bg-card border-border">
           <DialogHeader>
-            <DialogTitle>
-              Set or update your credentials for {exchange}
-            </DialogTitle>
+            <DialogTitle>Set or update your credentials for {exchange}</DialogTitle>
             <ExchangeCrendentials
               activeExchange={exchange}
               onClose={() => document.location.reload()}

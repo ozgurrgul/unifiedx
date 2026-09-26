@@ -9,14 +9,7 @@ export type Candle = {
   volume: number;
 };
 
-export const CHART_INTERVALS: ChartInterval[] = [
-  "1m",
-  "5m",
-  "15m",
-  "1h",
-  "4h",
-  "1d",
-];
+export const CHART_INTERVALS: ChartInterval[] = ["1m", "5m", "15m", "1h", "4h", "1d"];
 
 export const INTERVAL_SECONDS: Record<ChartInterval, number> = {
   "1m": 60,

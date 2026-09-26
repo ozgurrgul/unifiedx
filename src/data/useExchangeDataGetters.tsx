@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ExchangeDataSettersContext } from "./ExchangeDataSettersContext";
-import { ExchangeType } from "./exchangeConfigs";
+import type { ExchangeType } from "./exchangeConfigs";
 
 export const useExchangeDataGetters = ({
   activeExchange,

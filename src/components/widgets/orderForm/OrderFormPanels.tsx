@@ -1,13 +1,13 @@
 "use client";
 
-import { ExchangeWidget } from "../ExchangeWidget";
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useContext } from "react";
-import { MarketOrderForm } from "./MarketOrderForm";
-import { LimitOrderForm } from "./LimitOrderForm";
-import { CreateOrderPayload } from "@/types/lib";
 import { $bus, BusEvent } from "@/components/ExchangeBus";
 import { useToast } from "@/components/ui/use-toast";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import type { CreateOrderPayload } from "@/types/lib";
+import { ExchangeWidget } from "../ExchangeWidget";
+import { LimitOrderForm } from "./LimitOrderForm";
+import { MarketOrderForm } from "./MarketOrderForm";
 
 function useOrderSubmit() {
   const {

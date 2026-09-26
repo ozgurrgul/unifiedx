@@ -1,6 +1,17 @@
 import { useEffect } from "react";
 import useWebSocket from "react-use-websocket";
-import {
+import type {
+  BookData,
+  CreateOrderPayload,
+  Market,
+  MarketsHashmap,
+  Order,
+  Ticker,
+  TickersHashmap,
+  Trade,
+} from "@/types/lib";
+import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type {
   Binance24hTickerPrice,
   BinanceBookApiResponse,
   BinanceDepthWs,
@@ -9,17 +20,6 @@ import {
   BinanceTradeWs,
   WsResponses,
 } from "./types";
-import {
-  Market,
-  MarketsHashmap,
-  Trade,
-  Ticker,
-  TickersHashmap,
-  BookData,
-  Order,
-  CreateOrderPayload,
-} from "@/types/lib";
-import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -107,9 +107,7 @@ const getTickers = (markets: MarketsHashmap) => {
 
       const mappedTickers: TickersHashmap = arrayToHashmapByMarket(
         config.map((p) => {
-          const market = marketsArr.find(
-            (m) => m.brandSymbol === p.symbol
-          )?.market;
+          const market = marketsArr.find((m) => m.brandSymbol === p.symbol)?.market;
 
           if (!market) {
             // console.error("unknown market mapping", p.symbol);

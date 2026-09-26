@@ -1,9 +1,9 @@
 "use client";
 
-import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import Highcharts, { Options } from "highcharts";
+import Highcharts, { type Options } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import {
   buildDepthSeries,
   formatDepthPrice,
@@ -218,10 +218,7 @@ export const DepthChart = () => {
         midPrice: depthData.midPrice,
         xMin: depthData.xMin,
         xMax: depthData.xMax,
-        yMax: getVolumeAxisMax(
-          depthData.maxBidVolume,
-          depthData.maxAskVolume
-        ),
+        yMax: getVolumeAxisMax(depthData.maxBidVolume, depthData.maxAskVolume),
         baseSymbol: base?.symbol ?? "",
         quoteSymbol: quote?.symbol ?? "",
         quotePrecision: quote?.precision ?? 2,
@@ -234,8 +231,7 @@ export const DepthChart = () => {
     chartRef.current?.chart?.setSize(undefined, height, false);
   }, [height]);
 
-  const hasData =
-    depthData.maxBidVolume > 0 || depthData.maxAskVolume > 0;
+  const hasData = depthData.maxBidVolume > 0 || depthData.maxAskVolume > 0;
 
   if (orderBookLoading) {
     return (
@@ -243,9 +239,7 @@ export const DepthChart = () => {
         ref={containerRef}
         className="w-full h-full min-h-[200px] flex items-center justify-center"
       >
-        <span className="text-xs text-muted-foreground">
-          Loading depth data…
-        </span>
+        <span className="text-xs text-muted-foreground">Loading depth data…</span>
       </div>
     );
   }

@@ -1,22 +1,22 @@
-import {
+import crypto from "crypto";
+import { useEffect } from "react";
+import useWebSocket from "react-use-websocket";
+import type {
   BitvavoBalance,
   BitvavoMarket,
   BitvavoOrder,
   WsResponses,
 } from "@/data/bitvavo/types";
-import {
-  Market,
-  MarketsHashmap,
-  Trade,
-  Order,
-  TickersHashmap,
+import type {
   BalancesHashmap,
   CreateOrderPayload,
+  Market,
+  MarketsHashmap,
+  Order,
+  TickersHashmap,
+  Trade,
 } from "@/types/lib";
-import { useEffect } from "react";
-import useWebSocket from "react-use-websocket";
-import crypto from "crypto";
-import { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -187,7 +187,7 @@ export const useBitvavoData = ({
             side: r.side,
             updated: r.updated,
             status: statusMap[r.status],
-          } satisfies Order)
+          }) satisfies Order
       );
     } catch (e) {}
 
@@ -238,7 +238,7 @@ export const useBitvavoData = ({
               updated: r.updated,
               type: r.orderType,
               status: statusMap[r.status],
-            } satisfies Order)
+            }) satisfies Order
         );
     } catch (e) {}
 
@@ -305,9 +305,9 @@ export const useBitvavoData = ({
 
       if (isCredentialsProvided) {
         getOpenOrders().then(setOpenOrders);
-        getPastOrders(
-          `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`
-        ).then(setPastOrders);
+        getPastOrders(`${activeMarket.base.symbol}-${activeMarket.quote.symbol}`).then(
+          setPastOrders
+        );
         getBalances().then(setBalances);
       }
     }
@@ -337,7 +337,7 @@ export const useBitvavoData = ({
               timestamp: r.timestamp,
               market: activeMarket,
               side: r.side,
-            } satisfies Trade)
+            }) satisfies Trade
         )
       );
     } else if ("action" in msg && msg.action === "getBook") {
@@ -386,9 +386,9 @@ export const useBitvavoData = ({
       setTimeout(() => {
         getOpenOrders().then(setOpenOrders);
         getBalances().then(setBalances);
-        getPastOrders(
-          `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`
-        ).then(setPastOrders);
+        getPastOrders(`${activeMarket.base.symbol}-${activeMarket.quote.symbol}`).then(
+          setPastOrders
+        );
       }, 1000);
     }
   }, [lastJsonMessage, activeMarket]);
@@ -439,15 +439,10 @@ export const useBitvavoData = ({
       limit: "limit",
     };
 
-    postPlaceOrder(
-      payload.market,
-      payload.side,
-      orderTypeMapper[payload.type],
-      {
-        amount: payload.amount,
-        price: payload.price,
-      }
-    ).then((r) => {
+    postPlaceOrder(payload.market, payload.side, orderTypeMapper[payload.type], {
+      amount: payload.amount,
+      price: payload.price,
+    }).then((r) => {
       if (r.orderId) {
         // success action is being listened via `order` WS event
       } else if ("error" in r && typeof r.error === "string") {

@@ -123,8 +123,7 @@ type LayoutGridNode = {
  * 400px | flex | 400px once the dock has a real width.
  */
 export function applyDefaultColumnWidths(api: DockviewApi): boolean {
-  const middleWidth =
-    api.width - DOCK_SIDE_COLUMN_WIDTH * 2 - DOCK_COLUMN_GAP_PX;
+  const middleWidth = api.width - DOCK_SIDE_COLUMN_WIDTH * 2 - DOCK_COLUMN_GAP_PX;
   if (middleWidth < 240) {
     return false;
   }
@@ -182,10 +181,7 @@ export function saveDockLayout(api: DockviewApi): void {
   if (typeof window === "undefined") {
     return;
   }
-  window.localStorage.setItem(
-    DOCK_LAYOUT_STORAGE_KEY,
-    JSON.stringify(api.toJSON())
-  );
+  window.localStorage.setItem(DOCK_LAYOUT_STORAGE_KEY, JSON.stringify(api.toJSON()));
 }
 
 export function clearStoredDockLayout(): void {

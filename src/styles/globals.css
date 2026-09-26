@@ -250,7 +250,10 @@
 }
 
 /* Single-tab groups still show a readable header (matches .widget-title). */
-.exchange-dock-host .dockview-theme-unifiedx .dv-groupview .dv-tabs-and-actions-container {
+.exchange-dock-host
+  .dockview-theme-unifiedx
+  .dv-groupview
+  .dv-tabs-and-actions-container {
   flex-shrink: 0;
 }
 

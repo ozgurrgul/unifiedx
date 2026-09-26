@@ -1,26 +1,23 @@
 "use client";
 
-import React from "react";
 import type { IDockviewPanelHeaderProps, IDockviewPanelProps } from "dockview";
-import { MarketsWidget } from "../widgets/MarketsWidget";
-import { TradesWidget } from "../widgets/TradesWidget";
-import { OrderBookWidget } from "../widgets/orderBook/OrderBookWidget";
+import { DockviewDefaultTab } from "dockview-react";
+import type React from "react";
 import { BalancesWidget } from "../widgets/BalancesWidget";
+import { CandlestickChartPanel, DepthChartPanel } from "../widgets/ChartPanels";
+import { MarketsWidget } from "../widgets/MarketsWidget";
+import { OrderBookWidget } from "../widgets/orderBook/OrderBookWidget";
 import {
-  CandlestickChartPanel,
-  DepthChartPanel,
-} from "../widgets/ChartPanels";
-import {
-  MarketOrderFormPanel,
   LimitOrderFormPanel,
+  MarketOrderFormPanel,
 } from "../widgets/orderForm/OrderFormPanels";
 import {
   AllOpenOrdersPanel,
   BaseOpenOrdersPanel,
   OrderHistoryPanel,
 } from "../widgets/orders/OrdersPanels";
+import { TradesWidget } from "../widgets/TradesWidget";
 import { DOCK_PANEL_IDS } from "./defaultDockLayout";
-import { DockviewDefaultTab } from "dockview-react";
 
 function DockPanelShell({
   panelId,

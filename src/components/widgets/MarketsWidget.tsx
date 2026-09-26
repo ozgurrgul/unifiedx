@@ -2,7 +2,7 @@
 
 import Fuse from "fuse.js";
 import { MoreHorizontal } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -90,22 +90,38 @@ export const MarketsWidget: React.FC = () => {
   const { goToSpotMarket, goToPerpMarket } = useAppNavigation();
 
   const [searchInputText, setSearchInputText] = useState("");
-  const marketQuoteSymbols = getUniqueMarketQuotes(spotMarkets);
-  const visibleMarketQuoteSymbols =
-    marketQuoteSymbols.length > 5 ? marketQuoteSymbols.slice(0, 5) : marketQuoteSymbols;
+  const marketQuoteSymbols = useMemo(
+    () => getUniqueMarketQuotes(spotMarkets),
+    [spotMarkets]
+  );
+  const visibleMarketQuoteSymbols = useMemo(
+    () => (marketQuoteSymbols.length > 5 ? marketQuoteSymbols.slice(0, 5) : marketQuoteSymbols),
+    [marketQuoteSymbols]
+  );
 
   const [viewingMarketQuote, setViewingMarketQuote] = useState<string>();
+  const lastSyncedSpotMarketIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const activeQuote = spotMarkets[spotMarketId]?.quote.symbol;
-    if (activeQuote) {
+    const marketChanged = lastSyncedSpotMarketIdRef.current !== spotMarketId;
+
+    if (marketChanged && activeQuote) {
+      lastSyncedSpotMarketIdRef.current = spotMarketId;
       setViewingMarketQuote(activeQuote);
       return;
     }
-    if (visibleMarketQuoteSymbols.length > 0) {
-      setViewingMarketQuote(visibleMarketQuoteSymbols[0]);
+
+    if (viewingMarketQuote === undefined && activeQuote) {
+      setViewingMarketQuote(activeQuote);
+      lastSyncedSpotMarketIdRef.current = spotMarketId;
+      return;
     }
-  }, [spotMarketId, spotMarkets, visibleMarketQuoteSymbols]);
+
+    if (viewingMarketQuote === undefined && marketQuoteSymbols[0]) {
+      setViewingMarketQuote(marketQuoteSymbols[0]);
+    }
+  }, [spotMarketId, spotMarkets, marketQuoteSymbols, viewingMarketQuote]);
 
   const getMarketsByQuote = (_markets: SpotMarket[]) => {
     if (!viewingMarketQuote) {
@@ -179,11 +195,10 @@ export const MarketsWidget: React.FC = () => {
   const realMarkets = (
     <>
       {getMarkets().map((market) => {
-        const price = prices && prices[market.market]?.price;
         const isActive = market.market === spotMarketId;
         return (
           <TableRow
-            key={`${market.market}-${price}`}
+            key={market.market}
             onClick={() => {
               if (product === "perp") {
                 goToPerpMarket(

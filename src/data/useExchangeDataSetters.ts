@@ -4,6 +4,7 @@ import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types
 import type {
   BalancesHashmap,
   BookData,
+  PerpMarketsHashmap,
   SpotMarketsHashmap,
   Order,
   PricesHashmap,
@@ -149,9 +150,17 @@ export const useExchangeDataSetters = ({
     setCancellingOrderIdsState((prev) => prev.filter((id) => !ids.includes(id)));
   };
 
-  const setInitialMarkets = (markets: SpotMarketsHashmap) => {
+  const setInitialMarkets = (markets: SpotMarketsHashmap | PerpMarketsHashmap) => {
     setMarkets(markets);
     setMarketsLoading(false);
+  };
+
+  const beginActiveMarketChange = () => {
+    setTrades([]);
+    setInitialTradesLoading(true);
+    setOrderBookLoading(true);
+    setComputedOrderBookData(undefined);
+    setAllComputedOrderBookData(undefined);
   };
 
   return {
@@ -173,6 +182,7 @@ export const useExchangeDataSetters = ({
     marketsLoading,
     setInitialTrades,
     setInitialMarkets,
+    beginActiveMarketChange,
     setPrices,
     setTickers,
     patchTicker,

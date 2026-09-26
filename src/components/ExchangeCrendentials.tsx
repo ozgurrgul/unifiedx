@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { type ExchangeType, neededCredentialsForExchange } from "@/data/exchangeConfigs";
 import { useToast } from "./ui/use-toast";
 
 type ExchangeCrendentialsProps = {
@@ -26,7 +26,7 @@ export const ExchangeCrendentials: React.FC<ExchangeCrendentialsProps> = ({
   activeExchange,
   onClose,
 }) => {
-  const neededCredentials = exchangeConfigs[activeExchange]?.neededCredentials;
+  const neededCredentials = neededCredentialsForExchange(activeExchange);
   const { toast } = useToast();
 
   const formSchema = z.object(

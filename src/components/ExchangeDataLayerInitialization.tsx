@@ -3,7 +3,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
-import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
+import {
+  type ExchangeType,
+  isPerpOnlyExchange,
+  spotExchangeConfigs,
+} from "@/data/exchangeConfigs";
 import { ExchangeDataLayer } from "./ExchangeDataLayer";
 
 type ExchangeDataLayerInitializationProps = {
@@ -24,10 +28,14 @@ export const ExchangeDataLayerInitialization: React.FC<
     },
   } = useContext(ExchangeDataGettersContext);
 
-  const exchangeConfig = spotExchangeConfigs[activeExchange];
+  const isSpotVenue = !isPerpOnlyExchange(activeExchange);
+  const exchangeConfig = isSpotVenue ? spotExchangeConfigs[activeExchange] : null;
   const activeSpotMarket = spotMarkets[activeSpotMarketId];
 
   useEffect(() => {
+    if (!exchangeConfig) {
+      return;
+    }
     let cancelled = false;
     setInitialized(false);
     exchangeConfig
@@ -47,6 +55,10 @@ export const ExchangeDataLayerInitialization: React.FC<
       cancelled = true;
     };
   }, [activeExchange, exchangeConfig]);
+
+  if (!isSpotVenue || !exchangeConfig) {
+    return null;
+  }
 
   if (!initialized) {
     return null;

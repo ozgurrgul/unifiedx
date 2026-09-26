@@ -14,6 +14,7 @@ export const ExchangeDataSettersContext = createContext<ExchangeDataSettersConte
     setters: {
       addTrade: () => {},
       setInitialMarkets: () => {},
+      beginActiveMarketChange: () => {},
       setPrices: () => {},
       setTickers: () => {},
       patchTicker: () => {},

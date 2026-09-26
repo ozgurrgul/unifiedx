@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import WebSocket from "ws";
 import type { ChartInterval } from "@/components/widgets/chart/candlestick/types";
 
 type Candle = {
@@ -207,6 +208,111 @@ const fetchBtcTurkCandles = async (
   return candles.slice(-LIMIT);
 };
 
+const HELLO_TRADE_WS = "wss://marketdata.app.hello.trade/ws";
+
+const HELLO_TRADE_INTERVALS: Record<
+  ChartInterval,
+  { timespan: "MINUTE" | "HOUR" | "DAY"; multiplier: number; seconds: number }
+> = {
+  "1m": { timespan: "MINUTE", multiplier: 1, seconds: 60 },
+  "5m": { timespan: "MINUTE", multiplier: 5, seconds: 300 },
+  "15m": { timespan: "MINUTE", multiplier: 15, seconds: 900 },
+  "1h": { timespan: "HOUR", multiplier: 1, seconds: 3600 },
+  "4h": { timespan: "HOUR", multiplier: 4, seconds: 14_400 },
+  "1d": { timespan: "DAY", multiplier: 1, seconds: 86_400 },
+};
+
+const fetchHelloTradeCandles = async (
+  symbol: string,
+  interval: ChartInterval
+): Promise<Candle[]> => {
+  const spec = HELLO_TRADE_INTERVALS[interval];
+  const nowSec = Math.floor(Date.now() / 1000);
+  const from = nowSec - spec.seconds * LIMIT;
+
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(HELLO_TRADE_WS);
+    const candles: Candle[] = [];
+    let settled = false;
+
+    const finish = () => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      ws.close();
+      resolve(candles.sort((a, b) => a.time - b.time).slice(-LIMIT));
+    };
+
+    ws.on("open", () => {
+      ws.send(
+        JSON.stringify({
+          type: "subscribe",
+          channel: "candles",
+          symbols: [symbol],
+          timespan: spec.timespan,
+          multiplier: spec.multiplier,
+          from,
+          to: nowSec,
+          combined: true,
+        })
+      );
+    });
+
+    ws.on("message", (raw) => {
+      const msg = JSON.parse(raw.toString()) as {
+        type: string;
+        channel?: string;
+        data?: unknown;
+        message?: string;
+      };
+      if (msg.type === "error") {
+        settled = true;
+        ws.close();
+        reject(new Error(msg.message ?? "Hello Trade candles error"));
+        return;
+      }
+      if (msg.type !== "marketData" || msg.channel !== "candles") {
+        return;
+      }
+      const rows = Array.isArray(msg.data) ? msg.data : [msg.data];
+      for (const row of rows) {
+        if (!row || typeof row !== "object") {
+          continue;
+        }
+        const r = row as Record<string, string | number>;
+        if (r.symbol && r.symbol !== symbol) {
+          continue;
+        }
+        const timeStamp = Number(r.timeStamp ?? r.timestamp ?? 0);
+        if (!timeStamp) {
+          continue;
+        }
+        candles.push({
+          time: timeStamp > 1_000_000_000_000 ? Math.floor(timeStamp / 1000) : timeStamp,
+          open: parseFloat(String(r.open)),
+          high: parseFloat(String(r.high)),
+          low: parseFloat(String(r.low)),
+          close: parseFloat(String(r.close)),
+          volume: parseFloat(String(r.volume ?? 0)),
+        });
+      }
+      if (Array.isArray(msg.data)) {
+        finish();
+      }
+    });
+
+    ws.on("error", () => {
+      if (!settled) {
+        settled = true;
+        reject(new Error("Hello Trade candles WebSocket failed"));
+      }
+    });
+
+    setTimeout(finish, 12_000);
+  });
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Candle[] | { error: string }>
@@ -244,6 +350,8 @@ export default async function handler(
       candles = await fetchBtcTurkCandles(base, quote, interval);
     } else if (exchange === "kraken") {
       candles = await fetchKrakenCandles(base, quote, interval);
+    } else if (exchange === "helloTrade" && product === "perp") {
+      candles = await fetchHelloTradeCandles(base, interval);
     } else {
       res.status(400).json({ error: `Unsupported exchange: ${exchange}` });
       return;

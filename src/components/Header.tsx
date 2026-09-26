@@ -48,7 +48,7 @@ export const Header = () => {
   }, []);
 
   const onExchangeSelect = (ex: ExchangeType) => {
-    if (product === "perp" && isPerpSupportedExchange(ex)) {
+    if (isPerpSupportedExchange(ex) && (product === "perp" || ex === "helloTrade")) {
       goToPerpExchange(ex);
       return;
     }

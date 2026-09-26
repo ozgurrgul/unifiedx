@@ -1,5 +1,9 @@
 import { useRouter } from "next/router";
-import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
+import {
+  type ExchangeType,
+  isPerpOnlyExchange,
+  spotExchangeConfigs,
+} from "@/data/exchangeConfigs";
 import { perpExchangeConfigs } from "@/data/perp/exchangeConfigs";
 import type { PerpSupportedExchange } from "@/data/perp/types";
 import {
@@ -13,6 +17,10 @@ export const useAppNavigation = () => {
   const router = useRouter();
 
   const goToExchange = (exchange: ExchangeType) => {
+    if (isPerpOnlyExchange(exchange)) {
+      goToPerpExchange(exchange);
+      return;
+    }
     const { defaultSpotMarket } = spotExchangeConfigs[exchange];
     router.push(
       spotMarketPath(

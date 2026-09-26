@@ -5,11 +5,13 @@ export const exchangeLogos: Record<ExchangeType, string> = {
   bitvavo: "/exchanges/bitvavo.svg",
   btcTurk: "/exchanges/btcTurk.jpg",
   kraken: "/exchanges/kraken.svg",
+  helloTrade: "/exchanges/helloTrade.svg",
 };
 
 export const exchangeLabels: Record<ExchangeType, string> = {
-  binance: "binance",
-  bitvavo: "bitvavo",
-  btcTurk: "btcTurk",
-  kraken: "kraken",
+  binance: "Binance",
+  bitvavo: "Bitvavo",
+  btcTurk: "BtcTurk",
+  kraken: "Kraken",
+  helloTrade: "Hello Trade",
 };

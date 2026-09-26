@@ -3,7 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { useContext } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { exchangeConfigs } from "@/data/exchangeConfigs";
+import { neededCredentialsForExchange } from "@/data/exchangeConfigs";
 
 export function useAccountGatedContent() {
   const {
@@ -13,7 +13,7 @@ export function useAccountGatedContent() {
   } = useContext(ExchangeDataGettersContext);
 
   const requiresCredentials =
-    (exchangeConfigs[exchange]?.neededCredentials.length ?? 0) > 0;
+    neededCredentialsForExchange(exchange).length > 0;
 
   return {
     requiresCredentials,

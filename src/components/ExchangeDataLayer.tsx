@@ -55,7 +55,7 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
     ) {
       onSpotMarketChange(activeSpotMarket, previousMarket);
     }
-  }, [activeSpotMarket, previousMarket]);
+  }, [activeSpotMarket, previousMarket, onSpotMarketChange]);
 
   useEffect(() => {
     $bus.on(BusEvent.CancelOrder, cancelOrder);

@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
+import { type SpotExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 type Props = {
-  exchange: ExchangeType;
+  exchange: SpotExchangeType;
 };
 
 export const ExchangeRedirectToDefaultSpotMarket: React.FC<Props> = ({ exchange }) => {

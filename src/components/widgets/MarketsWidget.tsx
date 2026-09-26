@@ -11,7 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTradingProduct } from "@/context/TradingProductContext";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import type { PerpSupportedExchange } from "@/data/perp/types";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
 import type { SpotMarket, SpotMarketsHashmap } from "@/types/lib";
@@ -84,7 +86,8 @@ export const MarketsWidget: React.FC = () => {
       activeSpotMarket: { spotMarketId, spotMarkets, prices },
     },
   } = useContext(ExchangeDataGettersContext);
-  const { goToSpotMarket } = useAppNavigation();
+  const product = useTradingProduct();
+  const { goToSpotMarket, goToPerpMarket } = useAppNavigation();
 
   const [searchInputText, setSearchInputText] = useState("");
   const marketQuoteSymbols = getUniqueMarketQuotes(spotMarkets);
@@ -94,11 +97,15 @@ export const MarketsWidget: React.FC = () => {
   const [viewingMarketQuote, setViewingMarketQuote] = useState<string>();
 
   useEffect(() => {
-    if (visibleMarketQuoteSymbols && visibleMarketQuoteSymbols.length > 0) {
-      const firstQuote = visibleMarketQuoteSymbols[0];
-      setViewingMarketQuote(firstQuote);
+    const activeQuote = spotMarkets[spotMarketId]?.quote.symbol;
+    if (activeQuote) {
+      setViewingMarketQuote(activeQuote);
+      return;
     }
-  }, [JSON.stringify(visibleMarketQuoteSymbols)]);
+    if (visibleMarketQuoteSymbols.length > 0) {
+      setViewingMarketQuote(visibleMarketQuoteSymbols[0]);
+    }
+  }, [spotMarketId, spotMarkets, visibleMarketQuoteSymbols]);
 
   const getMarketsByQuote = (_markets: SpotMarket[]) => {
     if (!viewingMarketQuote) {
@@ -178,7 +185,15 @@ export const MarketsWidget: React.FC = () => {
           <TableRow
             key={`${market.market}-${price}`}
             onClick={() => {
-              goToSpotMarket(exchange, market.base.symbol, market.quote.symbol);
+              if (product === "perp") {
+                goToPerpMarket(
+                  exchange as PerpSupportedExchange,
+                  market.base.symbol,
+                  market.quote.symbol
+                );
+              } else {
+                goToSpotMarket(exchange, market.base.symbol, market.quote.symbol);
+              }
             }}
             className={cn("cursor-pointer transition-colors", {
               "row-active-market font-semibold": isActive,

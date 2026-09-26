@@ -5,14 +5,15 @@ import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
 import type { ExchangeType } from "@/data/exchangeConfigs";
-import type { SpotExchangeConfig } from "@/data/types";
+import type { PerpExchangeConfig } from "@/data/perp/exchangeConfigs";
+import type { SpotExchangeConfig } from "@/data/spot/types";
 import type { SpotMarket } from "@/types/lib";
 import { $bus, BusEvent } from "./ExchangeBus";
 
 type ExchangeDataLayerProps = {
   activeExchange: ExchangeType;
   activeSpotMarket: SpotMarket;
-  exchangeConfig: SpotExchangeConfig;
+  exchangeConfig: SpotExchangeConfig | PerpExchangeConfig;
 };
 
 export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
@@ -59,7 +60,11 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
   useEffect(() => {
     $bus.on(BusEvent.CancelOrder, cancelOrder);
     $bus.on(BusEvent.CreateOrder, createOrder);
-  }, [$bus]);
+    return () => {
+      $bus.off(BusEvent.CancelOrder, cancelOrder);
+      $bus.off(BusEvent.CreateOrder, createOrder);
+    };
+  }, [cancelOrder, createOrder]);
 
   return null;
 };

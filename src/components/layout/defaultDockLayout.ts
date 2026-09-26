@@ -118,6 +118,8 @@ export function applyDefaultDockLayout(
     position: { direction: "within", referencePanel: markets },
   });
 
+  api.getPanel(DOCK_PANEL_IDS.markets)?.api.setActive();
+
   const marketOrder = api.addPanel({
     id: DOCK_PANEL_IDS.marketOrder,
     component: "marketOrderForm",

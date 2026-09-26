@@ -1,10 +1,14 @@
 import { expect, test } from "@playwright/test";
-import { activateTab } from "./helpers/dock";
+import { activateTab, tabsShareGroup } from "./helpers/dock";
 import {
   BINANCE_BTC_EUR_PATH,
+  BINANCE_BTC_USDT_PERP_PATH,
   BITVAVO_BTC_EUR_PATH,
   EXCHANGE_FIXTURES,
+  gotoPerpTradingMarket,
   gotoTradingMarket,
+  selectExchange,
+  selectProduct,
   waitForLiveTicker,
 } from "./helpers/app";
 import {
@@ -26,19 +30,16 @@ test.describe("UnifiedX trading shell", () => {
     await expect(page.getByTestId("exchange-dock")).toHaveCount(0);
   });
 
-  test("exchange pills navigate to each exchange default market", async ({
+  test("exchange dropdown navigates to each exchange default market", async ({
     page,
   }) => {
     await gotoTradingMarket(page);
     await waitForLiveTicker(page);
 
-    await page.getByRole("button", { name: "bitvavo", exact: true }).click();
+    await selectExchange(page, "bitvavo");
     await page.waitForURL(`**${BITVAVO_BTC_EUR_PATH}`);
-    await expect(page.getByRole("button", { name: "bitvavo" })).toHaveClass(
-      /exchange-pill-active/
-    );
 
-    await page.getByRole("button", { name: "binance", exact: true }).click();
+    await selectExchange(page, "binance");
     await page.waitForURL(`**${BINANCE_BTC_EUR_PATH}`);
   });
 
@@ -67,6 +68,67 @@ test.describe("UnifiedX trading shell", () => {
       .click();
 
     await page.waitForURL("**/binance/spot/market/ETH-EUR");
+    await expect(page.locator(".widget-subheader").getByText("ETH")).toBeVisible();
+  });
+});
+
+test.describe("Binance perp", () => {
+  test("default perp route loads live market data", async ({ page }) => {
+    await gotoPerpTradingMarket(page);
+    await waitForLiveTicker(page);
+    await expect(page).toHaveURL(new RegExp(`${BINANCE_BTC_USDT_PERP_PATH}$`));
+    await expect(page.getByTestId("product-select")).toHaveText(/perp/i);
+  });
+
+  test("product dropdown switches between spot and perp", async ({ page }) => {
+    await gotoTradingMarket(page);
+    await waitForLiveTicker(page);
+
+    await selectProduct(page, "perp");
+    await page.waitForURL("**/binance/perp/market/BTC-USDT");
+    await waitForLiveTicker(page);
+
+    await selectProduct(page, "spot");
+    await page.waitForURL("**/binance/spot/market/BTC-USDT");
+    await waitForLiveTicker(page);
+  });
+
+  test("markets and trades tabs are grouped with markets open by default", async ({
+    page,
+  }) => {
+    await gotoPerpTradingMarket(page);
+    await waitForLiveTicker(page);
+
+    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
+    await expect(page.getByPlaceholder("Search markets...")).toBeVisible();
+  });
+
+  test("perp markets list is populated", async ({ page }) => {
+    await gotoPerpTradingMarket(page);
+    await waitForLiveTicker(page);
+
+    await activateTab(page, "markets");
+    await expect(page.getByPlaceholder("Search markets...")).toBeVisible();
+    await expect
+      .poll(async () => page.locator(".widget-markets tbody tr").count())
+      .toBeGreaterThan(5);
+    await expect(page.locator(".widget-markets")).toContainText("BTC-USDT");
+  });
+
+  test("perp market row navigates to another pair", async ({ page }) => {
+    await gotoPerpTradingMarket(page);
+    await waitForLiveTicker(page);
+
+    await activateTab(page, "markets");
+    await page.getByPlaceholder("Search markets...").fill("ETH");
+    await page
+      .locator(".widget-markets")
+      .getByRole("row")
+      .filter({ hasText: "ETH-USDT" })
+      .first()
+      .click();
+
+    await page.waitForURL("**/binance/perp/market/ETH-USDT");
     await expect(page.locator(".widget-subheader").getByText("ETH")).toBeVisible();
   });
 });

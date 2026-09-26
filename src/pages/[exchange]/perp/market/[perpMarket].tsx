@@ -1,43 +1,48 @@
 import { useRouter } from "next/router";
-import { ExchangeDataLayerInitialization } from "@/components/ExchangeDataLayerInitialization";
 import { ExchangeGrid } from "@/components/ExchangeGrid";
-import { TradingProductProvider } from "@/context/TradingProductContext";
+import { PerpExchangeDataLayerInitialization } from "@/components/PerpExchangeDataLayerInitialization";
 import { Toaster } from "@/components/ui/toaster";
+import { TradingProductProvider } from "@/context/TradingProductContext";
+import type { ExchangeType } from "@/data/exchangeConfigs";
+import { isPerpSupportedExchange } from "@/data/perp/exchangeConfigs";
 import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
-import type { ExchangeType } from "@/data/exchangeConfigs";
 
-export default function SpotMarketPage() {
+export default function PerpMarketPage() {
   const router = useRouter();
   const exchange = router.query.exchange
     ? (String(router.query.exchange) as ExchangeType)
     : undefined;
-  const spotMarketId = router.query.spotMarket
-    ? String(router.query.spotMarket)
+  const perpMarketId = router.query.perpMarket
+    ? String(router.query.perpMarket)
     : undefined;
 
-  if (!exchange || !spotMarketId) {
+  if (!exchange || !perpMarketId) {
     return null;
   }
 
-  const dataScopeKey = `${exchange}-spot-${spotMarketId}`;
+  if (!isPerpSupportedExchange(exchange)) {
+    return <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>;
+  }
+
+  const dataScopeKey = `${exchange}-perp-${perpMarketId}`;
 
   return (
-    <TradingProductProvider product="spot">
+    <TradingProductProvider product="perp">
       <ExchangeDataSettersContextProvider
         key={dataScopeKey}
-        activeSpotMarketId={spotMarketId}
+        activeSpotMarketId={perpMarketId}
       >
         <ExchangeDataGettersContextTypeProvider
           key={dataScopeKey}
           activeExchange={exchange}
-          activeSpotMarketId={spotMarketId}
+          activeSpotMarketId={perpMarketId}
         >
           <ExchangeGrid />
-          <ExchangeDataLayerInitialization
+          <PerpExchangeDataLayerInitialization
             key={exchange}
             activeExchange={exchange}
-            activeSpotMarketId={spotMarketId}
+            activeSpotMarketId={perpMarketId}
           />
         </ExchangeDataGettersContextTypeProvider>
         <Toaster />

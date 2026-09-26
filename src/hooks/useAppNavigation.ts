@@ -1,6 +1,13 @@
 import { useRouter } from "next/router";
 import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
-import { spotMarketIdFromSymbols, spotMarketPath } from "@/types/product";
+import { perpExchangeConfigs } from "@/data/perp/exchangeConfigs";
+import type { PerpSupportedExchange } from "@/data/perp/types";
+import {
+  perpMarketIdFromSymbols,
+  perpMarketPath,
+  spotMarketIdFromSymbols,
+  spotMarketPath,
+} from "@/types/product";
 
 export const useAppNavigation = () => {
   const router = useRouter();
@@ -31,12 +38,36 @@ export const useAppNavigation = () => {
     );
   };
 
+  const goToPerpMarket = (
+    exchange: PerpSupportedExchange,
+    baseAssetSymbol: string,
+    quoteAssetSymbol: string
+  ) => {
+    router.push(
+      perpMarketPath(
+        exchange,
+        perpMarketIdFromSymbols(baseAssetSymbol, quoteAssetSymbol)
+      )
+    );
+  };
+
+  const goToPerpExchange = (exchange: PerpSupportedExchange) => {
+    const { defaultPerpMarket } = perpExchangeConfigs[exchange];
+    goToPerpMarket(
+      exchange,
+      defaultPerpMarket.base.symbol,
+      defaultPerpMarket.quote.symbol
+    );
+  };
+
   /** @deprecated Use goToSpotMarket */
   const goToMarket = goToSpotMarket;
 
   return {
     goToExchange,
     goToSpotMarket,
+    goToPerpMarket,
+    goToPerpExchange,
     goToMarket,
   };
 };

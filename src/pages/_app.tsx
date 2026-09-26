@@ -1,21 +1,9 @@
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import type { AppProps } from "next/app";
-import { IBM_Plex_Mono, Inter } from "next/font/google";
 import Head from "next/head";
 import { ThemeProvider } from "@/components/theme-provider";
-
-const font1 = Inter({
-  weight: "400",
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const font2 = IBM_Plex_Mono({
-  weight: "400",
-  variable: "--font-ibm-plex",
-  subsets: ["latin"],
-});
+import { fontVariableClassName } from "@/lib/fonts";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -24,10 +12,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>UnifiedX - Multi-Exchange Crypto Trading Platform</title>
       </Head>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <main className={`${font1.variable} ${font2.variable} font-sans`}>
+        <div className={`${fontVariableClassName} font-sans min-h-screen`}>
           <Component {...pageProps} />
           <Analytics />
-        </main>
+        </div>
       </ThemeProvider>
     </>
   );

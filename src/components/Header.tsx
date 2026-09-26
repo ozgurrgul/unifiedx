@@ -3,7 +3,9 @@
 import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 import { Loader, Moon, RotateCcw, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { useTradingProduct } from "@/context/TradingProductContext";
 import {
   Dialog,
   DialogContent,
@@ -17,19 +19,22 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { ExchangeLogo } from "@/components/ExchangeLogo";
-import { exchangeLabels } from "@/data/exchangeBranding";
 import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { isPerpSupportedExchange } from "@/data/perp/exchangeConfigs";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
-import { cn } from "@/lib/utils";
 import { ExchangeCrendentials } from "./ExchangeCrendentials";
+import { HeaderExchangeSelect } from "./header/HeaderExchangeSelect";
+import { HeaderProductSelect } from "./header/HeaderProductSelect";
 import { useOptionalDockLayoutControl } from "./layout/DockLayoutControlContext";
 
 export const Header = () => {
-  const { goToExchange } = useAppNavigation();
+  const router = useRouter();
+  const product = useTradingProduct();
+  const { goToExchange, goToSpotMarket, goToPerpExchange } = useAppNavigation();
   const {
     getters: {
       activeExchange: { exchange, isAuthenticated },
+      activeSpotMarket: { spotMarketId },
     },
   } = useContext(ExchangeDataGettersContext);
 
@@ -42,28 +47,43 @@ export const Header = () => {
     setMounted(true);
   }, []);
 
+  const onExchangeSelect = (ex: ExchangeType) => {
+    if (product === "perp" && isPerpSupportedExchange(ex)) {
+      goToPerpExchange(ex);
+      return;
+    }
+    goToExchange(ex);
+  };
+
+  const onProductSelect = (mode: "spot" | "perp") => {
+    if (exchange !== "binance" || !spotMarketId) {
+      return;
+    }
+    const [base, quote] = spotMarketId.split("-");
+    if (mode === "spot") {
+      goToSpotMarket("binance", base, quote);
+    } else {
+      goToPerpExchange("binance");
+    }
+  };
+
+  const showProductSelect =
+    exchange === "binance" &&
+    Boolean(spotMarketId) &&
+    router.pathname.includes("/market/");
+
   return (
     <div className="app-header flex items-center justify-between px-4 shrink-0">
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         <span className="text-sm font-bold tracking-tight text-foreground">
           UnifiedX
         </span>
 
-        <div className="flex items-center gap-0.5">
-          {(Object.keys(exchangeConfigs) as ExchangeType[]).map((ex) => (
-            <button
-              type="button"
-              key={ex}
-              className={cn("exchange-pill flex items-center gap-1.5 capitalize", {
-                "exchange-pill-active": exchange === ex,
-              })}
-              onClick={() => goToExchange(ex)}
-            >
-              <ExchangeLogo exchange={ex} size={14} />
-              {exchangeLabels[ex]}
-            </button>
-          ))}
-        </div>
+        <HeaderExchangeSelect value={exchange} onSelect={onExchangeSelect} />
+
+        {showProductSelect && (
+          <HeaderProductSelect value={product} onSelect={onProductSelect} />
+        )}
       </div>
 
       <div className="flex items-center gap-2">
@@ -135,7 +155,7 @@ export const Header = () => {
           <DialogHeader>
             <DialogTitle>Set or update your credentials for {exchange}</DialogTitle>
             <ExchangeCrendentials
-              activeExchange={exchange}
+              activeExchange={exchange as ExchangeType}
               onClose={() => document.location.reload()}
             />
           </DialogHeader>

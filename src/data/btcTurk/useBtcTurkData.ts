@@ -15,6 +15,7 @@ import {
   DEFAULT_BASE_ASSET_PRECISION,
   DEFAULT_QUOTE_ASSET_PRECISION,
 } from "../constants";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import type {
   BtcTurkBook,
@@ -222,6 +223,7 @@ export const useBtcTurkData = ({
   } = setters;
 
   const subscribedPairRef = useRef<string | null>(null);
+  const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const syncBtcTurkSubscriptions = (
     sendMessage: (msg: string) => void,
@@ -253,6 +255,9 @@ export const useBtcTurkData = ({
       },
       onClose: () => {
         setConnected(false);
+        if (shouldIgnoreClose()) {
+          return;
+        }
         setError({ error: "Websocket closed" });
       },
     });
@@ -331,6 +336,7 @@ export const useBtcTurkData = ({
   const createOrder = (payload: CreateOrderPayload) => {};
 
   const disconnect = () => {
+    markClosing();
     getWebSocket()?.close();
   };
 

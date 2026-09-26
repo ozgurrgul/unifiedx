@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
 import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
@@ -16,6 +16,8 @@ export const ExchangeDataLayerInitialization: React.FC<
 > = ({ activeExchange, activeMarket: activeMarketStr }) => {
   const [initialized, setInitialized] = useState(false);
   const { setters } = useContext(ExchangeDataSettersContext);
+  const settersRef = useRef(setters);
+  settersRef.current = setters;
   const {
     getters: {
       activeMarket: { markets },
@@ -26,16 +28,25 @@ export const ExchangeDataLayerInitialization: React.FC<
   const activeMarket = markets[activeMarketStr];
 
   useEffect(() => {
+    let cancelled = false;
+    setInitialized(false);
     exchangeConfig
       .loadMarkets()
       .then((r) => {
-        setters.setInitialMarkets(r);
-        setInitialized(true);
+        if (!cancelled) {
+          settersRef.current.setInitialMarkets(r);
+          setInitialized(true);
+        }
       })
       .catch((r) => {
-        setters.setError({ error: r.toString() });
+        if (!cancelled) {
+          settersRef.current.setError({ error: r.toString() });
+        }
       });
-  }, [setInitialized]);
+    return () => {
+      cancelled = true;
+    };
+  }, [activeExchange, exchangeConfig]);
 
   if (!initialized) {
     return null;

@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { ExchangeDataLayerInitialization } from "@/components/ExchangeDataLayerInitialization";
 import { ExchangeGrid } from "@/components/ExchangeGrid";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,15 +17,19 @@ export default function MarketPage() {
     return null;
   }
 
+  const dataScopeKey = `${exchange}-${market}`;
+
   return (
-    <ExchangeDataSettersContextProvider activeMarket={market}>
+    <ExchangeDataSettersContextProvider key={dataScopeKey} activeMarket={market}>
       {market && (
         <ExchangeDataGettersContextTypeProvider
+          key={dataScopeKey}
           activeExchange={exchange as ExchangeType}
           activeMarket={market}
         >
           <ExchangeGrid />
           <ExchangeDataLayerInitialization
+            key={exchange}
             activeExchange={exchange}
             activeMarket={market}
           />

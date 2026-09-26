@@ -11,6 +11,7 @@ import type {
   TickersHashmap,
   Trade,
 } from "@/types/lib";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import type {
   Binance24hTickerPrice,
@@ -178,6 +179,7 @@ export const useBinanceData = ({
   const subscribedStreamsRef = useRef<{ trade: string; depth: string } | null>(
     null
   );
+  const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const subscribeBinanceStreams = (market: Market) => {
     const streams = getBinanceStreams(market);
@@ -209,6 +211,9 @@ export const useBinanceData = ({
       },
       onClose: () => {
         setConnected(false);
+        if (shouldIgnoreClose()) {
+          return;
+        }
         setError({ error: "Websocket closed" });
       },
     });
@@ -264,6 +269,7 @@ export const useBinanceData = ({
   const createOrder = (payload: CreateOrderPayload) => {};
 
   const disconnect = () => {
+    markClosing();
     getWebSocket()?.close();
   };
 

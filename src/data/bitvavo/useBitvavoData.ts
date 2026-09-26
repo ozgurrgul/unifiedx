@@ -17,6 +17,7 @@ import type {
   TickersHashmap,
   Trade,
 } from "@/types/lib";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import { bitvavoMarketId, syncBitvavoMarketStreams } from "./ws";
 
@@ -90,6 +91,7 @@ export const useBitvavoData = ({
   } = setters;
 
   const subscribedMarketRef = useRef<string | null>(null);
+  const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<WsResponses>("wss://ws.bitvavo.com/v2?source=exchange", {
@@ -122,6 +124,9 @@ export const useBitvavoData = ({
       },
       onClose: () => {
         setConnected(false);
+        if (shouldIgnoreClose()) {
+          return;
+        }
         setError({ error: "Websocket closed" });
       },
     });
@@ -402,6 +407,7 @@ export const useBitvavoData = ({
   };
 
   const disconnect = () => {
+    markClosing();
     getWebSocket()?.close();
   };
 

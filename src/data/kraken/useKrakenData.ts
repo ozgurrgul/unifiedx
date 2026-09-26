@@ -11,6 +11,7 @@ import type {
   TickersHashmap,
   Trade,
 } from "@/types/lib";
+import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
 import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
 import type {
   KrakenAssetPairsResponse,
@@ -259,6 +260,7 @@ export const useKrakenData = ({
   } = setters;
 
   const subscribedSymbolRef = useRef<string | null>(null);
+  const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<KrakenWsMessage>(KRAKEN_WS_V2, {
@@ -276,6 +278,9 @@ export const useKrakenData = ({
       onClose: () => {
         setConnected(false);
         subscribedSymbolRef.current = null;
+        if (shouldIgnoreClose()) {
+          return;
+        }
         setError({ error: "Websocket closed" });
       },
     });
@@ -353,6 +358,7 @@ export const useKrakenData = ({
   const createOrder = (_payload: CreateOrderPayload) => {};
 
   const disconnect = () => {
+    markClosing();
     getWebSocket()?.close();
   };
 

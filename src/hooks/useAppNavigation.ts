@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
-import type { ExchangeType } from "@/data/exchangeConfigs";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 
 export const useAppNavigation = () => {
   const router = useRouter();
 
   const goToExchange = (exchange: ExchangeType) => {
-    // TODO: using router.push causing a nasty error on ExchangeDataLayer
-    // So use native redirect until I fix it
-    // router.push(`/${exchange}`);
-    document.location.href = `/${exchange}`;
+    const { defaultMarket } = exchangeConfigs[exchange];
+    router.push(
+      `/${exchange}/market/${defaultMarket.base.symbol}-${defaultMarket.quote.symbol}`
+    );
   };
 
   const goToMarket = (

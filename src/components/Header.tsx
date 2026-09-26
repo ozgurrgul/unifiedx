@@ -17,6 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
+import { ExchangeLogo } from "@/components/ExchangeLogo";
+import { exchangeLabels } from "@/data/exchangeBranding";
 import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
@@ -48,16 +50,17 @@ export const Header = () => {
         </span>
 
         <div className="flex items-center gap-0.5">
-          {Object.keys(exchangeConfigs).map((ex) => (
+          {(Object.keys(exchangeConfigs) as ExchangeType[]).map((ex) => (
             <button
               type="button"
               key={ex}
-              className={cn("exchange-pill capitalize", {
+              className={cn("exchange-pill flex items-center gap-1.5 capitalize", {
                 "exchange-pill-active": exchange === ex,
               })}
-              onClick={() => goToExchange(ex as ExchangeType)}
+              onClick={() => goToExchange(ex)}
             >
-              {ex}
+              <ExchangeLogo exchange={ex} size={14} />
+              {exchangeLabels[ex]}
             </button>
           ))}
         </div>

@@ -21,7 +21,6 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
   exchangeConfig,
 }) => {
   const { setters } = useContext(ExchangeDataSettersContext);
-  const previousExchange = usePrevious(activeExchange);
   const previousMarket = usePrevious(activeMarket);
   const credentials: Record<string, string> = exchangeConfig.neededCredentials.reduce(
     (acc, cur) => {
@@ -36,32 +35,14 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
     Object.values(credentials).filter((r: string) => r.length).length > 0;
 
   const {
-    readyState,
     onMarketChange,
     mutations: { cancelOrder, createOrder },
-    disconnect,
   } = exchangeConfig.data({
     activeMarket,
     setters,
     credentials,
     isCredentialsProvided,
   });
-
-  useEffect(() => {
-    if (activeExchange && previousExchange && previousExchange !== activeExchange) {
-      setters.setOpenOrders([]);
-      setters.setInitialTrades([]);
-      setters.setInitialMarkets({});
-      setters.setPrices({});
-      setters.setOpenOrders([]);
-      setters.setPastOrders([]);
-      setters.setAuthenticated("no");
-      setters.setError(undefined);
-      setters.setTickers({});
-      setters.setBalances({});
-      disconnect();
-    }
-  }, [activeExchange, previousExchange, setters, disconnect]);
 
   useEffect(() => {
     if (activeMarket && activeMarket.market && !previousMarket) {

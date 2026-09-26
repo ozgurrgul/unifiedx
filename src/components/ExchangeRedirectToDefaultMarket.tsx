@@ -18,7 +18,7 @@ export const ExchangeRedirectToDefaultMarket: React.FC<Props> = ({ exchange }) =
       exchangeConfig.defaultMarket.base.symbol,
       exchangeConfig.defaultMarket.quote.symbol
     );
-  }, [goToMarket]);
+  }, [exchange, exchangeConfig, goToMarket]);
 
   return null;
 };

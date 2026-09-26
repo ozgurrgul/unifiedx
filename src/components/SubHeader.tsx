@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext } from "react";
+import { ExchangeLogo } from "@/components/ExchangeLogo";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { FormatAmount } from "./common/Formatters";
 import { Separator } from "./ui/separator";
@@ -8,12 +9,19 @@ import { Separator } from "./ui/separator";
 export const SubHeader = () => {
   const {
     getters: {
+      activeExchange: { exchange },
       activeMarket: { ticker, base, quote },
     },
   } = useContext(ExchangeDataGettersContext);
 
   return (
     <div className="flex items-center px-4 widget-subheader gap-0 shrink-0 min-h-[68px] border-b border-border">
+      {exchange && (
+        <div className="flex items-center gap-2 pr-4 mr-2 border-r border-border">
+          <ExchangeLogo exchange={exchange} size={28} />
+        </div>
+      )}
+
       <div className="pr-6">
         <div className="text-lg font-bold tracking-tight">
           {base?.symbol}

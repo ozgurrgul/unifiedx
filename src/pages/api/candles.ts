@@ -105,6 +105,43 @@ const fetchBitvavoCandles = async (
   return parseCandles(json);
 };
 
+const KRAKEN_INTERVALS: Record<ChartInterval, number> = {
+  "1m": 1,
+  "5m": 5,
+  "15m": 15,
+  "1h": 60,
+  "4h": 240,
+  "1d": 1440,
+};
+
+const fetchKrakenCandles = async (
+  base: string,
+  quote: string,
+  interval: ChartInterval
+): Promise<Candle[]> => {
+  const pair = `${base}/${quote}`;
+  const res = await fetch(
+    `https://api.kraken.com/0/public/OHLC?pair=${encodeURIComponent(pair)}&interval=${KRAKEN_INTERVALS[interval]}`
+  );
+  if (!res.ok) {
+    throw new Error(`Kraken candles failed: ${res.status}`);
+  }
+  const json = await res.json();
+  if (json?.error?.length) {
+    throw new Error(json.error.join(", "));
+  }
+  const rows = Object.values(json.result ?? {}).find((value) => Array.isArray(value)) as
+    | Array<[number, string, string, string, string, string, string, number]>
+    | undefined;
+  if (!rows) {
+    return [];
+  }
+  return parseCandles(
+    rows.map((row) => [row[0] * 1000, row[1], row[2], row[3], row[4], row[6]]),
+    0
+  );
+};
+
 const BTC_TURK_RESOLUTION: Record<ChartInterval, string | number> = {
   "1m": 1,
   "5m": 5,
@@ -187,6 +224,8 @@ export default async function handler(
       candles = await fetchBitvavoCandles(market, interval);
     } else if (exchange === "btcTurk") {
       candles = await fetchBtcTurkCandles(base, quote, interval);
+    } else if (exchange === "kraken") {
+      candles = await fetchKrakenCandles(base, quote, interval);
     } else {
       res.status(400).json({ error: `Unsupported exchange: ${exchange}` });
       return;

@@ -3,6 +3,7 @@ import { activateTab } from "./helpers/dock";
 import {
   BINANCE_BTC_EUR_PATH,
   BITVAVO_BTC_EUR_PATH,
+  EXCHANGE_DEFAULT_MARKETS,
   gotoTradingMarket,
   waitForLiveTicker,
 } from "./helpers/app";
@@ -26,6 +27,16 @@ test.describe("UnifiedX trading shell", () => {
     await page.waitForURL(`**${BINANCE_BTC_EUR_PATH}`);
     await expect(page).toHaveURL(new RegExp(`${BINANCE_BTC_EUR_PATH}$`));
   });
+
+  for (const { exchange, path, pairLabel } of EXCHANGE_DEFAULT_MARKETS) {
+    test(`${exchange} loads default market with live ticker`, async ({ page }) => {
+      await gotoTradingMarket(page, path);
+      await expect(page.locator(".widget-subheader")).toContainText(pairLabel);
+      await waitForLiveTicker(page);
+      await activateTab(page, "order-book");
+      await expect(page.locator(".widget-order-book")).toBeVisible();
+    });
+  }
 
   test("market page shows pair ticker and live last price", async ({ page }) => {
     await gotoTradingMarket(page);

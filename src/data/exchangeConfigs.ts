@@ -10,9 +10,10 @@ import {
   loadMarkets as loadBtcTurkMarkets,
   useBtcTurkData,
 } from "./btcTurk/useBtcTurkData";
+import { loadMarkets as loadKrakenMarkets, useKrakenData } from "./kraken/useKrakenData";
 import type { ExchangeConfig } from "./types";
 
-export type ExchangeType = "binance" | "bitvavo" | "btcTurk";
+export type ExchangeType = "binance" | "bitvavo" | "btcTurk" | "kraken";
 
 export const exchangeConfigs: { [key in ExchangeType]: ExchangeConfig } = {
   binance: {
@@ -74,5 +75,19 @@ export const exchangeConfigs: { [key in ExchangeType]: ExchangeConfig } = {
       //   id: "private_key",
       // },
     ],
+  },
+  kraken: {
+    data: useKrakenData,
+    defaultMarket: {
+      base: {
+        symbol: "BTC",
+      },
+      quote: {
+        symbol: "EUR",
+      },
+    },
+    loadMarkets: loadKrakenMarkets,
+    wsStreaming: true,
+    neededCredentials: [],
   },
 };

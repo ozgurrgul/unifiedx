@@ -2,6 +2,15 @@ import type { Page } from "@playwright/test";
 
 export const BINANCE_BTC_EUR_PATH = "/binance/market/BTC-EUR";
 export const BITVAVO_BTC_EUR_PATH = "/bitvavo/market/BTC-EUR";
+export const BTC_TURK_BTC_TRY_PATH = "/btcTurk/market/BTC-TRY";
+export const KRAKEN_BTC_EUR_PATH = "/kraken/market/BTC-EUR";
+
+export const EXCHANGE_DEFAULT_MARKETS = [
+  { exchange: "binance", path: BINANCE_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
+  { exchange: "bitvavo", path: BITVAVO_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
+  { exchange: "btcTurk", path: BTC_TURK_BTC_TRY_PATH, pairLabel: "BTC/TRY" },
+  { exchange: "kraken", path: KRAKEN_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
+] as const;
 
 export async function gotoTradingMarket(
   page: Page,

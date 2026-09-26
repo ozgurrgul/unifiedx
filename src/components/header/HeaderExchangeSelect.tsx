@@ -4,17 +4,8 @@ import { ChevronDown } from "lucide-react";
 import { ExchangeLogo } from "@/components/ExchangeLogo";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { exchangeLabels } from "@/data/exchangeBranding";
-import { spotExchangeConfigs, type ExchangeType, type SpotExchangeType } from "@/data/exchangeConfigs";
-import { perpExchangeConfigs } from "@/data/perp/exchangeConfigs";
-import type { PerpSupportedExchange } from "@/data/perp/types";
+import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
 import { cn } from "@/lib/utils";
-
-const headerExchangeIds: ExchangeType[] = [
-  ...(Object.keys(spotExchangeConfigs) as SpotExchangeType[]),
-  ...(Object.keys(perpExchangeConfigs) as PerpSupportedExchange[]).filter(
-    (id) => !(id in spotExchangeConfigs)
-  ),
-];
 
 type HeaderExchangeSelectProps = {
   value?: ExchangeType | "";
@@ -43,7 +34,7 @@ export const HeaderExchangeSelect = ({ value, onSelect }: HeaderExchangeSelectPr
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-44 p-1">
-        {headerExchangeIds.map((ex) => (
+        {(Object.keys(exchangeConfigs) as ExchangeType[]).map((ex) => (
           <button
             key={ex}
             type="button"

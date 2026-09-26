@@ -3,9 +3,9 @@ import type {
   UseSpotExchangeDataInput,
   UseSpotExchangeDataOutput,
 } from "../spot/types";
-import type { PerpMarketsHashmap } from "@/types/lib";
+import type { SpotMarketsHashmap } from "@/types/lib";
 
-export type PerpSupportedExchange = "binance" | "helloTrade";
+export type PerpSupportedExchange = "binance";
 
 export type PerpExchangeConfig = {
   product: "perp";
@@ -14,7 +14,7 @@ export type PerpExchangeConfig = {
     quote: { symbol: string };
   };
   data: (input: UseSpotExchangeDataInput) => UseSpotExchangeDataOutput;
-  loadPerpMarkets: () => Promise<PerpMarketsHashmap>;
+  loadPerpMarkets: () => Promise<SpotMarketsHashmap>;
   wsStreaming: boolean;
   neededCredentials: ExchangeCredentialInput[];
 };

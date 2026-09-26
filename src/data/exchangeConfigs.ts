@@ -14,15 +14,11 @@ import {
   loadSpotMarkets as loadKrakenSpotMarkets,
   useKrakenData,
 } from "./kraken/useKrakenData";
-import { perpExchangeConfigs } from "./perp/exchangeConfigs";
 import type { SpotExchangeConfig } from "./spot/types";
 
-export type SpotExchangeType = "binance" | "bitvavo" | "btcTurk" | "kraken";
+export type ExchangeType = "binance" | "bitvavo" | "btcTurk" | "kraken";
 
-/** Spot venues plus perp-only integrations listed in the header. */
-export type ExchangeType = SpotExchangeType | "helloTrade";
-
-export const spotExchangeConfigs: { [key in SpotExchangeType]: SpotExchangeConfig } = {
+export const spotExchangeConfigs: { [key in ExchangeType]: SpotExchangeConfig } = {
   binance: {
     product: "spot",
     data: useBinanceData,
@@ -74,16 +70,3 @@ export const spotExchangeConfigs: { [key in SpotExchangeType]: SpotExchangeConfi
 
 /** Spot configs for all supported exchanges. */
 export const exchangeConfigs = spotExchangeConfigs;
-
-export function isPerpOnlyExchange(
-  exchange: ExchangeType
-): exchange is Exclude<keyof typeof perpExchangeConfigs, SpotExchangeType> {
-  return exchange in perpExchangeConfigs && !(exchange in spotExchangeConfigs);
-}
-
-export function neededCredentialsForExchange(exchange: ExchangeType) {
-  if (isPerpOnlyExchange(exchange)) {
-    return perpExchangeConfigs[exchange].neededCredentials;
-  }
-  return spotExchangeConfigs[exchange].neededCredentials;
-}

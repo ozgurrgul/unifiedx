@@ -25,21 +25,22 @@ export default function PerpMarketPage() {
     return <div className="p-4 text-sm">Perpetuals are not supported for {exchange}</div>;
   }
 
-  const exchangeScopeKey = `${exchange}-perp`;
+  const dataScopeKey = `${exchange}-perp-${perpMarketId}`;
 
   return (
     <TradingProductProvider product="perp">
       <ExchangeDataSettersContextProvider
-        key={exchangeScopeKey}
+        key={dataScopeKey}
         activeSpotMarketId={perpMarketId}
       >
         <ExchangeDataGettersContextTypeProvider
-          key={exchangeScopeKey}
+          key={dataScopeKey}
           activeExchange={exchange}
           activeSpotMarketId={perpMarketId}
         >
           <ExchangeGrid />
           <PerpExchangeDataLayerInitialization
+            key={exchange}
             activeExchange={exchange}
             activeSpotMarketId={perpMarketId}
           />

@@ -1,6 +1,6 @@
-export type MarketInstrument = {
+export type SpotMarket = {
   brandSymbol: string;
-  /** Canonical pair id, e.g. BTC-EUR (spot) or BTC-USDC (perp) */
+  /** Spot pair id, e.g. BTC-EUR */
   market: string;
   base: AssetConfig;
   quote: AssetConfig;
@@ -13,12 +13,6 @@ export type MarketInstrument = {
     };
   };
 };
-
-/** Spot pair metadata */
-export type SpotMarket = MarketInstrument;
-
-/** Perpetual contract metadata (collateral in quote, e.g. USDC) */
-export type PerpMarket = MarketInstrument;
 
 export type Price = {
   market: string;
@@ -95,7 +89,6 @@ export type Balance = {
 };
 
 export type SpotMarketsHashmap = Record<string, SpotMarket>;
-export type PerpMarketsHashmap = Record<string, PerpMarket>;
 export type PricesHashmap = Record<string, Price>;
 export type TickersHashmap = Record<string, Ticker>;
 export type TradesHashmap = Record<string, Trade[]>;

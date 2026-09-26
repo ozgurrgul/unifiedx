@@ -1,11 +1,6 @@
 import { useRouter } from "next/router";
 import { ExchangeRedirectToDefaultSpotMarket } from "@/components/ExchangeRedirectToDefaultSpotMarket";
-import {
-  type ExchangeType,
-  isPerpOnlyExchange,
-  spotExchangeConfigs,
-} from "@/data/exchangeConfigs";
-import { ExchangeRedirectToDefaultPerpMarket } from "@/components/ExchangeRedirectToDefaultPerpMarket";
+import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
 
 export default function ExchangePage() {
   const router = useRouter();
@@ -15,10 +10,6 @@ export default function ExchangePage() {
 
   if (!exchange) {
     return null;
-  }
-
-  if (isPerpOnlyExchange(exchange)) {
-    return <ExchangeRedirectToDefaultPerpMarket exchange={exchange} />;
   }
 
   const exchangeConfig = spotExchangeConfigs[exchange];

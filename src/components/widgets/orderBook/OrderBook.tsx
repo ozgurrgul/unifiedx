@@ -57,7 +57,7 @@ const BookRenderer: React.FC<BookProps> = ({ type, entries, total, base, quote }
 export const OrderBook: React.FC<Props> = ({ data }) => {
   const {
     getters: {
-      activeMarket: { base, quote },
+      activeSpotMarket: { base, quote },
     },
   } = useContext(ExchangeDataGettersContext);
 

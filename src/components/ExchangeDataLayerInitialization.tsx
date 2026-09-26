@@ -3,35 +3,35 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
-import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
 import { ExchangeDataLayer } from "./ExchangeDataLayer";
 
 type ExchangeDataLayerInitializationProps = {
   activeExchange: ExchangeType;
-  activeMarket: string;
+  activeSpotMarketId: string;
 };
 
 export const ExchangeDataLayerInitialization: React.FC<
   ExchangeDataLayerInitializationProps
-> = ({ activeExchange, activeMarket: activeMarketStr }) => {
+> = ({ activeExchange, activeSpotMarketId }) => {
   const [initialized, setInitialized] = useState(false);
   const { setters } = useContext(ExchangeDataSettersContext);
   const settersRef = useRef(setters);
   settersRef.current = setters;
   const {
     getters: {
-      activeMarket: { markets },
+      activeSpotMarket: { spotMarkets },
     },
   } = useContext(ExchangeDataGettersContext);
 
-  const exchangeConfig = exchangeConfigs[activeExchange];
-  const activeMarket = markets[activeMarketStr];
+  const exchangeConfig = spotExchangeConfigs[activeExchange];
+  const activeSpotMarket = spotMarkets[activeSpotMarketId];
 
   useEffect(() => {
     let cancelled = false;
     setInitialized(false);
     exchangeConfig
-      .loadMarkets()
+      .loadSpotMarkets()
       .then((r) => {
         if (!cancelled) {
           settersRef.current.setInitialMarkets(r);
@@ -52,14 +52,14 @@ export const ExchangeDataLayerInitialization: React.FC<
     return null;
   }
 
-  if (!activeMarket) {
+  if (!activeSpotMarket) {
     return null;
   }
 
   return (
     <ExchangeDataLayer
       activeExchange={activeExchange}
-      activeMarket={activeMarket}
+      activeSpotMarket={activeSpotMarket}
       exchangeConfig={exchangeConfig}
     />
   );

@@ -36,15 +36,15 @@ function useOrderSubmit() {
 function useOrderFormMarket() {
   const {
     getters: {
-      activeMarket: { balances, base, quote, market },
+      activeSpotMarket: { balances, base, quote, spotMarketId },
     },
   } = useContext(ExchangeDataGettersContext);
-  return { balances, base, quote, market };
+  return { balances, base, quote, spotMarketId };
 }
 
 export const MarketOrderFormPanel = () => {
   const onSubmit = useOrderSubmit();
-  const { balances, base, quote, market } = useOrderFormMarket();
+  const { balances, base, quote, spotMarketId } = useOrderFormMarket();
 
   return (
     <ExchangeWidget type="market-order">
@@ -55,7 +55,7 @@ export const MarketOrderFormPanel = () => {
             balance={balances[quote?.symbol]}
             asset={quote}
             baseAsset={base}
-            market={market}
+            market={spotMarketId}
             onSubmit={onSubmit}
           />
         </div>
@@ -65,7 +65,7 @@ export const MarketOrderFormPanel = () => {
             balance={balances[base?.symbol]}
             asset={base}
             baseAsset={base}
-            market={market}
+            market={spotMarketId}
             onSubmit={onSubmit}
           />
         </div>
@@ -76,7 +76,7 @@ export const MarketOrderFormPanel = () => {
 
 export const LimitOrderFormPanel = () => {
   const onSubmit = useOrderSubmit();
-  const { balances, base, quote, market } = useOrderFormMarket();
+  const { balances, base, quote, spotMarketId } = useOrderFormMarket();
 
   return (
     <ExchangeWidget type="limit-order">
@@ -87,7 +87,7 @@ export const LimitOrderFormPanel = () => {
             balance={balances[quote?.symbol]}
             asset={quote}
             baseAsset={base}
-            market={market}
+            market={spotMarketId}
             onSubmit={onSubmit}
           />
         </div>
@@ -97,7 +97,7 @@ export const LimitOrderFormPanel = () => {
             balance={balances[base?.symbol]}
             asset={base}
             baseAsset={base}
-            market={market}
+            market={spotMarketId}
             onSubmit={onSubmit}
           />
         </div>

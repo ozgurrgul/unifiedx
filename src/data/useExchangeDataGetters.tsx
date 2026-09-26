@@ -4,10 +4,10 @@ import type { ExchangeType } from "./exchangeConfigs";
 
 export const useExchangeDataGetters = ({
   activeExchange,
-  activeMarket,
+  activeSpotMarketId,
 }: {
   activeExchange: ExchangeType;
-  activeMarket: string;
+  activeSpotMarketId: string;
 }) => {
   const {
     setters: {
@@ -38,15 +38,15 @@ export const useExchangeDataGetters = ({
       isAuthenticated,
       marketsLoading,
     },
-    activeMarket: {
-      market: activeMarket,
-      base: markets[activeMarket]?.base,
-      quote: markets[activeMarket]?.quote,
-      ticker: tickers[activeMarket],
+    activeSpotMarket: {
+      spotMarketId: activeSpotMarketId,
+      base: markets[activeSpotMarketId]?.base,
+      quote: markets[activeSpotMarketId]?.quote,
+      ticker: tickers[activeSpotMarketId],
       trades,
       computedOrderBookData,
       allComputedOrderBookData,
-      markets,
+      spotMarkets: markets,
       prices,
       openOrders,
       cancellingOrderIds,

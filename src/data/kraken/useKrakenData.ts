@@ -4,15 +4,15 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
-  Market,
-  MarketsHashmap,
+  SpotMarket,
+  SpotMarketsHashmap,
   Order,
   Ticker,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
 import type {
   KrakenAssetPairsResponse,
   KrakenDepthResponse,
@@ -64,7 +64,7 @@ function assertKrakenOk<T extends { error: string[] }>(payload: T): T {
   return payload;
 }
 
-export const loadMarkets = (): Promise<MarketsHashmap> => {
+export const loadSpotMarkets = (): Promise<SpotMarketsHashmap> => {
   for (const key of Object.keys(krakenPairAliasToMarket)) {
     delete krakenPairAliasToMarket[key];
   }
@@ -73,7 +73,7 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
     .then((r) => r.json())
     .then((raw) => {
       const config = assertKrakenOk(raw as KrakenAssetPairsResponse);
-      const mappedMarkets: Market[] = [];
+      const mappedMarkets: SpotMarket[] = [];
 
       for (const [pairId, info] of Object.entries(config.result)) {
         if (info.status && info.status !== "online") {
@@ -133,9 +133,9 @@ const bookLevelsToEntries = (
   ]);
 };
 
-const getTrades = (activeMarket: Market) => {
+const getTrades = (activeSpotMarket: SpotMarket) => {
   return fetch(
-    `${KRAKEN_REST_BASE}/Trades?pair=${encodeURIComponent(activeMarket.brandSymbol)}&count=100`
+    `${KRAKEN_REST_BASE}/Trades?pair=${encodeURIComponent(activeSpotMarket.brandSymbol)}&count=100`
   )
     .then((r) => r.json())
     .then((raw) => {
@@ -147,7 +147,7 @@ const getTrades = (activeMarket: Market) => {
       }
 
       const mappedTrades: Trade[] = rows.map((row) => ({
-        market: activeMarket,
+        market: activeSpotMarket,
         amount: row[1],
         id: String(row[6]),
         price: row[0],
@@ -159,7 +159,7 @@ const getTrades = (activeMarket: Market) => {
     });
 };
 
-const getTickers = (markets: MarketsHashmap) => {
+const getTickers = (markets: SpotMarketsHashmap) => {
   return fetch(`${KRAKEN_REST_BASE}/Ticker`)
     .then((r) => r.json())
     .then((raw) => {
@@ -189,9 +189,9 @@ const getTickers = (markets: MarketsHashmap) => {
     });
 };
 
-const getBook = (activeMarket: Market) => {
+const getBook = (activeSpotMarket: SpotMarket) => {
   return fetch(
-    `${KRAKEN_REST_BASE}/Depth?pair=${encodeURIComponent(activeMarket.brandSymbol)}&count=100`
+    `${KRAKEN_REST_BASE}/Depth?pair=${encodeURIComponent(activeSpotMarket.brandSymbol)}&count=100`
   )
     .then((r) => r.json())
     .then((raw) => {
@@ -201,7 +201,7 @@ const getBook = (activeMarket: Market) => {
       const mappedBook: BookData = {
         asks: bookLevelsToEntries(book?.asks ?? []),
         bids: bookLevelsToEntries(book?.bids ?? []),
-        market: activeMarket,
+        market: activeSpotMarket,
       };
       return mappedBook;
     });
@@ -245,9 +245,9 @@ function unsubscribeKrakenMarket(sendJsonMessage: (msg: object) => void, symbol:
 }
 
 export const useKrakenData = ({
-  activeMarket,
+  activeSpotMarket,
   setters,
-}: UseExchangeDataInput): UseExchangeDataOutput => {
+}: UseSpotExchangeDataInput): UseSpotExchangeDataOutput => {
   const {
     setTickers,
     setInitialTrades,
@@ -266,9 +266,9 @@ export const useKrakenData = ({
     useWebSocket<KrakenWsMessage>(KRAKEN_WS_V2, {
       onOpen: () => {
         setConnected(true);
-        if (activeMarket.brandSymbol) {
-          subscribeKrakenMarket(sendJsonMessage, activeMarket.brandSymbol);
-          subscribedSymbolRef.current = activeMarket.brandSymbol;
+        if (activeSpotMarket.brandSymbol) {
+          subscribeKrakenMarket(sendJsonMessage, activeSpotMarket.brandSymbol);
+          subscribedSymbolRef.current = activeSpotMarket.brandSymbol;
         }
       },
       onError: () => {
@@ -285,7 +285,7 @@ export const useKrakenData = ({
       },
     });
 
-  const syncWsSubscription = (nextMarket: Market, previousMarket?: Market) => {
+  const syncWsSubscription = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (readyState !== ReadyState.OPEN) {
       return;
     }
@@ -300,7 +300,7 @@ export const useKrakenData = ({
     }
   };
 
-  const onMarketChange = (market: Market, previousMarket?: Market) => {
+  const onSpotMarketChange = (market: SpotMarket, previousMarket?: SpotMarket) => {
     syncWsSubscription(market, previousMarket);
     getTickers(markets).then(setTickers);
     getBook(market).then(setBookData);
@@ -318,14 +318,14 @@ export const useKrakenData = ({
 
     if (msg.channel === "trade" && msg.type === "update") {
       for (const row of msg.data) {
-        if (row.symbol !== activeMarket.brandSymbol) {
+        if (row.symbol !== activeSpotMarket.brandSymbol) {
           continue;
         }
         const mapped: Trade = {
           amount: String(row.qty),
           price: String(row.price),
           timestamp: Date.parse(row.timestamp),
-          market: activeMarket,
+          market: activeSpotMarket,
           id: row.trade_id,
           side: row.side,
         };
@@ -336,13 +336,13 @@ export const useKrakenData = ({
 
     if (msg.channel === "book" && (msg.type === "snapshot" || msg.type === "update")) {
       for (const row of msg.data) {
-        if (row.symbol !== activeMarket.brandSymbol) {
+        if (row.symbol !== activeSpotMarket.brandSymbol) {
           continue;
         }
         const mapped: BookData = {
           asks: bookLevelsToEntries(row.asks),
           bids: bookLevelsToEntries(row.bids),
-          market: activeMarket,
+          market: activeSpotMarket,
         };
         if (msg.type === "snapshot") {
           setBookData(mapped);
@@ -351,7 +351,7 @@ export const useKrakenData = ({
         }
       }
     }
-  }, [lastJsonMessage, activeMarket, addTrade, addBookData, setBookData]);
+  }, [lastJsonMessage, activeSpotMarket, addTrade, addBookData, setBookData]);
 
   const cancelOrder = (_order: Order) => {};
 
@@ -364,7 +364,7 @@ export const useKrakenData = ({
 
   return {
     readyState,
-    onMarketChange,
+    onSpotMarketChange,
     disconnect,
     mutations: {
       cancelOrder,

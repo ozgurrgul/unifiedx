@@ -14,13 +14,13 @@ import {
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
-import type { Market, MarketsHashmap } from "@/types/lib";
+import type { SpotMarket, SpotMarketsHashmap } from "@/types/lib";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Skeleton } from "../ui/skeleton";
 import { ExchangeWidget } from "./ExchangeWidget";
 
-const getUniqueMarketQuotes = (markets: MarketsHashmap) => {
+const getUniqueMarketQuotes = (markets: SpotMarketsHashmap) => {
   const quotes: string[] = [];
   const marketArray = Object.values(markets);
   marketArray.forEach((market) => {
@@ -81,13 +81,13 @@ export const MarketsWidget: React.FC = () => {
   const {
     getters: {
       activeExchange: { exchange, marketsLoading },
-      activeMarket: { market: activeMarket, markets, prices },
+      activeSpotMarket: { spotMarketId, spotMarkets, prices },
     },
   } = useContext(ExchangeDataGettersContext);
-  const { goToMarket } = useAppNavigation();
+  const { goToSpotMarket } = useAppNavigation();
 
   const [searchInputText, setSearchInputText] = useState("");
-  const marketQuoteSymbols = getUniqueMarketQuotes(markets);
+  const marketQuoteSymbols = getUniqueMarketQuotes(spotMarkets);
   const visibleMarketQuoteSymbols =
     marketQuoteSymbols.length > 5 ? marketQuoteSymbols.slice(0, 5) : marketQuoteSymbols;
 
@@ -100,7 +100,7 @@ export const MarketsWidget: React.FC = () => {
     }
   }, [JSON.stringify(visibleMarketQuoteSymbols)]);
 
-  const getMarketsByQuote = (_markets: Market[]) => {
+  const getMarketsByQuote = (_markets: SpotMarket[]) => {
     if (!viewingMarketQuote) {
       return _markets;
     }
@@ -109,7 +109,7 @@ export const MarketsWidget: React.FC = () => {
   };
 
   const getMarkets = () => {
-    const marketsArray = Object.values(markets);
+    const marketsArray = Object.values(spotMarkets);
     if (searchInputText) {
       const fuse = new Fuse(marketsArray, {
         distance: 100,
@@ -173,12 +173,12 @@ export const MarketsWidget: React.FC = () => {
     <>
       {getMarkets().map((market) => {
         const price = prices && prices[market.market]?.price;
-        const isActive = market.market === activeMarket;
+        const isActive = market.market === spotMarketId;
         return (
           <TableRow
             key={`${market.market}-${price}`}
             onClick={() => {
-              goToMarket(exchange, market.base.symbol, market.quote.symbol);
+              goToSpotMarket(exchange, market.base.symbol, market.quote.symbol);
             }}
             className={cn("cursor-pointer transition-colors", {
               "row-active-market font-semibold": isActive,

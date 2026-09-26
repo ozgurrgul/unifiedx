@@ -5,23 +5,23 @@ import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
 import { ExchangeDataSettersContext } from "@/data/ExchangeDataSettersContext";
 import type { ExchangeType } from "@/data/exchangeConfigs";
-import type { ExchangeConfig } from "@/data/types";
-import type { Market } from "@/types/lib";
+import type { SpotExchangeConfig } from "@/data/types";
+import type { SpotMarket } from "@/types/lib";
 import { $bus, BusEvent } from "./ExchangeBus";
 
 type ExchangeDataLayerProps = {
   activeExchange: ExchangeType;
-  activeMarket: Market;
-  exchangeConfig: ExchangeConfig;
+  activeSpotMarket: SpotMarket;
+  exchangeConfig: SpotExchangeConfig;
 };
 
 export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
   activeExchange,
-  activeMarket,
+  activeSpotMarket,
   exchangeConfig,
 }) => {
   const { setters } = useContext(ExchangeDataSettersContext);
-  const previousMarket = usePrevious(activeMarket);
+  const previousMarket = usePrevious(activeSpotMarket);
   const credentials: Record<string, string> = exchangeConfig.neededCredentials.reduce(
     (acc, cur) => {
       return {
@@ -35,26 +35,26 @@ export const ExchangeDataLayer: React.FC<ExchangeDataLayerProps> = ({
     Object.values(credentials).filter((r: string) => r.length).length > 0;
 
   const {
-    onMarketChange,
+    onSpotMarketChange,
     mutations: { cancelOrder, createOrder },
   } = exchangeConfig.data({
-    activeMarket,
+    activeSpotMarket,
     setters,
     credentials,
     isCredentialsProvided,
   });
 
   useEffect(() => {
-    if (activeMarket && activeMarket.market && !previousMarket) {
-      onMarketChange(activeMarket);
+    if (activeSpotMarket && activeSpotMarket.market && !previousMarket) {
+      onSpotMarketChange(activeSpotMarket);
     } else if (
-      activeMarket &&
+      activeSpotMarket &&
       previousMarket &&
-      previousMarket.market !== activeMarket.market
+      previousMarket.market !== activeSpotMarket.market
     ) {
-      onMarketChange(activeMarket, previousMarket);
+      onSpotMarketChange(activeSpotMarket, previousMarket);
     }
-  }, [activeMarket, previousMarket]);
+  }, [activeSpotMarket, previousMarket]);
 
   useEffect(() => {
     $bus.on(BusEvent.CancelOrder, cancelOrder);

@@ -144,7 +144,7 @@ function AccountGatedOrdersBody({
 export const BaseOpenOrdersPanel = () => {
   const {
     getters: {
-      activeMarket: { base, openOrders, cancellingOrderIds },
+      activeSpotMarket: { base, openOrders, cancellingOrderIds },
     },
   } = useContext(ExchangeDataGettersContext);
   const { cancelOrder, onClickMarket } = useOrdersActions();
@@ -168,7 +168,7 @@ export const BaseOpenOrdersPanel = () => {
 export const AllOpenOrdersPanel = () => {
   const {
     getters: {
-      activeMarket: { openOrders, cancellingOrderIds },
+      activeSpotMarket: { openOrders, cancellingOrderIds },
     },
   } = useContext(ExchangeDataGettersContext);
   const { cancelOrder, onClickMarket } = useOrdersActions();
@@ -190,7 +190,7 @@ export const AllOpenOrdersPanel = () => {
 export const OrderHistoryPanel = () => {
   const {
     getters: {
-      activeMarket: { pastOrders },
+      activeSpotMarket: { pastOrders },
     },
   } = useContext(ExchangeDataGettersContext);
   const { onClickMarket } = useOrdersActions();

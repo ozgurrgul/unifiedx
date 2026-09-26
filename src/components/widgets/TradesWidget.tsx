@@ -28,7 +28,7 @@ function formatTradeTimestamp(timestamp: number): string {
 export const TradesWidget: React.FC = () => {
   const {
     getters: {
-      activeMarket: { trades, base, quote, initialTradesLoading },
+      activeSpotMarket: { trades, base, quote, initialTradesLoading },
     },
   } = useContext(ExchangeDataGettersContext);
   const header = (

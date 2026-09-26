@@ -39,7 +39,7 @@ export const CandlestickChart = () => {
   const {
     getters: {
       activeExchange: { exchange },
-      activeMarket: { market, base, quote, trades },
+      activeSpotMarket: { spotMarketId, base, quote, trades },
     },
   } = useContext(ExchangeDataGettersContext);
 
@@ -118,7 +118,7 @@ export const CandlestickChart = () => {
 
   // Load candles when market or interval changes
   useEffect(() => {
-    if (!exchange || !market || !base?.symbol || !quote?.symbol) return;
+    if (!exchange || !spotMarketId || !base?.symbol || !quote?.symbol) return;
 
     let cancelled = false;
     setLoading(true);
@@ -127,7 +127,7 @@ export const CandlestickChart = () => {
 
     fetchCandles({
       exchange,
-      market,
+      market: spotMarketId,
       base: base.symbol,
       quote: quote.symbol,
       brandSymbol: "",
@@ -149,7 +149,7 @@ export const CandlestickChart = () => {
     return () => {
       cancelled = true;
     };
-  }, [exchange, market, base?.symbol, quote?.symbol, interval]);
+  }, [exchange, spotMarketId, base?.symbol, quote?.symbol, interval]);
 
   // Live update from latest trade
   useEffect(() => {

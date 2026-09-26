@@ -1,9 +1,10 @@
+
 import { useEffect, useRef, useState } from "react";
 import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
 import type {
   BalancesHashmap,
   BookData,
-  MarketsHashmap,
+  SpotMarketsHashmap,
   Order,
   PricesHashmap,
   TickersHashmap,
@@ -12,17 +13,17 @@ import type {
 import type { BookWorkerPayload } from "../../workers/BookWorkerTypes";
 import { MAX_TRADES_BUFFER } from "./constants";
 
-export type UseExchangeDataSettersInput = {
-  activeMarket: string;
+export type UseSpotExchangeDataSettersInput = {
+  activeSpotMarketId: string;
 };
 
 export const useExchangeDataSetters = ({
-  activeMarket,
-}: UseExchangeDataSettersInput) => {
+  activeSpotMarketId,
+}: UseSpotExchangeDataSettersInput) => {
   const workerRef = useRef<Worker>();
   const [connected, setConnected] = useState<boolean>(false);
   const [marketsLoading, setMarketsLoading] = useState(true);
-  const [markets, setMarkets] = useState<MarketsHashmap>({});
+  const [markets, setMarkets] = useState<SpotMarketsHashmap>({});
   const [prices, setPrices] = useState<PricesHashmap>({});
   const [tickers, _setTickers] = useState<TickersHashmap>({});
 
@@ -40,7 +41,7 @@ export const useExchangeDataSetters = ({
   const [allComputedOrderBookData, setAllComputedOrderBookData] =
     useState<ComputedOrderBookData>();
 
-  const [cancellingOrderIds, _setCancellingOrderIds] = useState<string[]>([]);
+  const [cancellingOrderIds, setCancellingOrderIdsState] = useState<string[]>([]);
 
   const [error, setError] = useState<{ error: string }>();
   const [isAuthenticated, setAuthenticated] = useState<"no" | "loading" | "yes">("no");
@@ -83,7 +84,7 @@ export const useExchangeDataSetters = ({
   };
 
   const addTrade = (trade: Trade) => {
-    if (trade.market.market !== activeMarket) {
+    if (trade.market.market !== activeSpotMarketId) {
       return;
     }
     setTrades((prev) => [trade, ...prev].slice(0, MAX_TRADES_BUFFER));
@@ -95,26 +96,26 @@ export const useExchangeDataSetters = ({
   };
 
   const setBookData = (data: BookData) => {
-    if (data.market.market !== activeMarket) {
+    if (data.market.market !== activeSpotMarketId) {
       return;
     }
     workerRef.current?.postMessage({
       type: "snapshot",
       bookData: data,
       visibleRows: visibleOrderBookRows,
-      quoteAssetPrecision: markets[activeMarket]?.quote.precision,
+      quoteAssetPrecision: markets[activeSpotMarketId]?.quote.precision,
     } satisfies BookWorkerPayload);
   };
 
   const addBookData = (data: BookData) => {
-    if (data.market.market !== activeMarket) {
+    if (data.market.market !== activeSpotMarketId) {
       return;
     }
     workerRef.current?.postMessage({
       type: "update",
       bookData: data,
       visibleRows: visibleOrderBookRows,
-      quoteAssetPrecision: markets[activeMarket]?.quote.precision,
+      quoteAssetPrecision: markets[activeSpotMarketId]?.quote.precision,
     } satisfies BookWorkerPayload);
   };
 
@@ -123,14 +124,14 @@ export const useExchangeDataSetters = ({
   };
 
   const addCancellingOrderIds = (ids: string[]) => {
-    _setCancellingOrderIds((prev) => [...prev, ...ids]);
+    setCancellingOrderIdsState((prev) => [...prev, ...ids]);
   };
 
   const removeCancellingOrderIds = (ids: string[]) => {
-    _setCancellingOrderIds((prev) => prev.filter((id) => !ids.includes(id)));
+    setCancellingOrderIdsState((prev) => prev.filter((id) => !ids.includes(id)));
   };
 
-  const setInitialMarkets = (markets: MarketsHashmap) => {
+  const setInitialMarkets = (markets: SpotMarketsHashmap) => {
     setMarkets(markets);
     setMarketsLoading(false);
   };
@@ -152,7 +153,6 @@ export const useExchangeDataSetters = ({
     initialTradesLoading,
     orderBookLoading,
     marketsLoading,
-    // TODO: order by time
     setInitialTrades,
     setInitialMarkets,
     setPrices,

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { ExchangeRedirectToDefaultMarket } from "@/components/ExchangeRedirectToDefaultMarket";
-import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { ExchangeRedirectToDefaultSpotMarket } from "@/components/ExchangeRedirectToDefaultSpotMarket";
+import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
 
 export default function ExchangePage() {
   const router = useRouter();
@@ -12,11 +12,11 @@ export default function ExchangePage() {
     return null;
   }
 
-  const exchangeConfig = exchangeConfigs[exchange];
+  const exchangeConfig = spotExchangeConfigs[exchange];
 
   if (!exchangeConfig) {
     return <div>Exchange is not configured {exchange}</div>;
   }
 
-  return <ExchangeRedirectToDefaultMarket exchange={exchange} />;
+  return <ExchangeRedirectToDefaultSpotMarket exchange={exchange} />;
 }

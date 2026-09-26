@@ -1,26 +1,42 @@
 import { useRouter } from "next/router";
-import { type ExchangeType, exchangeConfigs } from "@/data/exchangeConfigs";
+import { type ExchangeType, spotExchangeConfigs } from "@/data/exchangeConfigs";
+import { spotMarketIdFromSymbols, spotMarketPath } from "@/types/product";
 
 export const useAppNavigation = () => {
   const router = useRouter();
 
   const goToExchange = (exchange: ExchangeType) => {
-    const { defaultMarket } = exchangeConfigs[exchange];
+    const { defaultSpotMarket } = spotExchangeConfigs[exchange];
     router.push(
-      `/${exchange}/market/${defaultMarket.base.symbol}-${defaultMarket.quote.symbol}`
+      spotMarketPath(
+        exchange,
+        spotMarketIdFromSymbols(
+          defaultSpotMarket.base.symbol,
+          defaultSpotMarket.quote.symbol
+        )
+      )
     );
   };
 
-  const goToMarket = (
+  const goToSpotMarket = (
     exchange: ExchangeType,
     baseAssetSymbol: string,
     quoteAssetSymbol: string
   ) => {
-    router.push(`/${exchange}/market/${baseAssetSymbol}-${quoteAssetSymbol}`);
+    router.push(
+      spotMarketPath(
+        exchange,
+        spotMarketIdFromSymbols(baseAssetSymbol, quoteAssetSymbol)
+      )
+    );
   };
+
+  /** @deprecated Use goToSpotMarket */
+  const goToMarket = goToSpotMarket;
 
   return {
     goToExchange,
+    goToSpotMarket,
     goToMarket,
   };
 };

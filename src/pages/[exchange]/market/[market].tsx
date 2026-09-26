@@ -1,41 +1,19 @@
 import { useRouter } from "next/router";
-import { ExchangeDataLayerInitialization } from "@/components/ExchangeDataLayerInitialization";
-import { ExchangeGrid } from "@/components/ExchangeGrid";
-import { Toaster } from "@/components/ui/toaster";
-import { ExchangeDataGettersContextTypeProvider } from "@/data/ExchangeDataGettersContext";
-import { ExchangeDataSettersContextProvider } from "@/data/ExchangeDataSettersContext";
-import type { ExchangeType } from "@/data/exchangeConfigs";
+import { useEffect } from "react";
+import { spotMarketPath } from "@/types/product";
 
-export default function MarketPage() {
+/** Legacy spot URL → canonical /{exchange}/spot/market/{spotMarketId} */
+export default function LegacySpotMarketRedirectPage() {
   const router = useRouter();
-  const exchange = router.query.exchange
-    ? (String(router.query.exchange) as ExchangeType)
-    : undefined;
-  const market = router.query.market ? String(router.query.market) : undefined;
+  const exchange = router.query.exchange ? String(router.query.exchange) : undefined;
+  const spotMarketId = router.query.market ? String(router.query.market) : undefined;
 
-  if (!exchange || !market) {
-    return null;
-  }
+  useEffect(() => {
+    if (!exchange || !spotMarketId || !router.isReady) {
+      return;
+    }
+    router.replace(spotMarketPath(exchange, spotMarketId));
+  }, [exchange, router, router.isReady, spotMarketId]);
 
-  const dataScopeKey = `${exchange}-${market}`;
-
-  return (
-    <ExchangeDataSettersContextProvider key={dataScopeKey} activeMarket={market}>
-      {market && (
-        <ExchangeDataGettersContextTypeProvider
-          key={dataScopeKey}
-          activeExchange={exchange as ExchangeType}
-          activeMarket={market}
-        >
-          <ExchangeGrid />
-          <ExchangeDataLayerInitialization
-            key={exchange}
-            activeExchange={exchange}
-            activeMarket={market}
-          />
-        </ExchangeDataGettersContextTypeProvider>
-      )}
-      <Toaster />
-    </ExchangeDataSettersContextProvider>
-  );
+  return null;
 }

@@ -1,6 +1,6 @@
-import type { Market } from "@/types/lib";
+import type { SpotMarket } from "@/types/lib";
 
-export function bitvavoMarketId(market: Market): string {
+export function bitvavoMarketId(market: SpotMarket): string {
   return `${market.base.symbol}-${market.quote.symbol}`;
 }
 
@@ -16,14 +16,14 @@ function channelEntries(marketId: string) {
 }
 
 /** https://docs.bitvavo.com/docs/websocket-api/trades-subscription/ */
-export function subscribeBitvavoTrades(send: BitvavoWsSend, market: Market): void {
+export function subscribeBitvavoTrades(send: BitvavoWsSend, market: SpotMarket): void {
   send({
     action: "subscribe",
     channels: [{ name: "trades", markets: [bitvavoMarketId(market)] }],
   });
 }
 
-export function unsubscribeBitvavoTrades(send: BitvavoWsSend, market: Market): void {
+export function unsubscribeBitvavoTrades(send: BitvavoWsSend, market: SpotMarket): void {
   send({
     action: "unsubscribe",
     channels: [{ name: "trades", markets: [bitvavoMarketId(market)] }],
@@ -32,8 +32,8 @@ export function unsubscribeBitvavoTrades(send: BitvavoWsSend, market: Market): v
 
 export function syncBitvavoMarketStreams(
   send: BitvavoWsSend,
-  nextMarket: Market,
-  previousMarket?: Market
+  nextMarket: SpotMarket,
+  previousMarket?: SpotMarket
 ): void {
   if (previousMarket) {
     const prevId = bitvavoMarketId(previousMarket);

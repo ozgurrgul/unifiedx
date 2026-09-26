@@ -8,7 +8,7 @@ import { DOCK_PANEL_IDS } from "./defaultDockLayout";
 export function DockPanelTitleSync({ api }: { api: DockviewApi | null }) {
   const {
     getters: {
-      activeMarket: { base },
+      activeSpotMarket: { base },
     },
   } = useContext(ExchangeDataGettersContext);
 

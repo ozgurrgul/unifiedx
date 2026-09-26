@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import type { ComputedOrderBookData } from "@/components/widgets/orderBook/types";
 import {
-  UseExchangeDataSettersInput,
+  type UseSpotExchangeDataSettersInput,
   useExchangeDataSetters,
 } from "@/data/useExchangeDataSetters";
 
@@ -50,12 +50,12 @@ export const ExchangeDataSettersContext = createContext<ExchangeDataSettersConte
 
 export const ExchangeDataSettersContextProvider = ({
   children,
-  activeMarket,
+  activeSpotMarketId,
 }: {
   children: any;
-  activeMarket: string;
+  activeSpotMarketId: string;
 }) => {
-  const setters = useExchangeDataSetters({ activeMarket });
+  const setters = useExchangeDataSetters({ activeSpotMarketId });
 
   return (
     <ExchangeDataSettersContext.Provider value={{ setters }}>
@@ -63,3 +63,5 @@ export const ExchangeDataSettersContextProvider = ({
     </ExchangeDataSettersContext.Provider>
   );
 };
+
+export type { UseSpotExchangeDataSettersInput };

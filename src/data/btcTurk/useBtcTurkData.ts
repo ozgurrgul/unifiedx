@@ -4,8 +4,8 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
-  Market,
-  MarketsHashmap,
+  SpotMarket,
+  SpotMarketsHashmap,
   Order,
   Ticker,
   TickersHashmap,
@@ -16,7 +16,7 @@ import {
   DEFAULT_QUOTE_ASSET_PRECISION,
 } from "../constants";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
 import type {
   BtcTurkBook,
   BtcTurkCurrency,
@@ -42,7 +42,7 @@ function arrayToHashmapByMarket<T extends { market: string }>(
   return dict;
 }
 
-export const loadMarkets = (): Promise<MarketsHashmap> => {
+export const loadSpotMarkets = (): Promise<SpotMarketsHashmap> => {
   return fetch(`/api/gateway/btcTurk`, {
     method: "POST",
     body: JSON.stringify({ type: "/server/exchangeInfo" }),
@@ -59,7 +59,7 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
         };
       } = r;
 
-      const mappedMarkets: MarketsHashmap = arrayToHashmapByMarket(
+      const mappedMarkets: SpotMarketsHashmap = arrayToHashmapByMarket(
         config.data.symbols
           .filter((p) => p.status === "TRADING")
           .map((p) => {
@@ -69,7 +69,7 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
             const quoteCurrency = config.data.currencies.find(
               (r) => r.symbol === p.denominator
             );
-            const market: Market = {
+            const market: SpotMarket = {
               market: `${p.numerator}-${p.denominator}`,
               brandSymbol: p.nameNormalized,
               base: {
@@ -97,13 +97,13 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
     });
 };
 
-const getTrades = (activeMarket: Market) => {
+const getTrades = (activeSpotMarket: SpotMarket) => {
   return fetch(`/api/gateway/btcTurk`, {
     method: "POST",
     body: JSON.stringify({
       type: "/trades",
       extra: {
-        market: `${activeMarket.base.symbol}${activeMarket.quote.symbol}`,
+        market: `${activeSpotMarket.base.symbol}${activeSpotMarket.quote.symbol}`,
       },
     }),
     headers: {
@@ -119,7 +119,7 @@ const getTrades = (activeMarket: Market) => {
       }
       const mappedTrades: Trade[] = config.map((p) => {
         const trade: Trade = {
-          market: activeMarket,
+          market: activeSpotMarket,
           amount: p.amount,
           id: `${p.tid}-${p.date}`,
           price: p.price,
@@ -132,7 +132,7 @@ const getTrades = (activeMarket: Market) => {
     });
 };
 
-const getTickers = (markets: MarketsHashmap) => {
+const getTickers = (markets: SpotMarketsHashmap) => {
   return fetch(`/api/gateway/btcTurk`, {
     method: "POST",
     body: JSON.stringify({
@@ -177,13 +177,13 @@ const getTickers = (markets: MarketsHashmap) => {
     });
 };
 
-const getBook = (activeMarket: Market) => {
+const getBook = (activeSpotMarket: SpotMarket) => {
   return fetch(`/api/gateway/btcTurk`, {
     method: "POST",
     body: JSON.stringify({
       type: "/orderbook",
       extra: {
-        market: `${activeMarket.base.symbol}${activeMarket.quote.symbol}`,
+        market: `${activeSpotMarket.base.symbol}${activeSpotMarket.quote.symbol}`,
       },
     }),
     headers: {
@@ -197,18 +197,18 @@ const getBook = (activeMarket: Market) => {
       const mappedBook: BookData = {
         asks: config.asks,
         bids: config.bids,
-        market: activeMarket,
+        market: activeSpotMarket,
       };
       return mappedBook;
     });
 };
 
 export const useBtcTurkData = ({
-  activeMarket,
+  activeSpotMarket,
   setters,
   isCredentialsProvided,
   credentials,
-}: UseExchangeDataInput): UseExchangeDataOutput => {
+}: UseSpotExchangeDataInput): UseSpotExchangeDataOutput => {
   const {
     setPrices,
     setTickers,
@@ -227,8 +227,8 @@ export const useBtcTurkData = ({
 
   const syncBtcTurkSubscriptions = (
     sendMessage: (msg: string) => void,
-    nextMarket: Market,
-    previousMarket?: Market
+    nextMarket: SpotMarket,
+    previousMarket?: SpotMarket
   ) => {
     if (previousMarket) {
       const prevEvent = btcTurkPairEvent(previousMarket);
@@ -247,7 +247,7 @@ export const useBtcTurkData = ({
     {
       onOpen: () => {
         setConnected(true);
-        syncBtcTurkSubscriptions(sendMessage, activeMarket);
+        syncBtcTurkSubscriptions(sendMessage, activeSpotMarket);
       },
       onError: () => {
         setConnected(false);
@@ -262,7 +262,7 @@ export const useBtcTurkData = ({
       },
     });
 
-  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+  const onSpotMarketChange = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (nextMarket) {
       getTickers(markets).then(setTickers);
       getBook(nextMarket).then(setBookData);
@@ -294,7 +294,7 @@ export const useBtcTurkData = ({
       const items =
         "items" in payload && Array.isArray(payload.items) ? payload.items : [];
       if (items.length > 0) {
-        setInitialTrades(items.map((row) => mapBtcTurkWsTrade(row, activeMarket)));
+        setInitialTrades(items.map((row) => mapBtcTurkWsTrade(row, activeSpotMarket)));
       }
       return;
     }
@@ -306,13 +306,13 @@ export const useBtcTurkData = ({
       "P" in payload &&
       "A" in payload
     ) {
-      addTrade(mapBtcTurkWsTrade(payload as BtcTurkWsTradeSingle, activeMarket));
+      addTrade(mapBtcTurkWsTrade(payload as BtcTurkWsTradeSingle, activeSpotMarket));
       return;
     }
 
     if (code === 431 && payload && typeof payload === "object" && "AO" in payload) {
       setBookData({
-        market: activeMarket,
+        market: activeSpotMarket,
         asks: payload.AO.map((row) => [row.P, row.A]),
         bids: payload.BO.map((row) => [row.P, row.A]),
       });
@@ -324,12 +324,12 @@ export const useBtcTurkData = ({
         rows.map((row) => [row.P, row.CP === 3 ? "0" : row.A] as [string, string]);
 
       addBookData({
-        market: activeMarket,
+        market: activeSpotMarket,
         asks: mapDiffSide(payload.AO),
         bids: mapDiffSide(payload.BO),
       });
     }
-  }, [lastJsonMessage, activeMarket, addTrade, setBookData, addBookData, setInitialTrades]);
+  }, [lastJsonMessage, activeSpotMarket, addTrade, setBookData, addBookData, setInitialTrades]);
 
   const cancelOrder = (order: Order) => {};
 
@@ -342,7 +342,7 @@ export const useBtcTurkData = ({
 
   return {
     readyState,
-    onMarketChange,
+    onSpotMarketChange,
     disconnect,
     mutations: {
       cancelOrder,

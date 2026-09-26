@@ -10,7 +10,7 @@ export const SubHeader = () => {
   const {
     getters: {
       activeExchange: { exchange },
-      activeMarket: { ticker, base, quote },
+      activeSpotMarket: { ticker, base, quote },
     },
   } = useContext(ExchangeDataGettersContext);
 

@@ -18,8 +18,8 @@ export const ExchangeDataGettersContext = createContext<ExchangeDataGettersConte
         isAuthenticated: "no",
         marketsLoading: false,
       },
-      activeMarket: {
-        market: "",
+      activeSpotMarket: {
+        spotMarketId: "",
         base: {
           symbol: "",
           precision: 0,
@@ -32,7 +32,7 @@ export const ExchangeDataGettersContext = createContext<ExchangeDataGettersConte
         trades: [],
         computedOrderBookData: {} as ComputedOrderBookData,
         allComputedOrderBookData: {} as ComputedOrderBookData,
-        markets: {},
+        spotMarkets: {},
         prices: {},
         openOrders: [],
         cancellingOrderIds: [],
@@ -46,15 +46,15 @@ export const ExchangeDataGettersContext = createContext<ExchangeDataGettersConte
 );
 
 export const ExchangeDataGettersContextTypeProvider = ({
-  activeMarket,
+  activeSpotMarketId,
   activeExchange,
   children,
 }: {
   activeExchange: ExchangeType;
-  activeMarket: string;
+  activeSpotMarketId: string;
   children: any;
 }) => {
-  const getters = useExchangeDataGetters({ activeMarket, activeExchange });
+  const getters = useExchangeDataGetters({ activeSpotMarketId, activeExchange });
 
   return (
     <ExchangeDataGettersContext.Provider value={{ getters }}>

@@ -9,7 +9,7 @@ import { OrderBook } from "./OrderBook";
 export const OrderBookWidget: React.FC = () => {
   const {
     getters: {
-      activeMarket: { computedOrderBookData, base, quote, orderBookLoading },
+      activeSpotMarket: { computedOrderBookData, base, quote, orderBookLoading },
     },
   } = useContext(ExchangeDataGettersContext);
 

@@ -1,7 +1,7 @@
-import type { Market, Trade } from "@/types/lib";
+import type { SpotMarket, Trade } from "@/types/lib";
 import type { BtcTurkWsTradeSingle } from "./types";
 
-export function btcTurkPairEvent(market: Market): string {
+export function btcTurkPairEvent(market: SpotMarket): string {
   return `${market.base.symbol}${market.quote.symbol}`.toUpperCase();
 }
 
@@ -21,7 +21,7 @@ export function btcTurkSubscriptionMessage(
   ]);
 }
 
-export function mapBtcTurkWsTrade(row: BtcTurkWsTradeSingle, market: Market): Trade {
+export function mapBtcTurkWsTrade(row: BtcTurkWsTradeSingle, market: SpotMarket): Trade {
   return {
     id: row.I,
     price: row.P,

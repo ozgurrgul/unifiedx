@@ -11,14 +11,14 @@ import type {
 import type {
   BalancesHashmap,
   CreateOrderPayload,
-  Market,
-  MarketsHashmap,
+  SpotMarket,
+  SpotMarketsHashmap,
   Order,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
 import { bitvavoMarketId, syncBitvavoMarketStreams } from "./ws";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
@@ -31,7 +31,7 @@ function arrayToHashmapByMarket<T extends { market: string }>(
   return dict;
 }
 
-export const loadMarkets = (): Promise<MarketsHashmap> => {
+export const loadSpotMarkets = (): Promise<SpotMarketsHashmap> => {
   return fetch("https://api.bitvavo.com/v2/markets")
     .then((r) => r.json())
     .then((r) => {
@@ -61,18 +61,18 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
                   active: p.orderTypes.includes("limit"),
                 },
               },
-            } satisfies Market;
+            } satisfies SpotMarket;
           })
       );
     });
 };
 
 export const useBitvavoData = ({
-  activeMarket,
+  activeSpotMarket,
   setters,
   isCredentialsProvided,
   credentials,
-}: UseExchangeDataInput): UseExchangeDataOutput => {
+}: UseSpotExchangeDataInput): UseSpotExchangeDataOutput => {
   const {
     setPrices,
     setTickers,
@@ -98,8 +98,8 @@ export const useBitvavoData = ({
       onOpen: () => {
         setConnected(true);
         sendJsonMessage({ action: "getTickerPrice" });
-        syncBitvavoMarketStreams(sendJsonMessage, activeMarket);
-        subscribedMarketRef.current = bitvavoMarketId(activeMarket);
+        syncBitvavoMarketStreams(sendJsonMessage, activeSpotMarket);
+        subscribedMarketRef.current = bitvavoMarketId(activeSpotMarket);
 
         if (isCredentialsProvided && credentials) {
           const time = new Date().getTime();
@@ -131,7 +131,7 @@ export const useBitvavoData = ({
       },
     });
 
-  const subscribeAccountChannel = (market: Market) => {
+  const subscribeAccountChannel = (market: SpotMarket) => {
     sendJsonMessage({
       action: "subscribe",
       channels: [
@@ -287,7 +287,7 @@ export const useBitvavoData = ({
     }
   };
 
-  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+  const onSpotMarketChange = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (readyState === ReadyState.OPEN) {
       syncBitvavoMarketStreams(sendJsonMessage, nextMarket, previousMarket);
       subscribedMarketRef.current = bitvavoMarketId(nextMarket);
@@ -306,13 +306,13 @@ export const useBitvavoData = ({
     if (readyState !== ReadyState.OPEN) {
       return;
     }
-    const marketId = bitvavoMarketId(activeMarket);
+    const marketId = bitvavoMarketId(activeSpotMarket);
     if (subscribedMarketRef.current === marketId) {
       return;
     }
-    syncBitvavoMarketStreams(sendJsonMessage, activeMarket);
+    syncBitvavoMarketStreams(sendJsonMessage, activeSpotMarket);
     subscribedMarketRef.current = marketId;
-  }, [readyState, activeMarket, sendJsonMessage]);
+  }, [readyState, activeSpotMarket, sendJsonMessage]);
 
   useEffect(() => {
     if (!lastJsonMessage) {
@@ -330,7 +330,7 @@ export const useBitvavoData = ({
               price: r.price,
               amount: r.amount,
               timestamp: r.timestamp,
-              market: activeMarket,
+              market: activeSpotMarket,
               side: r.side,
             }) satisfies Trade
         )
@@ -339,7 +339,7 @@ export const useBitvavoData = ({
       setBookData({
         asks: msg.response.asks,
         bids: msg.response.bids,
-        market: activeMarket,
+        market: activeSpotMarket,
       });
     } else if ("event" in msg && msg.event === "ticker24h") {
       const tickers: TickersHashmap = {};
@@ -354,7 +354,7 @@ export const useBitvavoData = ({
       }
       setTickers(tickers);
     } else if ("event" in msg && msg.event === "trade") {
-      if (msg.market !== bitvavoMarketId(activeMarket)) {
+      if (msg.market !== bitvavoMarketId(activeSpotMarket)) {
         return;
       }
       addTrade({
@@ -362,18 +362,18 @@ export const useBitvavoData = ({
         price: msg.price,
         amount: msg.amount,
         timestamp: msg.timestamp,
-        market: activeMarket,
+        market: activeSpotMarket,
         side: msg.side,
       });
     } else if ("event" in msg && msg.event === "book") {
       addBookData({
         bids: msg.bids,
         asks: msg.asks,
-        market: activeMarket,
+        market: activeSpotMarket,
       });
     } else if ("event" in msg && msg.event === "authenticate") {
       if (msg.authenticated) {
-        subscribeAccountChannel(activeMarket);
+        subscribeAccountChannel(activeSpotMarket);
         setAuthenticated("yes");
       } else {
         setAuthenticated("no");
@@ -384,12 +384,12 @@ export const useBitvavoData = ({
       setTimeout(() => {
         getOpenOrders().then(setOpenOrders);
         getBalances().then(setBalances);
-        getPastOrders(`${activeMarket.base.symbol}-${activeMarket.quote.symbol}`).then(
+        getPastOrders(`${activeSpotMarket.base.symbol}-${activeSpotMarket.quote.symbol}`).then(
           setPastOrders
         );
       }, 1000);
     }
-  }, [lastJsonMessage, activeMarket]);
+  }, [lastJsonMessage, activeSpotMarket]);
 
   const cancelOrder = (order: Order) => {
     addCancellingOrderIds([order.id]);
@@ -452,7 +452,7 @@ export const useBitvavoData = ({
 
   return {
     readyState,
-    onMarketChange,
+    onSpotMarketChange,
     disconnect,
     mutations: {
       cancelOrder,

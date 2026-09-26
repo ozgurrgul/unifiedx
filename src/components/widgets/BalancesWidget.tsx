@@ -22,7 +22,7 @@ export const BalancesWidget: React.FC = () => {
   const { showSignInPrompt } = useAccountGatedContent();
   const {
     getters: {
-      activeMarket: { balances, base, quote },
+      activeSpotMarket: { balances, base, quote },
     },
   } = useContext(ExchangeDataGettersContext);
 

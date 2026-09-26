@@ -4,15 +4,15 @@ import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
-  Market,
-  MarketsHashmap,
+  SpotMarket,
+  SpotMarketsHashmap,
   Order,
   Ticker,
   TickersHashmap,
   Trade,
 } from "@/types/lib";
 import { useIgnoreWebSocketClose } from "../useIgnoreWebSocketClose";
-import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import type { UseSpotExchangeDataInput, UseSpotExchangeDataOutput } from "../types";
 import type {
   Binance24hTickerPrice,
   BinanceBookApiResponse,
@@ -35,7 +35,7 @@ function arrayToHashmapByMarket<T extends { market: string }>(
 
 const BINANCE_API_BASE_URL = "https://api.binance.com/api/v3";
 
-function getBinanceStreams(market: Market) {
+function getBinanceStreams(market: SpotMarket) {
   const symbol = `${market.base.symbol}${market.quote.symbol}`.toLowerCase();
   return {
     trade: `${symbol}@trade`,
@@ -43,7 +43,7 @@ function getBinanceStreams(market: Market) {
   };
 }
 
-export const loadMarkets = (): Promise<MarketsHashmap> => {
+export const loadSpotMarkets = (): Promise<SpotMarketsHashmap> => {
   return fetch(`${BINANCE_API_BASE_URL}/exchangeInfo`)
     .then((r) => r.json())
     .then((r) => {
@@ -51,11 +51,11 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
         symbols: BinanceMarket[];
       } = r;
 
-      const mappedMarkets: MarketsHashmap = arrayToHashmapByMarket(
+      const mappedMarkets: SpotMarketsHashmap = arrayToHashmapByMarket(
         config.symbols
           .filter((p) => p.status === "TRADING")
           .map((p) => {
-            const market: Market = {
+            const market: SpotMarket = {
               market: `${p.baseAsset}-${p.quoteAsset}`,
               brandSymbol: p.symbol,
               base: {
@@ -86,16 +86,16 @@ export const loadMarkets = (): Promise<MarketsHashmap> => {
     });
 };
 
-const getTrades = (activeMarket: Market) => {
+const getTrades = (activeSpotMarket: SpotMarket) => {
   return fetch(
-    `${BINANCE_API_BASE_URL}/trades?symbol=${activeMarket.base.symbol}${activeMarket.quote.symbol}`
+    `${BINANCE_API_BASE_URL}/trades?symbol=${activeSpotMarket.base.symbol}${activeSpotMarket.quote.symbol}`
   )
     .then((r) => r.json())
     .then((r) => {
       const config: BinanceTradeApi[] = r;
       const mappedTrades: Trade[] = config.map((p) => {
         const trade: Trade = {
-          market: activeMarket,
+          market: activeSpotMarket,
           amount: p.qty,
           id: p.id,
           price: p.price,
@@ -108,7 +108,7 @@ const getTrades = (activeMarket: Market) => {
     });
 };
 
-const getTickers = (markets: MarketsHashmap) => {
+const getTickers = (markets: SpotMarketsHashmap) => {
   return fetch(`${BINANCE_API_BASE_URL}/ticker/24hr`)
     .then((r) => r.json())
     .then((r) => {
@@ -142,9 +142,9 @@ const getTickers = (markets: MarketsHashmap) => {
     });
 };
 
-const getBook = (activeMarket: Market) => {
+const getBook = (activeSpotMarket: SpotMarket) => {
   return fetch(
-    `${BINANCE_API_BASE_URL}/depth?symbol=${activeMarket.base.symbol}${activeMarket.quote.symbol}`
+    `${BINANCE_API_BASE_URL}/depth?symbol=${activeSpotMarket.base.symbol}${activeSpotMarket.quote.symbol}`
   )
     .then((r) => r.json())
     .then((r) => {
@@ -152,18 +152,18 @@ const getBook = (activeMarket: Market) => {
       const mappedBook: BookData = {
         asks: config.asks,
         bids: config.bids,
-        market: activeMarket,
+        market: activeSpotMarket,
       };
       return mappedBook;
     });
 };
 
 export const useBinanceData = ({
-  activeMarket,
+  activeSpotMarket,
   setters,
   isCredentialsProvided,
   credentials,
-}: UseExchangeDataInput): UseExchangeDataOutput => {
+}: UseSpotExchangeDataInput): UseSpotExchangeDataOutput => {
   const {
     setPrices,
     setTickers,
@@ -181,7 +181,7 @@ export const useBinanceData = ({
   );
   const { markClosing, shouldIgnoreClose } = useIgnoreWebSocketClose();
 
-  const subscribeBinanceStreams = (market: Market) => {
+  const subscribeBinanceStreams = (market: SpotMarket) => {
     const streams = getBinanceStreams(market);
     sendJsonMessage({
       method: "SUBSCRIBE",
@@ -203,7 +203,7 @@ export const useBinanceData = ({
     useWebSocket<WsResponses>("wss://stream.binance.com:443/stream", {
       onOpen: () => {
         setConnected(true);
-        subscribeBinanceStreams(activeMarket);
+        subscribeBinanceStreams(activeSpotMarket);
       },
       onError: () => {
         setConnected(false);
@@ -218,7 +218,7 @@ export const useBinanceData = ({
       },
     });
 
-  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+  const onSpotMarketChange = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (nextMarket) {
       getTickers(markets).then(setTickers);
       getBook(nextMarket).then(setBookData);
@@ -240,7 +240,7 @@ export const useBinanceData = ({
       return;
     }
     const msg = lastJsonMessage;
-    const streams = getBinanceStreams(activeMarket);
+    const streams = getBinanceStreams(activeSpotMarket);
     // Handle trade
     if (msg.stream === streams.trade) {
       const data = msg.data as BinanceTradeWs["data"];
@@ -248,7 +248,7 @@ export const useBinanceData = ({
         amount: data.q,
         price: data.p,
         timestamp: data.E,
-        market: activeMarket,
+        market: activeSpotMarket,
         id: data.t,
         side: data.m ? "sell" : "buy",
       };
@@ -258,7 +258,7 @@ export const useBinanceData = ({
       const mapped: BookData = {
         asks: data.a,
         bids: data.b,
-        market: activeMarket,
+        market: activeSpotMarket,
       };
       addBookData(mapped);
     }
@@ -275,7 +275,7 @@ export const useBinanceData = ({
 
   return {
     readyState,
-    onMarketChange,
+    onSpotMarketChange,
     disconnect,
     mutations: {
       cancelOrder,

@@ -175,7 +175,7 @@ const buildChartOptions = ({
 export const DepthChart = () => {
   const {
     getters: {
-      activeMarket: {
+      activeSpotMarket: {
         allComputedOrderBookData: bookData,
         base,
         quote,

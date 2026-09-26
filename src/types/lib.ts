@@ -1,5 +1,6 @@
-export type Market = {
+export type SpotMarket = {
   brandSymbol: string;
+  /** Spot pair id, e.g. BTC-EUR */
   market: string;
   base: AssetConfig;
   quote: AssetConfig;
@@ -36,7 +37,7 @@ export type Trade = {
   side: "buy" | "sell";
   amount: string;
   timestamp: number;
-  market: Market;
+  market: SpotMarket;
 };
 
 export type Order = {
@@ -79,7 +80,7 @@ export type Balance = {
   inOrder: number;
 };
 
-export type MarketsHashmap = Record<string, Market>;
+export type SpotMarketsHashmap = Record<string, SpotMarket>;
 export type PricesHashmap = Record<string, Price>;
 export type TickersHashmap = Record<string, Ticker>;
 export type TradesHashmap = Record<string, Trade[]>;
@@ -91,5 +92,5 @@ export type BookEntry = [BookEntryPrice, BookEntryAmount];
 export type BookData = {
   bids: BookEntry[];
   asks: BookEntry[];
-  market: Market;
+  market: SpotMarket;
 };

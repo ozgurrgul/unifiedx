@@ -5,12 +5,39 @@ export const BITVAVO_BTC_EUR_PATH = "/bitvavo/market/BTC-EUR";
 export const BTC_TURK_BTC_TRY_PATH = "/btcTurk/market/BTC-TRY";
 export const KRAKEN_BTC_EUR_PATH = "/kraken/market/BTC-EUR";
 
-export const EXCHANGE_DEFAULT_MARKETS = [
-  { exchange: "binance", path: BINANCE_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
-  { exchange: "bitvavo", path: BITVAVO_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
-  { exchange: "btcTurk", path: BTC_TURK_BTC_TRY_PATH, pairLabel: "BTC/TRY" },
-  { exchange: "kraken", path: KRAKEN_BTC_EUR_PATH, pairLabel: "BTC/EUR" },
-] as const;
+export type ExchangeFixture = {
+  exchange: string;
+  rootPath: string;
+  path: string;
+  pairLabel: string;
+};
+
+export const EXCHANGE_FIXTURES: ExchangeFixture[] = [
+  {
+    exchange: "binance",
+    rootPath: "/binance",
+    path: BINANCE_BTC_EUR_PATH,
+    pairLabel: "BTC/EUR",
+  },
+  {
+    exchange: "bitvavo",
+    rootPath: "/bitvavo",
+    path: BITVAVO_BTC_EUR_PATH,
+    pairLabel: "BTC/EUR",
+  },
+  {
+    exchange: "btcTurk",
+    rootPath: "/btcTurk",
+    path: BTC_TURK_BTC_TRY_PATH,
+    pairLabel: "BTC/TRY",
+  },
+  {
+    exchange: "kraken",
+    rootPath: "/kraken",
+    path: KRAKEN_BTC_EUR_PATH,
+    pairLabel: "BTC/EUR",
+  },
+];
 
 export async function gotoTradingMarket(
   page: Page,

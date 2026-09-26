@@ -13,6 +13,10 @@ import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
 import type { Order } from "@/types/lib";
+import {
+  AuthenticatedAccountPrompt,
+  useAccountGatedContent,
+} from "../../common/AuthenticatedAccountPrompt";
 import { FormatAmount } from "../../common/Formatters";
 import { $bus, BusEvent } from "../../ExchangeBus";
 import { Button } from "../../ui/button";
@@ -125,6 +129,18 @@ function useOrdersActions() {
   return { cancelOrder, onClickMarket };
 }
 
+function AccountGatedOrdersBody({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { showSignInPrompt } = useAccountGatedContent();
+  if (showSignInPrompt) {
+    return <AuthenticatedAccountPrompt />;
+  }
+  return children;
+}
+
 export const BaseOpenOrdersPanel = () => {
   const {
     getters: {
@@ -137,12 +153,14 @@ export const BaseOpenOrdersPanel = () => {
 
   return (
     <ExchangeWidget type="base-open-orders" header={<TableHeaderRenderer />}>
-      <OrdersTable
-        orders={baseOpenOrders}
-        onClickCancel={cancelOrder}
-        onClickMarket={onClickMarket}
-        cancellingOrderIds={cancellingOrderIds}
-      />
+      <AccountGatedOrdersBody>
+        <OrdersTable
+          orders={baseOpenOrders}
+          onClickCancel={cancelOrder}
+          onClickMarket={onClickMarket}
+          cancellingOrderIds={cancellingOrderIds}
+        />
+      </AccountGatedOrdersBody>
     </ExchangeWidget>
   );
 };
@@ -157,12 +175,14 @@ export const AllOpenOrdersPanel = () => {
 
   return (
     <ExchangeWidget type="all-open-orders" header={<TableHeaderRenderer />}>
-      <OrdersTable
-        orders={openOrders}
-        onClickCancel={cancelOrder}
-        cancellingOrderIds={cancellingOrderIds}
-        onClickMarket={onClickMarket}
-      />
+      <AccountGatedOrdersBody>
+        <OrdersTable
+          orders={openOrders}
+          onClickCancel={cancelOrder}
+          cancellingOrderIds={cancellingOrderIds}
+          onClickMarket={onClickMarket}
+        />
+      </AccountGatedOrdersBody>
     </ExchangeWidget>
   );
 };
@@ -180,11 +200,13 @@ export const OrderHistoryPanel = () => {
       type="order-history"
       header={<TableHeaderRenderer showCancel={false} />}
     >
-      <OrdersTable
-        orders={pastOrders}
-        cancellingOrderIds={[]}
-        onClickMarket={onClickMarket}
-      />
+      <AccountGatedOrdersBody>
+        <OrdersTable
+          orders={pastOrders}
+          cancellingOrderIds={[]}
+          onClickMarket={onClickMarket}
+        />
+      </AccountGatedOrdersBody>
     </ExchangeWidget>
   );
 };

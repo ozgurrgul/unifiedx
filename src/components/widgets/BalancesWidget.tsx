@@ -11,10 +11,15 @@ import {
 } from "@/components/ui/table";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
 import { cn } from "@/lib/utils";
+import {
+  AuthenticatedAccountPrompt,
+  useAccountGatedContent,
+} from "../common/AuthenticatedAccountPrompt";
 import { FormatAmount } from "../common/Formatters";
 import { ExchangeWidget } from "./ExchangeWidget";
 
 export const BalancesWidget: React.FC = () => {
+  const { showSignInPrompt } = useAccountGatedContent();
   const {
     getters: {
       activeMarket: { balances, base, quote },
@@ -47,6 +52,9 @@ export const BalancesWidget: React.FC = () => {
 
   return (
     <ExchangeWidget type="balances" header={header}>
+      {showSignInPrompt ? (
+        <AuthenticatedAccountPrompt />
+      ) : (
       <Table>
         <TableBody>
           {sortedBalances.map((balance) => {
@@ -73,6 +81,7 @@ export const BalancesWidget: React.FC = () => {
           })}
         </TableBody>
       </Table>
+      )}
     </ExchangeWidget>
   );
 };

@@ -1,16 +1,27 @@
 import type { DockviewApi, SerializedDockview } from "dockview";
-import { DOCK_PANEL_IDS, DOCK_SIDE_COLUMN_WIDTH } from "./defaultDockLayout";
+import {
+  DOCK_PANEL_IDS,
+  DOCK_SIDE_COLUMN_WIDTH,
+  queueDefaultColumnWidths,
+} from "./defaultDockLayout";
 
-export const PERP_DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-perp-v2";
+export const PERP_DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-perp-v4";
 
 const PERP_PANEL_IDS = [
   DOCK_PANEL_IDS.orderBook,
+  DOCK_PANEL_IDS.chart,
   DOCK_PANEL_IDS.markets,
   DOCK_PANEL_IDS.trades,
   DOCK_PANEL_IDS.marketOrder,
 ] as const;
 
-const PERP_COMPONENTS = ["orderBook", "markets", "trades", "marketOrderForm"] as const;
+const PERP_COMPONENTS = [
+  "orderBook",
+  "candlestickChart",
+  "markets",
+  "trades",
+  "marketOrderForm",
+] as const;
 
 function isPerpLayoutValid(data: unknown): data is SerializedDockview {
   if (!data || typeof data !== "object") {
@@ -30,7 +41,10 @@ function isPerpLayoutValid(data: unknown): data is SerializedDockview {
   return true;
 }
 
-export function applyDefaultPerpDockLayout(api: DockviewApi): void {
+export function applyDefaultPerpDockLayout(
+  api: DockviewApi,
+  onColumnWidthsApplied?: () => void
+): void {
   api.clear();
 
   const orderBook = api.addPanel({
@@ -40,11 +54,18 @@ export function applyDefaultPerpDockLayout(api: DockviewApi): void {
     initialWidth: DOCK_SIDE_COLUMN_WIDTH,
   });
 
+  const chart = api.addPanel({
+    id: DOCK_PANEL_IDS.chart,
+    component: "candlestickChart",
+    title: "Chart",
+    position: { direction: "right", referencePanel: orderBook },
+  });
+
   const markets = api.addPanel({
     id: DOCK_PANEL_IDS.markets,
     component: "markets",
     title: "Markets",
-    position: { direction: "right", referencePanel: orderBook },
+    position: { direction: "right", referencePanel: chart },
     initialWidth: DOCK_SIDE_COLUMN_WIDTH,
   });
 
@@ -61,9 +82,11 @@ export function applyDefaultPerpDockLayout(api: DockviewApi): void {
     id: DOCK_PANEL_IDS.marketOrder,
     component: "marketOrderForm",
     title: "Market",
-    position: { direction: "below", referencePanel: orderBook },
+    position: { direction: "below", referencePanel: chart },
     initialHeight: 280,
   });
+
+  queueDefaultColumnWidths(api, onColumnWidthsApplied);
 }
 
 function loadStoredPerpLayout(): SerializedDockview | null {
@@ -105,6 +128,5 @@ export function restorePerpDockLayout(
       clearStoredPerpDockLayout();
     }
   }
-  applyDefaultPerpDockLayout(api);
-  onDefaultLayoutPersisted?.();
+  applyDefaultPerpDockLayout(api, onDefaultLayoutPersisted);
 }

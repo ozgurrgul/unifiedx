@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { activateTab, tabsShareGroup } from "./helpers/dock";
+import { activateTab, dockPanel, tabsShareGroup } from "./helpers/dock";
 import {
   BINANCE_BTC_EUR_PATH,
   BINANCE_BTC_USDT_PERP_PATH,
@@ -103,6 +103,18 @@ test.describe("Binance perp", () => {
 
     await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
     await expect(page.getByPlaceholder("Search markets...")).toBeVisible();
+  });
+
+  test("perp dock includes candlestick chart", async ({ page }) => {
+    await gotoPerpTradingMarket(page);
+    await waitForLiveTicker(page);
+
+    await activateTab(page, "chart");
+    await expect(dockPanel(page, "chart")).toBeVisible();
+    await expect(page.locator(".widget-chart")).toBeVisible();
+    await expect(page.locator(".widget-chart")).not.toContainText("Failed to load chart", {
+      timeout: 30_000,
+    });
   });
 
   test("perp markets list is populated", async ({ page }) => {

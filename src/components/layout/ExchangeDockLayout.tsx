@@ -76,8 +76,11 @@ export const ExchangeDockLayout = () => {
     }
     if (isPerp) {
       clearStoredPerpDockLayout();
-      applyDefaultPerpDockLayout(apiRef.current);
-      savePerpDockLayout(apiRef.current);
+      applyDefaultPerpDockLayout(apiRef.current, () => {
+        if (apiRef.current) {
+          savePerpDockLayout(apiRef.current);
+        }
+      });
     } else {
       clearStoredDockLayout();
       applyDefaultDockLayout(apiRef.current, () => {

@@ -66,33 +66,6 @@ export const SubHeader = () => {
         </div>
       </div>
 
-      {ticker?.volumeQuote && (
-        <div className="pr-6">
-          <div className="ticker-label">24h Volume</div>
-          <div className="ticker-value">
-            <FormatAmount amount={ticker?.volumeQuote} precision={quote?.precision} />
-          </div>
-        </div>
-      )}
-
-      {ticker?.high && (
-        <div className="pr-6">
-          <div className="ticker-label">24h High</div>
-          <div className="ticker-value text-bid">
-            <FormatAmount amount={ticker?.high} precision={quote?.precision} />
-          </div>
-        </div>
-      )}
-
-      {ticker?.low && (
-        <div className="pr-6">
-          <div className="ticker-label">24h Low</div>
-          <div className="ticker-value text-ask">
-            <FormatAmount amount={ticker?.low} precision={quote?.precision} />
-          </div>
-        </div>
-      )}
-
       {product === "perp" && ticker?.markPrice && (
         <div className="pr-6">
           <div className="ticker-label">Mark</div>
@@ -121,6 +94,33 @@ export const SubHeader = () => {
                 @ {nextFundingLabel}
               </span>
             )}
+          </div>
+        </div>
+      )}
+
+      {ticker?.volumeQuote && (
+        <div className="pr-6">
+          <div className="ticker-label">24h Volume</div>
+          <div className="ticker-value">
+            <FormatAmount amount={ticker?.volumeQuote} precision={quote?.precision} />
+          </div>
+        </div>
+      )}
+
+      {ticker?.high && (
+        <div className="pr-6">
+          <div className="ticker-label">24h High</div>
+          <div className="ticker-value text-bid">
+            <FormatAmount amount={ticker?.high} precision={quote?.precision} />
+          </div>
+        </div>
+      )}
+
+      {ticker?.low && (
+        <div className="pr-6">
+          <div className="ticker-label">24h Low</div>
+          <div className="ticker-value text-ask">
+            <FormatAmount amount={ticker?.low} precision={quote?.precision} />
           </div>
         </div>
       )}

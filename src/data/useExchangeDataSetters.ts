@@ -86,10 +86,17 @@ export const useExchangeDataSetters = ({
 
   const patchTicker = (market: string, patch: Partial<Ticker>) => {
     _setTickers((prev) => {
-      const existing = prev[market];
-      if (!existing) {
-        return prev;
-      }
+      const existing = prev[market] ?? {
+        market,
+        last: "",
+        ask: "",
+        bid: "",
+        high: "",
+        low: "",
+        open: "",
+        volume: "",
+        volumeQuote: "",
+      };
       return { ...prev, [market]: { ...existing, ...patch } };
     });
   };

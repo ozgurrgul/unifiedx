@@ -232,6 +232,9 @@ export const useBinancePerpData = ({
       onOpen: () => {
         setConnected(true);
         subscribeStreams(activeSpotMarket);
+        getPremiumIndex(activeSpotMarket).then((perp) => {
+          patchTicker(activeSpotMarket.market, perp);
+        });
       },
       onError: () => {
         setConnected(false);
@@ -248,12 +251,14 @@ export const useBinancePerpData = ({
 
   const onSpotMarketChange = (nextMarket: SpotMarket, previousMarket?: SpotMarket) => {
     if (nextMarket) {
-      getTickers(markets).then(setTickers);
+      getTickers(markets).then((tickers) => {
+        setTickers(tickers);
+        getPremiumIndex(nextMarket).then((perp) => {
+          patchTicker(nextMarket.market, perp);
+        });
+      });
       getBook(nextMarket).then(setBookData);
       getTrades(nextMarket).then(setInitialTrades);
-      getPremiumIndex(nextMarket).then((perp) => {
-        patchTicker(nextMarket.market, perp);
-      });
     }
 
     if (readyState === ReadyState.OPEN) {

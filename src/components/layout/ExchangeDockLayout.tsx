@@ -1,6 +1,6 @@
 "use client";
 
-import type { DockviewApi, SerializedDockview } from "dockview";
+import type { DockviewApi } from "dockview";
 import { DockviewReact, type DockviewReadyEvent, themeDark } from "dockview-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DockPanelTitleSync } from "./DockPanelTitleSync";
@@ -9,7 +9,7 @@ import { useDockLayoutControl } from "./DockLayoutControlContext";
 import {
   applyDefaultDockLayout,
   clearStoredDockLayout,
-  loadStoredDockLayout,
+  restoreDockLayout,
   saveDockLayout,
 } from "./defaultDockLayout";
 import { ExchangeDockTab, exchangeDockComponents } from "./exchangeDockComponents";
@@ -41,19 +41,7 @@ export const ExchangeDockLayout = () => {
       apiRef.current = event.api;
       setDockApi(event.api);
 
-      const stored = loadStoredDockLayout();
-      const persistDefaultLayout = () => saveDockLayout(event.api);
-
-      if (stored) {
-        try {
-          event.api.fromJSON(stored as SerializedDockview);
-          saveDockLayout(event.api);
-        } catch {
-          applyDefaultDockLayout(event.api, persistDefaultLayout);
-        }
-      } else {
-        applyDefaultDockLayout(event.api, persistDefaultLayout);
-      }
+      restoreDockLayout(event.api, () => saveDockLayout(event.api));
 
       event.api.onDidMutateLayout(() => {
         saveDockLayout(event.api);

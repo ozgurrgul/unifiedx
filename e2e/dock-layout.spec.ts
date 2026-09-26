@@ -43,6 +43,9 @@ test.describe("Exchange dockview layout", () => {
       .poll(async () => tabsShareGroup(page, "chart", "depth-chart"))
       .toBe(true);
     await expect
+      .poll(async () => tabsShareGroup(page, "markets", "trades"))
+      .toBe(true);
+    await expect
       .poll(async () => tabsShareGroup(page, "market-order", "limit-order"))
       .toBe(true);
     await expect
@@ -53,19 +56,21 @@ test.describe("Exchange dockview layout", () => {
   test("merges panels into a tab group via drag and drop", async ({ page }) => {
     await waitForDockReady(page);
 
-    expect(await tabsShareGroup(page, "order-book", "trades")).toBe(false);
+    expect(await tabsShareGroup(page, "order-book", "base-open-orders")).toBe(
+      false
+    );
 
-    await dragTabOntoTab(page, "order-book", "trades");
+    await dragTabOntoTab(page, "order-book", "base-open-orders");
 
     await expect
-      .poll(async () => tabsShareGroup(page, "order-book", "trades"))
+      .poll(async () => tabsShareGroup(page, "order-book", "base-open-orders"))
       .toBe(true);
-
-    await activateTab(page, "trades");
-    await expect(dockPanel(page, "trades")).toBeVisible();
 
     await activateTab(page, "order-book");
     await expect(dockPanel(page, "order-book")).toBeVisible();
+
+    await activateTab(page, "base-open-orders");
+    await expect(dockPanel(page, "base-open-orders")).toBeVisible();
   });
 
   test("switches between the three order dock tabs", async ({ page }) => {
@@ -99,8 +104,10 @@ test.describe("Exchange dockview layout", () => {
   test("persists layout across reload", async ({ page }) => {
     await waitForDockReady(page);
 
-    await dragTabOntoTab(page, "markets", "trades");
-    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
+    await dragTabOntoTab(page, "order-book", "base-open-orders");
+    await expect
+      .poll(async () => tabsShareGroup(page, "order-book", "base-open-orders"))
+      .toBe(true);
 
     await expect.poll(async () => readLayoutSnapshot(page)).not.toBeNull();
 
@@ -108,7 +115,9 @@ test.describe("Exchange dockview layout", () => {
     await page.getByTestId("exchange-dock").waitFor({ state: "visible" });
     await dockTab(page, "markets").waitFor({ state: "visible" });
 
-    await expect.poll(async () => tabsShareGroup(page, "markets", "trades")).toBe(true);
+    await expect
+      .poll(async () => tabsShareGroup(page, "order-book", "base-open-orders"))
+      .toBe(true);
   });
 
   test("reset layout restores separated panels after complex edits", async ({
@@ -116,24 +125,27 @@ test.describe("Exchange dockview layout", () => {
   }) => {
     await waitForDockReady(page);
 
-    await dragTabOntoTab(page, "order-book", "trades");
+    await dragTabOntoTab(page, "order-book", "base-open-orders");
     await dragTabOntoTab(page, "balances", "markets");
     await resizeDockWithSplitter(page);
 
     await expect
-      .poll(async () => tabsShareGroup(page, "order-book", "trades"))
+      .poll(async () => tabsShareGroup(page, "order-book", "base-open-orders"))
       .toBe(true);
 
     await page.getByTestId("reset-dock-layout").click();
 
     await expect
-      .poll(async () => tabsShareGroup(page, "order-book", "trades"))
+      .poll(async () => tabsShareGroup(page, "order-book", "base-open-orders"))
       .toBe(false);
     await expect
       .poll(async () => tabsShareGroup(page, "balances", "markets"))
       .toBe(false);
     await expect
       .poll(async () => tabsShareGroup(page, "chart", "depth-chart"))
+      .toBe(true);
+    await expect
+      .poll(async () => tabsShareGroup(page, "markets", "trades"))
       .toBe(true);
 
     for (const id of PANEL_IDS) {

@@ -1,6 +1,22 @@
 import type { DockviewApi, SerializedDockview } from "dockview";
 
-export const DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-v2";
+export const DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-v3";
+
+const LEGACY_DOCK_LAYOUT_STORAGE_KEYS = ["unifiedx-dock-layout-v2"] as const;
+
+const DOCK_CONTENT_COMPONENTS = [
+  "orderBook",
+  "candlestickChart",
+  "depthChart",
+  "markets",
+  "trades",
+  "marketOrderForm",
+  "limitOrderForm",
+  "balances",
+  "baseOpenOrders",
+  "allOpenOrders",
+  "orderHistory",
+] as const;
 
 /** Default width for the left (order book) and right (markets) dock columns. */
 export const DOCK_SIDE_COLUMN_WIDTH = 400;
@@ -20,6 +36,45 @@ export const DOCK_PANEL_IDS = {
   allOpenOrders: "all-open-orders",
   orderHistory: "order-history",
 } as const;
+
+const REQUIRED_PANEL_IDS = Object.values(DOCK_PANEL_IDS);
+
+export function isStoredDockLayoutValid(data: unknown): data is SerializedDockview {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+  const layout = data as SerializedDockview;
+  if (!layout.panels || typeof layout.panels !== "object") {
+    return false;
+  }
+  if (!layout.grid?.root) {
+    return false;
+  }
+
+  for (const panelId of REQUIRED_PANEL_IDS) {
+    const panel = layout.panels[panelId];
+    const component = panel?.contentComponent;
+    if (
+      !component ||
+      !DOCK_CONTENT_COMPONENTS.includes(
+        component as (typeof DOCK_CONTENT_COMPONENTS)[number]
+      )
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function isDockRuntimeHealthy(api: DockviewApi): boolean {
+  for (const panelId of REQUIRED_PANEL_IDS) {
+    if (!api.getPanel(panelId)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 export function applyDefaultDockLayout(
   api: DockviewApi,
@@ -48,7 +103,7 @@ export function applyDefaultDockLayout(
     position: { direction: "within", referencePanel: chart },
   });
 
-  api.addPanel({
+  const markets = api.addPanel({
     id: DOCK_PANEL_IDS.markets,
     component: "markets",
     title: "Markets",
@@ -56,11 +111,11 @@ export function applyDefaultDockLayout(
     initialWidth: DOCK_SIDE_COLUMN_WIDTH,
   });
 
-  const trades = api.addPanel({
+  api.addPanel({
     id: DOCK_PANEL_IDS.trades,
     component: "trades",
     title: "Trades",
-    position: { direction: "below", referencePanel: orderBook },
+    position: { direction: "within", referencePanel: markets },
   });
 
   const marketOrder = api.addPanel({
@@ -77,21 +132,18 @@ export function applyDefaultDockLayout(
     position: { direction: "within", referencePanel: marketOrder },
   });
 
-  const marketsPanel = api.getPanel(DOCK_PANEL_IDS.markets);
-  if (marketsPanel) {
-    api.addPanel({
-      id: DOCK_PANEL_IDS.balances,
-      component: "balances",
-      title: "Balances",
-      position: { direction: "below", referencePanel: marketsPanel },
-    });
-  }
+  api.addPanel({
+    id: DOCK_PANEL_IDS.balances,
+    component: "balances",
+    title: "Balances",
+    position: { direction: "below", referencePanel: markets },
+  });
 
   const baseOpenOrders = api.addPanel({
     id: DOCK_PANEL_IDS.baseOpenOrders,
     component: "baseOpenOrders",
     title: "Open orders",
-    position: { direction: "below", referencePanel: trades },
+    position: { direction: "below", referencePanel: orderBook },
     initialHeight: 280,
   });
 
@@ -110,6 +162,31 @@ export function applyDefaultDockLayout(
   });
 
   queueDefaultColumnWidths(api, onColumnWidthsApplied);
+}
+
+/** Load persisted layout or build the default; recover if storage is corrupt. */
+export function restoreDockLayout(
+  api: DockviewApi,
+  onDefaultLayoutPersisted?: () => void
+): void {
+  const stored = loadStoredDockLayout();
+
+  if (stored && isStoredDockLayoutValid(stored)) {
+    try {
+      api.fromJSON(stored);
+      if (!isDockRuntimeHealthy(api)) {
+        throw new Error("dock layout missing panels after restore");
+      }
+      saveDockLayout(api);
+      return;
+    } catch {
+      clearStoredDockLayout();
+    }
+  } else if (stored) {
+    clearStoredDockLayout();
+  }
+
+  applyDefaultDockLayout(api, onDefaultLayoutPersisted);
 }
 
 type LayoutGridNode = {
@@ -162,12 +239,9 @@ export function queueDefaultColumnWidths(
   requestAnimationFrame(attempt);
 }
 
-export function loadStoredDockLayout(): unknown | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
+function readLayoutFromStorage(key: string): unknown | null {
   try {
-    const raw = window.localStorage.getItem(DOCK_LAYOUT_STORAGE_KEY);
+    const raw = window.localStorage.getItem(key);
     if (!raw) {
       return null;
     }
@@ -177,11 +251,38 @@ export function loadStoredDockLayout(): unknown | null {
   }
 }
 
+export function loadStoredDockLayout(): unknown | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const current = readLayoutFromStorage(DOCK_LAYOUT_STORAGE_KEY);
+  if (current) {
+    return current;
+  }
+
+  for (const legacyKey of LEGACY_DOCK_LAYOUT_STORAGE_KEYS) {
+    const legacy = readLayoutFromStorage(legacyKey);
+    window.localStorage.removeItem(legacyKey);
+    if (legacy && isStoredDockLayoutValid(legacy)) {
+      return legacy;
+    }
+  }
+
+  return null;
+}
+
 export function saveDockLayout(api: DockviewApi): void {
   if (typeof window === "undefined") {
     return;
   }
+  if (!isDockRuntimeHealthy(api)) {
+    return;
+  }
   window.localStorage.setItem(DOCK_LAYOUT_STORAGE_KEY, JSON.stringify(api.toJSON()));
+  for (const legacyKey of LEGACY_DOCK_LAYOUT_STORAGE_KEYS) {
+    window.localStorage.removeItem(legacyKey);
+  }
 }
 
 export function clearStoredDockLayout(): void {
@@ -189,4 +290,7 @@ export function clearStoredDockLayout(): void {
     return;
   }
   window.localStorage.removeItem(DOCK_LAYOUT_STORAGE_KEY);
+  for (const legacyKey of LEGACY_DOCK_LAYOUT_STORAGE_KEYS) {
+    window.localStorage.removeItem(legacyKey);
+  }
 }

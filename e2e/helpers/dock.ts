@@ -2,7 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 
 export const MARKET_PATH = "/binance/market/BTC-EUR";
 
-export const DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-v2";
+export const DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-v3";
 
 export const PANEL_IDS = [
   "order-book",

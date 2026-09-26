@@ -36,4 +36,39 @@ export type BtcTurkTicker = {
 
 export type BtcTurkBook = {} & BookData;
 
-export type WsResponses = [number, { type: number; message: string }];
+export type BtcTurkWsTradeSingle = {
+  type: 422;
+  PS: string;
+  A: string;
+  S: 0 | 1;
+  D: number;
+  P: string;
+  I: string;
+};
+
+export type BtcTurkWsTradeList = {
+  type: 421;
+  PS?: string;
+  items?: BtcTurkWsTradeSingle[];
+};
+
+export type BtcTurkWsOrderBookFull = {
+  type: 431;
+  PS: string;
+  AO: { P: string; A: string }[];
+  BO: { P: string; A: string }[];
+};
+
+export type BtcTurkWsOrderBookDiff = {
+  type: 432;
+  PS: string;
+  AO: { P: string; A: string; CP: number }[];
+  BO: { P: string; A: string; CP: number }[];
+};
+
+export type WsResponses =
+  | [number, { type: number; message: string }]
+  | [421, BtcTurkWsTradeList]
+  | [422, BtcTurkWsTradeSingle]
+  | [431, BtcTurkWsOrderBookFull]
+  | [432, BtcTurkWsOrderBookDiff];

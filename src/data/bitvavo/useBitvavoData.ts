@@ -92,6 +92,17 @@ export const useBitvavoData = ({
       onOpen: () => {
         setConnected(true);
         sendJsonMessage({ action: "getTickerPrice" });
+        sendJsonMessage({
+          action: "getTrades",
+          market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
+        });
+        sendJsonMessage({
+          action: "getBook",
+          market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
+        });
+        subscribeEvent("ticker24h", activeMarket);
+        subscribeEvent("trades", activeMarket);
+        subscribeEvent("book", activeMarket);
 
         if (isCredentialsProvided && credentials) {
           const time = new Date().getTime();

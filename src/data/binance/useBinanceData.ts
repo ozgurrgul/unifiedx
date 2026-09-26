@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useWebSocket from "react-use-websocket";
+import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
@@ -32,6 +33,14 @@ function arrayToHashmapByMarket<T extends { market: string }>(
 }
 
 const BINANCE_API_BASE_URL = "https://api.binance.com/api/v3";
+
+function getBinanceStreams(market: Market) {
+  const symbol = `${market.base.symbol}${market.quote.symbol}`.toLowerCase();
+  return {
+    trade: `${symbol}@trade`,
+    depth: `${symbol}@depth@100ms`,
+  };
+}
 
 export const loadMarkets = (): Promise<MarketsHashmap> => {
   return fetch(`${BINANCE_API_BASE_URL}/exchangeInfo`)
@@ -166,18 +175,33 @@ export const useBinanceData = ({
     setError,
   } = setters;
 
-  const tradeStream = `${activeMarket.base.symbol.toLowerCase()}${activeMarket.quote.symbol.toLowerCase()}@trade`;
-  const depthStream = `${activeMarket.base.symbol.toLowerCase()}${activeMarket.quote.symbol.toLowerCase()}@depth@5`;
+  const subscribedStreamsRef = useRef<{ trade: string; depth: string } | null>(
+    null
+  );
+
+  const subscribeBinanceStreams = (market: Market) => {
+    const streams = getBinanceStreams(market);
+    sendJsonMessage({
+      method: "SUBSCRIBE",
+      params: [streams.trade, streams.depth],
+      id: Date.now(),
+    });
+    subscribedStreamsRef.current = streams;
+  };
+
+  const unsubscribeBinanceStreams = (streams: { trade: string; depth: string }) => {
+    sendJsonMessage({
+      method: "UNSUBSCRIBE",
+      params: [streams.trade, streams.depth],
+      id: Date.now(),
+    });
+  };
 
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<WsResponses>("wss://stream.binance.com:443/stream", {
       onOpen: () => {
         setConnected(true);
-        sendJsonMessage({
-          method: "SUBSCRIBE",
-          params: [tradeStream, depthStream],
-          id: 1,
-        });
+        subscribeBinanceStreams(activeMarket);
       },
       onError: () => {
         setConnected(false);
@@ -189,14 +213,20 @@ export const useBinanceData = ({
       },
     });
 
-  const onMarketChange = (activeMarket: Market, previousMarket?: Market) => {
-    if (activeMarket) {
+  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+    if (nextMarket) {
       getTickers(markets).then(setTickers);
-      getBook(activeMarket).then(setBookData);
-      getTrades(activeMarket).then(setInitialTrades);
+      getBook(nextMarket).then(setBookData);
+      getTrades(nextMarket).then(setInitialTrades);
     }
 
-    if (previousMarket) {
+    if (readyState === ReadyState.OPEN) {
+      if (previousMarket && subscribedStreamsRef.current) {
+        unsubscribeBinanceStreams(subscribedStreamsRef.current);
+      }
+      if (nextMarket) {
+        subscribeBinanceStreams(nextMarket);
+      }
     }
   };
 
@@ -205,8 +235,9 @@ export const useBinanceData = ({
       return;
     }
     const msg = lastJsonMessage;
+    const streams = getBinanceStreams(activeMarket);
     // Handle trade
-    if (msg.stream === tradeStream) {
+    if (msg.stream === streams.trade) {
       const data = msg.data as BinanceTradeWs["data"];
       const mapped: Trade = {
         amount: data.q,
@@ -217,7 +248,7 @@ export const useBinanceData = ({
         side: data.m ? "sell" : "buy",
       };
       addTrade(mapped);
-    } else if (msg.stream === depthStream) {
+    } else if (msg.stream === streams.depth) {
       const data = msg.data as BinanceDepthWs["data"];
       const mapped: BookData = {
         asks: data.a,

@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useWebSocket from "react-use-websocket";
+import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BookData,
   CreateOrderPayload,
@@ -21,8 +22,14 @@ import type {
   BtcTurkSymbol,
   BtcTurkTicker,
   BtcTurkTrade,
+  BtcTurkWsTradeSingle,
   WsResponses,
 } from "./types";
+import {
+  btcTurkPairEvent,
+  btcTurkSubscriptionMessage,
+  mapBtcTurkWsTrade,
+} from "./ws";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -196,6 +203,7 @@ const getBook = (activeMarket: Market) => {
 };
 
 export const useBtcTurkData = ({
+  activeMarket,
   setters,
   isCredentialsProvided,
   credentials,
@@ -213,19 +221,31 @@ export const useBtcTurkData = ({
     setConnected,
   } = setters;
 
-  const { lastJsonMessage, sendJsonMessage, sendMessage, readyState, getWebSocket } =
-    useWebSocket<any>("wss://ws-feed-pro.btcturk.com", {
-      onOpen: async () => {
+  const subscribedPairRef = useRef<string | null>(null);
+
+  const syncBtcTurkSubscriptions = (
+    sendMessage: (msg: string) => void,
+    nextMarket: Market,
+    previousMarket?: Market
+  ) => {
+    if (previousMarket) {
+      const prevEvent = btcTurkPairEvent(previousMarket);
+      sendMessage(btcTurkSubscriptionMessage("trade", prevEvent, false));
+      sendMessage(btcTurkSubscriptionMessage("orderbook", prevEvent, false));
+    }
+
+    const nextEvent = btcTurkPairEvent(nextMarket);
+    sendMessage(btcTurkSubscriptionMessage("trade", nextEvent, true));
+    sendMessage(btcTurkSubscriptionMessage("orderbook", nextEvent, true));
+    subscribedPairRef.current = nextEvent;
+  };
+
+  const { lastJsonMessage, sendMessage, readyState, getWebSocket } = useWebSocket(
+    "wss://ws-feed-pro.btcturk.com",
+    {
+      onOpen: () => {
         setConnected(true);
-        // if (isCredentialsProvided && credentials) {
-        //   sendMessage(
-        //     await getAuthSignature(
-        //       credentials["public_key"],
-        //       credentials["private_key"]
-        //     )
-        //   );
-        //   setAuthenticated("loading");
-        // }
+        syncBtcTurkSubscriptions(sendMessage, activeMarket);
       },
       onError: () => {
         setConnected(false);
@@ -237,14 +257,15 @@ export const useBtcTurkData = ({
       },
     });
 
-  const onMarketChange = (activeMarket: Market, previousMarket?: Market) => {
-    if (activeMarket) {
+  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+    if (nextMarket) {
       getTickers(markets).then(setTickers);
-      getBook(activeMarket).then(setBookData);
-      getTrades(activeMarket).then(setInitialTrades);
+      getBook(nextMarket).then(setBookData);
+      getTrades(nextMarket).then(setInitialTrades);
     }
 
-    if (previousMarket) {
+    if (readyState === ReadyState.OPEN) {
+      syncBtcTurkSubscriptions(sendMessage, nextMarket, previousMarket);
     }
   };
 
@@ -253,11 +274,57 @@ export const useBtcTurkData = ({
       return;
     }
     const msg = lastJsonMessage as WsResponses;
-    if (Array.isArray(msg) && msg[1].type === 114) {
-      setAuthenticated("no");
-      setError({ error: msg[1].message });
+    if (!Array.isArray(msg)) {
+      return;
     }
-  }, [lastJsonMessage]);
+
+    const [code, payload] = msg;
+    if (code === 114 && payload && typeof payload === "object" && "message" in payload) {
+      setAuthenticated("no");
+      setError({ error: String(payload.message) });
+      return;
+    }
+
+    if (code === 421 && payload && typeof payload === "object") {
+      const items =
+        "items" in payload && Array.isArray(payload.items) ? payload.items : [];
+      if (items.length > 0) {
+        setInitialTrades(items.map((row) => mapBtcTurkWsTrade(row, activeMarket)));
+      }
+      return;
+    }
+
+    if (
+      code === 422 &&
+      payload &&
+      typeof payload === "object" &&
+      "P" in payload &&
+      "A" in payload
+    ) {
+      addTrade(mapBtcTurkWsTrade(payload as BtcTurkWsTradeSingle, activeMarket));
+      return;
+    }
+
+    if (code === 431 && payload && typeof payload === "object" && "AO" in payload) {
+      setBookData({
+        market: activeMarket,
+        asks: payload.AO.map((row) => [row.P, row.A]),
+        bids: payload.BO.map((row) => [row.P, row.A]),
+      });
+      return;
+    }
+
+    if (code === 432 && payload && typeof payload === "object" && "AO" in payload) {
+      const mapDiffSide = (rows: { P: string; A: string; CP: number }[]) =>
+        rows.map((row) => [row.P, row.CP === 3 ? "0" : row.A] as [string, string]);
+
+      addBookData({
+        market: activeMarket,
+        asks: mapDiffSide(payload.AO),
+        bids: mapDiffSide(payload.BO),
+      });
+    }
+  }, [lastJsonMessage, activeMarket, addTrade, setBookData, addBookData, setInitialTrades]);
 
   const cancelOrder = (order: Order) => {};
 

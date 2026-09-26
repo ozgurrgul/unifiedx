@@ -10,6 +10,7 @@ import type {
   Trade,
 } from "@/types/lib";
 import type { BookWorkerPayload } from "../../workers/BookWorkerTypes";
+import { MAX_TRADES_BUFFER } from "./constants";
 
 export type UseExchangeDataSettersInput = {
   activeMarket: string;
@@ -85,7 +86,7 @@ export const useExchangeDataSetters = ({
     if (trade.market.market !== activeMarket) {
       return;
     }
-    setTrades([trade, ...(trades || [])]);
+    setTrades((prev) => [trade, ...prev].slice(0, MAX_TRADES_BUFFER));
   };
 
   const setInitialTrades = (trades: Trade[]) => {

@@ -86,7 +86,17 @@ export type WsGetInitialTradesResponse = {
 
 export type WsTradeEvent = {
   event: "trade";
+  market: string;
 } & BitvavoTrade;
+
+export type WsSubscribedEvent = {
+  event: "subscribed";
+  subscriptions: {
+    trades?: string[];
+    book?: string[];
+    ticker24h?: string[];
+  };
+};
 
 export type WsGetBookResponse = {
   action: "getBook";
@@ -112,6 +122,7 @@ export type WsResponses =
   | WsGetInitialTradesResponse
   | WsGetTickerPriceResponse
   | WsTradeEvent
+  | WsSubscribedEvent
   | WsGetBookResponse
   | WsBookEvent
   | WsAuthenticateEvent

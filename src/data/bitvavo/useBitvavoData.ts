@@ -1,6 +1,7 @@
 import crypto from "crypto";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useWebSocket from "react-use-websocket";
+import { ReadyState } from "react-use-websocket/dist/lib/constants";
 import type {
   BitvavoBalance,
   BitvavoMarket,
@@ -17,6 +18,7 @@ import type {
   Trade,
 } from "@/types/lib";
 import type { UseExchangeDataInput, UseExchangeDataOutput } from "../types";
+import { bitvavoMarketId, syncBitvavoMarketStreams } from "./ws";
 
 function arrayToHashmapByMarket<T extends { market: string }>(
   array: T[]
@@ -87,22 +89,15 @@ export const useBitvavoData = ({
     setConnected,
   } = setters;
 
+  const subscribedMarketRef = useRef<string | null>(null);
+
   const { lastJsonMessage, sendJsonMessage, readyState, getWebSocket } =
     useWebSocket<WsResponses>("wss://ws.bitvavo.com/v2?source=exchange", {
       onOpen: () => {
         setConnected(true);
         sendJsonMessage({ action: "getTickerPrice" });
-        sendJsonMessage({
-          action: "getTrades",
-          market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
-        });
-        sendJsonMessage({
-          action: "getBook",
-          market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
-        });
-        subscribeEvent("ticker24h", activeMarket);
-        subscribeEvent("trades", activeMarket);
-        subscribeEvent("book", activeMarket);
+        syncBitvavoMarketStreams(sendJsonMessage, activeMarket);
+        subscribedMarketRef.current = bitvavoMarketId(activeMarket);
 
         if (isCredentialsProvided && credentials) {
           const time = new Date().getTime();
@@ -131,25 +126,13 @@ export const useBitvavoData = ({
       },
     });
 
-  const subscribeEvent = (event: string, market: Market) => {
+  const subscribeAccountChannel = (market: Market) => {
     sendJsonMessage({
       action: "subscribe",
       channels: [
         {
-          name: event,
-          markets: [`${market.base.symbol}-${market.quote.symbol}`],
-        },
-      ],
-    });
-  };
-
-  const unsubscribeEvent = (event: string, market: Market) => {
-    sendJsonMessage({
-      action: "unsubscribe",
-      channels: [
-        {
-          name: event,
-          markets: [`${market.base.symbol}-${market.quote.symbol}`],
+          name: "account",
+          markets: [bitvavoMarketId(market)],
         },
       ],
     });
@@ -299,36 +282,32 @@ export const useBitvavoData = ({
     }
   };
 
-  const onMarketChange = (activeMarket: Market, previousMarket?: Market) => {
-    if (activeMarket) {
-      sendJsonMessage({
-        action: "getTrades",
-        market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
-      });
-      sendJsonMessage({
-        action: "getBook",
-        market: `${activeMarket.base.symbol}-${activeMarket.quote.symbol}`,
-      });
-
-      subscribeEvent("ticker24h", activeMarket);
-      subscribeEvent("trades", activeMarket);
-      subscribeEvent("book", activeMarket);
-
-      if (isCredentialsProvided) {
-        getOpenOrders().then(setOpenOrders);
-        getPastOrders(`${activeMarket.base.symbol}-${activeMarket.quote.symbol}`).then(
-          setPastOrders
-        );
-        getBalances().then(setBalances);
-      }
+  const onMarketChange = (nextMarket: Market, previousMarket?: Market) => {
+    if (readyState === ReadyState.OPEN) {
+      syncBitvavoMarketStreams(sendJsonMessage, nextMarket, previousMarket);
+      subscribedMarketRef.current = bitvavoMarketId(nextMarket);
+    } else {
+      subscribedMarketRef.current = null;
     }
 
-    if (previousMarket) {
-      unsubscribeEvent("ticker24h", previousMarket);
-      unsubscribeEvent("trades", previousMarket);
-      unsubscribeEvent("book", previousMarket);
+    if (isCredentialsProvided) {
+      getOpenOrders().then(setOpenOrders);
+      getPastOrders(bitvavoMarketId(nextMarket)).then(setPastOrders);
+      getBalances().then(setBalances);
     }
   };
+
+  useEffect(() => {
+    if (readyState !== ReadyState.OPEN) {
+      return;
+    }
+    const marketId = bitvavoMarketId(activeMarket);
+    if (subscribedMarketRef.current === marketId) {
+      return;
+    }
+    syncBitvavoMarketStreams(sendJsonMessage, activeMarket);
+    subscribedMarketRef.current = marketId;
+  }, [readyState, activeMarket, sendJsonMessage]);
 
   useEffect(() => {
     if (!lastJsonMessage) {
@@ -370,6 +349,9 @@ export const useBitvavoData = ({
       }
       setTickers(tickers);
     } else if ("event" in msg && msg.event === "trade") {
+      if (msg.market !== bitvavoMarketId(activeMarket)) {
+        return;
+      }
       addTrade({
         id: msg.id,
         price: msg.price,
@@ -386,7 +368,7 @@ export const useBitvavoData = ({
       });
     } else if ("event" in msg && msg.event === "authenticate") {
       if (msg.authenticated) {
-        subscribeEvent("account", activeMarket);
+        subscribeAccountChannel(activeMarket);
         setAuthenticated("yes");
       } else {
         setAuthenticated("no");

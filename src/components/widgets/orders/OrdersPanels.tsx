@@ -1,9 +1,8 @@
 "use client";
 
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { useContext, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExchangeWidget } from "./ExchangeWidget";
+import { useContext } from "react";
+import { ExchangeWidget } from "../ExchangeWidget";
 import {
   Table,
   TableBody,
@@ -13,15 +12,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Order } from "@/types/lib";
-import { FormatAmount } from "../common/Formatters";
-import { Button } from "../ui/button";
-import { $bus, BusEvent } from "../ExchangeBus";
+import { FormatAmount } from "../../common/Formatters";
+import { Button } from "../../ui/button";
+import { $bus, BusEvent } from "../../ExchangeBus";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { cn } from "@/lib/utils";
 
 const TableHeaderRenderer: React.FC<{
-  onClickCancel?: (order: Order) => void;
-}> = ({ onClickCancel }) => {
+  showCancel?: boolean;
+}> = ({ showCancel = true }) => {
   return (
     <Table>
       <TableHeader>
@@ -41,7 +40,9 @@ const TableHeaderRenderer: React.FC<{
           <TableHead className="h-8 text-xs text-right w-[240px]">
             Status
           </TableHead>
-          <TableHead className="h-8 text-xs text-right">Action</TableHead>
+          {showCancel && (
+            <TableHead className="h-8 text-xs text-right">Action</TableHead>
+          )}
         </TableRow>
       </TableHeader>
     </Table>
@@ -54,14 +55,6 @@ const OrdersTable: React.FC<{
   onClickMarket: (order: Order) => void;
   cancellingOrderIds: string[];
 }> = ({ orders, onClickCancel, onClickMarket, cancellingOrderIds }) => {
-  // if (!orders.length) {
-  //   return (
-  //     <>
-  //       <Table>{renderHeader()}</Table>
-  //       <div className="flex justify-center p-6 text-sm">No open orders</div>
-  //     </>
-  //   );
-  // }
   return (
     <Table>
       <TableBody>
@@ -121,21 +114,13 @@ const OrdersTable: React.FC<{
   );
 };
 
-export const OrdersWidget = () => {
+function useOrdersActions() {
   const { goToMarket } = useAppNavigation();
-  const [activeTab, setActiveTab] = useState<
-    "open-orders" | "all-open-orders" | "order-history"
-  >("open-orders");
   const {
     getters: {
       activeExchange: { exchange },
-      activeMarket: { base, openOrders, cancellingOrderIds, pastOrders },
     },
   } = useContext(ExchangeDataGettersContext);
-
-  const baseOpenOrders = openOrders.filter(
-    (r) => r.baseAssetSymbol === base?.symbol
-  );
 
   const cancelOrder = (order: Order) => {
     $bus.emit(BusEvent.CancelOrder, order);
@@ -145,55 +130,71 @@ export const OrdersWidget = () => {
     goToMarket(exchange, order.baseAssetSymbol, order.quoteAssetSymbol);
   };
 
-  const header = (
-    <>
-      <Tabs
-        value={activeTab}
-        onValueChange={(e) => {
-          setActiveTab(e as any);
-        }}
-      >
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="open-orders">
-            {base?.symbol} open orders
-          </TabsTrigger>
-          <TabsTrigger value="all-open-orders">All open orders</TabsTrigger>
-          <TabsTrigger value="order-history">
-            {base?.symbol} order history
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <TableHeaderRenderer
-        onClickCancel={activeTab === "order-history" ? undefined : cancelOrder}
-      />
-    </>
+  return { cancelOrder, onClickMarket };
+}
+
+export const BaseOpenOrdersPanel = () => {
+  const {
+    getters: {
+      activeMarket: { base, openOrders, cancellingOrderIds },
+    },
+  } = useContext(ExchangeDataGettersContext);
+  const { cancelOrder, onClickMarket } = useOrdersActions();
+
+  const baseOpenOrders = openOrders.filter(
+    (r) => r.baseAssetSymbol === base?.symbol
   );
 
   return (
-    <ExchangeWidget type="open-orders" header={header}>
-      {activeTab === "open-orders" && (
-        <OrdersTable
-          orders={baseOpenOrders}
-          onClickCancel={cancelOrder}
-          onClickMarket={onClickMarket}
-          cancellingOrderIds={cancellingOrderIds}
-        />
-      )}
-      {activeTab === "all-open-orders" && (
-        <OrdersTable
-          orders={openOrders}
-          onClickCancel={cancelOrder}
-          cancellingOrderIds={cancellingOrderIds}
-          onClickMarket={onClickMarket}
-        />
-      )}
-      {activeTab === "order-history" && (
-        <OrdersTable
-          orders={pastOrders}
-          cancellingOrderIds={[]}
-          onClickMarket={onClickMarket}
-        />
-      )}
+    <ExchangeWidget type="base-open-orders" header={<TableHeaderRenderer />}>
+      <OrdersTable
+        orders={baseOpenOrders}
+        onClickCancel={cancelOrder}
+        onClickMarket={onClickMarket}
+        cancellingOrderIds={cancellingOrderIds}
+      />
+    </ExchangeWidget>
+  );
+};
+
+export const AllOpenOrdersPanel = () => {
+  const {
+    getters: {
+      activeMarket: { openOrders, cancellingOrderIds },
+    },
+  } = useContext(ExchangeDataGettersContext);
+  const { cancelOrder, onClickMarket } = useOrdersActions();
+
+  return (
+    <ExchangeWidget type="all-open-orders" header={<TableHeaderRenderer />}>
+      <OrdersTable
+        orders={openOrders}
+        onClickCancel={cancelOrder}
+        cancellingOrderIds={cancellingOrderIds}
+        onClickMarket={onClickMarket}
+      />
+    </ExchangeWidget>
+  );
+};
+
+export const OrderHistoryPanel = () => {
+  const {
+    getters: {
+      activeMarket: { pastOrders },
+    },
+  } = useContext(ExchangeDataGettersContext);
+  const { onClickMarket } = useOrdersActions();
+
+  return (
+    <ExchangeWidget
+      type="order-history"
+      header={<TableHeaderRenderer showCancel={false} />}
+    >
+      <OrdersTable
+        orders={pastOrders}
+        cancellingOrderIds={[]}
+        onClickMarket={onClickMarket}
+      />
     </ExchangeWidget>
   );
 };

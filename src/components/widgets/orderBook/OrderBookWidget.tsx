@@ -40,7 +40,6 @@ export const OrderBookWidget: React.FC = () => {
 
   const header = (
     <>
-      <div className="widget-title">Order Book</div>
       <Table>
         <TableHeader className="w-full">
           <TableRow className="hover:bg-transparent">

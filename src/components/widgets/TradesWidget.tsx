@@ -23,7 +23,6 @@ export const TradesWidget: React.FC = () => {
   } = useContext(ExchangeDataGettersContext);
   const header = (
     <>
-      <div className="widget-title">Trades</div>
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">

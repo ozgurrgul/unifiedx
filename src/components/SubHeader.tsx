@@ -13,10 +13,7 @@ export const SubHeader = () => {
   } = useContext(ExchangeDataGettersContext);
 
   return (
-    <div
-      className="flex items-center px-4 widget-subheader gap-0"
-      style={{ gridArea: "subheader" }}
-    >
+    <div className="flex items-center px-4 widget-subheader gap-0 shrink-0 min-h-[68px] border-b border-border">
       <div className="pr-6">
         <div className="text-lg font-bold tracking-tight">
           {base?.symbol}

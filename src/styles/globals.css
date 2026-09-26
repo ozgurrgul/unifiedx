@@ -148,34 +148,118 @@
   }
 }
 
-.exchange-grid {
-  background-color: hsl(var(--border));
-  border: 1px solid hsl(var(--border));
+.exchange-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 36px;
   box-sizing: border-box;
-  margin: 0;
-  min-width: 0;
-  display: grid;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx {
+  --dv-color-abyss: hsl(var(--background));
+  --dv-color-abyss-dark: hsl(var(--card));
+  --dv-color-abyss-light: hsl(var(--secondary));
+  --dv-color-surface: hsl(var(--card));
+  --dv-color-surface-dark: hsl(var(--background));
+  --dv-color-surface-light: hsl(var(--secondary));
+  --dv-color-text: hsl(var(--foreground));
+  --dv-color-text-secondary: hsl(var(--muted-foreground));
+  --dv-color-border: hsl(var(--border));
+  --dv-color-border-divider: hsl(var(--border));
+  --dv-tabs-and-actions-container-background-color: hsl(var(--card));
+  --dv-tab-background-color: transparent;
+  --dv-tab-active-background-color: transparent;
+  --dv-tab-inactive-background-color: transparent;
+  --dv-group-view-background-color: hsl(var(--card));
+  --dv-separator-border: hsl(var(--border));
+  --dv-paneview-header-border-color: hsl(var(--border));
+  --dv-tabs-and-actions-container-height: 36px;
+  --dv-tab-font-size: 12px;
+  --dv-tab-margin: 0;
+  --dv-tab-divider-color: transparent;
+  --dv-icon-hover-background-color: hsl(var(--secondary));
   gap: 1px;
-  grid-template-columns:
-    minmax(250px, 360px)
-    minmax(550px, 1fr)
-    minmax(250px, 360px);
-  grid-template-rows:
-    var(--header-height)
-    68px
-    240px
-    240px
-    120px
-    240px
-    385px;
-  grid-template-areas:
-    "header header header"
-    "subheader subheader markets"
-    "order-book chart markets"
-    "order-book chart markets"
-    "trades order-form balances"
-    "trades order-form balances"
-    "open-orders open-orders open-orders";
+  background-color: hsl(var(--border));
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-tabs-and-actions-container {
+  border-bottom: 1px solid hsl(var(--border));
+  min-height: 36px;
+  padding: 0;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-tabs-container {
+  gap: 0;
+  padding: 0 2px;
+  min-height: 36px;
+  align-items: stretch;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-tab {
+  padding: 0;
+  margin: 0;
+  min-height: 36px;
+  display: flex;
+  align-items: stretch;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-default-tab.unifiedx-dock-tab,
+.exchange-dock-host .dockview-theme-unifiedx .dv-tab .dv-default-tab {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  height: 100%;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-default-tab-content {
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-inactive-tab .dv-default-tab {
+  color: hsl(var(--muted-foreground));
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-inactive-tab .dv-default-tab:hover {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--secondary) / 0.5);
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-active-tab .dv-default-tab {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--secondary) / 0.75);
+  box-shadow: inset 0 -2px 0 hsl(var(--foreground) / 0.45);
+}
+
+/* Single-tab groups still show a readable header (matches .widget-title). */
+.exchange-dock-host .dockview-theme-unifiedx .dv-groupview .dv-tabs-and-actions-container {
+  flex-shrink: 0;
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-sash {
+  background-color: hsl(var(--border));
+}
+
+.exchange-dock-host .dockview-theme-unifiedx .dv-sash:hover {
+  background-color: hsl(var(--muted-foreground) / 0.35);
 }
 
 .widget {

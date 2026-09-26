@@ -23,7 +23,6 @@ export const BalancesWidget: React.FC = () => {
 
   const header = (
     <>
-      <div className="widget-title">Balances</div>
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">

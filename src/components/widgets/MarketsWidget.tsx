@@ -13,7 +13,6 @@ import { Input } from "../ui/input";
 import { useContext, useEffect, useState } from "react";
 import { ExchangeWidget } from "./ExchangeWidget";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -131,32 +130,28 @@ export const MarketsWidget: React.FC = () => {
           value={searchInputText}
         />
       </div>
-      <Tabs
-        key={viewingMarketQuote}
-        defaultValue={viewingMarketQuote}
-        className="w-full px-2"
-      >
-        <TabsList className="w-full justify-start h-8">
-          {visibleMarketQuoteSymbols?.map((quoteSymbol) => (
-            <TabsTrigger
-              key={quoteSymbol}
-              value={quoteSymbol}
-              onClick={() => setViewingMarketQuote(quoteSymbol)}
-              className="text-xs"
-            >
-              {quoteSymbol}
-            </TabsTrigger>
-          ))}
-          {visibleMarketQuoteSymbols?.length < marketQuoteSymbols?.length && (
-            <RemaningMarkets
-              viewingMarketQuote={viewingMarketQuote}
-              visibleMarketQuoteSymbols={visibleMarketQuoteSymbols}
-              marketQuoteSymbols={marketQuoteSymbols}
-              onSelect={(quote) => setViewingMarketQuote(quote)}
-            />
-          )}
-        </TabsList>
-      </Tabs>
+      <div className="flex items-center gap-1 px-2 pb-2 flex-wrap">
+        {visibleMarketQuoteSymbols?.map((quoteSymbol) => (
+          <button
+            key={quoteSymbol}
+            type="button"
+            onClick={() => setViewingMarketQuote(quoteSymbol)}
+            className={cn("exchange-pill", {
+              "exchange-pill-active": quoteSymbol === viewingMarketQuote,
+            })}
+          >
+            {quoteSymbol}
+          </button>
+        ))}
+        {visibleMarketQuoteSymbols?.length < marketQuoteSymbols?.length && (
+          <RemaningMarkets
+            viewingMarketQuote={viewingMarketQuote}
+            visibleMarketQuoteSymbols={visibleMarketQuoteSymbols}
+            marketQuoteSymbols={marketQuoteSymbols}
+            onSelect={(quote) => setViewingMarketQuote(quote)}
+          />
+        )}
+      </div>
       <Table className="pt-2">
         <TableHeader className="w-full">
           <TableRow>

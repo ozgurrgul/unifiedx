@@ -1,18 +1,19 @@
 "use client";
 
-import { MarketsWidget } from "./widgets/MarketsWidget";
-import { TradesWidget } from "./widgets/TradesWidget";
-import { OrderBookWidget } from "./widgets/orderBook/OrderBookWidget";
 import { SubHeader } from "./SubHeader";
 import { Header } from "./Header";
-import { ChartWidget } from "./widgets/ChartWidget";
-import { OrdersWidget } from "./widgets/OrdersWidget";
 import { useToast } from "./ui/use-toast";
 import { useContext, useEffect } from "react";
 import { ExchangeDataGettersContext } from "@/data/ExchangeDataGettersContext";
-import { BalancesWidget } from "./widgets/BalancesWidget";
-import { OrderForm } from "./widgets/orderForm/OrderFormWidget";
 import { BottomBar } from "./BottomBar";
+import dynamic from "next/dynamic";
+import { DockLayoutControlProvider } from "./layout/DockLayoutControlContext";
+
+const ExchangeDockLayout = dynamic(
+  () =>
+    import("./layout/ExchangeDockLayout").then((m) => m.ExchangeDockLayout),
+  { ssr: false }
+);
 
 export const ExchangeGrid = ({}) => {
   const { toast } = useToast();
@@ -33,19 +34,13 @@ export const ExchangeGrid = ({}) => {
   }, [error, toast]);
 
   return (
-    <div>
-      <div className="exchange-grid">
+    <DockLayoutControlProvider>
+      <div className="exchange-shell">
         <Header />
         <SubHeader />
-        <MarketsWidget />
-        <TradesWidget />
-        <ChartWidget />
-        <OrderBookWidget />
-        <OrderForm />
-        <OrdersWidget />
-        <BalancesWidget />
+        <ExchangeDockLayout />
+        <BottomBar />
       </div>
-      <BottomBar />
-    </div>
+    </DockLayoutControlProvider>
   );
 };

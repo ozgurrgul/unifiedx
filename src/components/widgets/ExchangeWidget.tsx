@@ -19,8 +19,7 @@ export const ExchangeWidget: React.FC<ExchangeWidgetProps> = ({
 
   return (
     <div
-      className={`widget widget-${type}`}
-      style={{ gridArea: type }}
+      className={`widget widget-${type} h-full min-h-0 flex flex-col`}
       ref={widgetRef}
     >
       <div className="widget-card-header" ref={headerRef}>

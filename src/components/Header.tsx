@@ -18,9 +18,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loader, Moon, Sun } from "lucide-react";
+import { Loader, Moon, RotateCcw, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { useOptionalDockLayoutControl } from "./layout/DockLayoutControlContext";
 
 export const Header = () => {
   const { goToExchange } = useAppNavigation();
@@ -33,16 +34,14 @@ export const Header = () => {
   const [showCredentials, setShowCredentials] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const dockLayoutControl = useOptionalDockLayoutControl();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   return (
-    <div
-      className="app-header flex items-center justify-between px-4"
-      style={{ gridArea: "header" }}
-    >
+    <div className="app-header flex items-center justify-between px-4 shrink-0">
       <div className="flex items-center gap-6">
         <span className="text-sm font-bold tracking-tight text-foreground">
           UnifiedX
@@ -96,6 +95,19 @@ export const Header = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+          </button>
+        )}
+
+        {dockLayoutControl && (
+          <button
+            type="button"
+            data-testid="reset-dock-layout"
+            disabled={!dockLayoutControl.canResetLayout}
+            onClick={dockLayoutControl.resetLayout}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors disabled:opacity-40 disabled:pointer-events-none"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Reset layout
           </button>
         )}
 

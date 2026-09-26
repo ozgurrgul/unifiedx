@@ -1,6 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-
-export const MARKET_PATH = "/binance/market/BTC-EUR";
+import { BINANCE_BTC_EUR_PATH } from "./app";
 
 export const DOCK_LAYOUT_STORAGE_KEY = "unifiedx-dock-layout-v3";
 
@@ -37,13 +36,13 @@ export async function waitForDockReady(
   const freshLayout = options?.freshLayout ?? true;
 
   if (freshLayout) {
-    await page.goto(MARKET_PATH);
+    await page.goto(BINANCE_BTC_EUR_PATH);
     await page.evaluate((key) => {
       window.localStorage.removeItem(key);
     }, DOCK_LAYOUT_STORAGE_KEY);
     await page.reload();
   } else {
-    await page.goto(MARKET_PATH);
+    await page.goto(BINANCE_BTC_EUR_PATH);
   }
 
   await page.getByTestId("exchange-dock").waitFor({ state: "visible" });

@@ -66,7 +66,7 @@ test.describe("UnifiedX trading shell", () => {
       .first()
       .click();
 
-    await page.waitForURL("**/binance/market/ETH-EUR");
+    await page.waitForURL("**/binance/spot/market/ETH-EUR");
     await expect(page.locator(".widget-subheader").getByText("ETH")).toBeVisible();
   });
 });
